@@ -1,0 +1,68 @@
+/*
+****************
+* time 2015年8月13日
+* var 狼族小狈
+* 企业QQ：800007757
+* 官方网址：http://kelink.com
+****************
+*/
+html { font-size: 100%; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100% }
+html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, select, p, blockquote, th, td { margin: 0; padding: 0 }
+table { border-collapse: collapse; border-spacing: 0 }
+fieldset, img, a { border: 0 }
+dl, dt, dd, ul, ol, li, pre, form, fieldset, input, textarea, p, blockquote, th, td { list-style: none }
+h1, h2, h3, h4, h5, h6 { font-weight: normal; line-height: 1.2 }
+audio, canvas, video, progress { display: inline-block; vertical-align: baseline }
+a { color: #00c3b6; outline: none; cursor: pointer; -webkit-transition: all 0.3s ease-out; transition: all 0.3s ease-out; text-decoration: none }
+ul { overflow: hidden; }
+button, input, textarea, select, optgroup, option, file { font: inherit; outline: none; vertical-align: middle }
+img { max-width: 100%; height: auto }
+::-moz-focus-inner {
+ border-color: transparent
+}
+
+::-moz-selection {
+ color: #fff;
+ color: rgba(255,255,255,0.9);
+ background: #ea4c89;
+ text-shadow: none
+}
+::selection { color: #fff; color: rgba(255,255,255,0.9); background: #ea4c89; text-shadow: none }
+input[type="submit"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; outline: none; -webkit-tap-highlight-color: transparent; border-radius: 0 }
+
+::-webkit-input-placeholder {
+ color: rgba(255,255,255,0.2)
+}
+ input:-moz-placeholder {
+ color: rgba(255,255,255,0.2)
+}
+pre, code { white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word }
+.clear { clear: both; _height: 1px; overflow: hidden; *display: inline
+}
+body { font: 12px/1.5 "Helvetica neue", Helvetica, Tahoma, "lantinghei sc", "Microsoft Yahei", sans-serif; color: #333; background-color: #f1f1f1; font-weight: 400; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale }
+.nav { padding: 10px; }
+.nav .class { margin-bottom: 20px; }
+.nav .class h2 { font-size: 14px; padding: 15px 20px; border-bottom: 1px solid #E5E5E5; background-color: #F9F9F9; color: #333; }
+.nav .class ul { background: #fff; }
+.nav .class ul li { height: auto; overflow: hidden; padding: 15px 20px; border-bottom: 1px solid #F2F2F2; }
+.nav .class ul li a { color: #777; }
+/*头部导航*/
+#header-nav { overflow: hidden; position: fixed; top: 0; right: 0; left: 0; overflow: hidden; height: 50px; padding-left: 50px; background: #333; box-shadow: 0 1px 1px rgba(0,0,0,0.3); }
+#header-nav h2 { float: left; padding: 0 10px 0 0; line-height: 50px; color: #ccc; font-size: 12px; border-right: 1px solid #444; }
+#header-nav h2 span { padding: 0 5px; color: #14E3EC; font-size: 14px; }
+#header-nav h2 span a { color: #14E3EC; font-size: 14px; line-height: 50px; font-size: 14px; }
+#header-nav ul { overflow: hidden; padding-left: 10px; border-left: 1px solid #555; }
+#header-nav ul li { float: left; height: 38px; padding: 5px 10px; }
+#header-nav ul li:hover { background: #444; }
+#header-nav ul li a { line-height: 38px; color: #F3F3F3; font-size: 14px; }
+#main { padding: 50px; background: #fff; }
+/*表格，ubb说明*/
+.var-type { padding: 50px 0 30px 0; }
+.var-type h2 { padding-left: 10px; margin: 10px 0; border-left: 5px solid #aaa; font-size: 16px; line-height: 28px; }
+.var-type .ubb {min-width: 320px; margin-bottom:20px; background: #fff; border: 1px solid #E5E5E5; }
+.var-type .ubb th, .var-type table td { padding: 10px 20px; }
+.var-type .ubb th { background: #F9F9F9; border: 1px solid #E5E5E5; font-size: 14px; color: #333; }
+.var-type .ubb td { font-size: 13px; border: 1px solid #E5E5E5; color: #777; }
+/*内容*/
+.content {line-height:38px; font-size:14px;}
+.content pre{ background:#F9F9F9; border:1px solid #ccc; line-height:24px;}

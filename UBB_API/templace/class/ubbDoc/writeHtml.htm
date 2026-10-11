@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="kelink.com">
+<meta name="keywords" content="wap建站,wap建站帮助,wap建站帮助文档,自助建站,wap帮助文档,3g,3g手机,3g建站,3g门户,wap,wap建站,手机建站,3G门户">
+<meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩 wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫 什么呢？赶快申请吧。">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>HTML输出</title>
+<link rel="stylesheet" href="../../static/common.css" type="text/css">
+<script src="../../static/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/common.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="header-nav"> </div>
+<div id="main">
+  <div class="var-type">
+    <h2>修饰类</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[hr]</td>
+        <td>普通水平线</td>
+      </tr>
+      <tr>
+        <td>[br]</td>
+        <td>换行或/// 或按回车键</td>
+      </tr>
+      <tr>
+        <td>[tab]</td>
+        <td>空格或按空格键</td>
+      </tr>
+      <tr>
+        <td>[left]</td>
+        <td>居左</td>
+      </tr>
+      <tr>
+        <td>[center]</td>
+        <td>居中</td>
+      </tr>
+      <tr>
+        <td>[right]</td>
+        <td>居右</td>
+      </tr>
+      <tr>
+        <td>[hr]</td>
+        <td>普通水平线</td>
+      </tr>
+      <tr>
+        <td>[font=黑体]输入文字[/font]</td>
+        <td>字体</td>
+      </tr>
+      <tr>
+        <td>[size=7]输入文字[/size]</td>
+        <td>字体大小</td>
+      </tr>
+      <tr>
+        <td>[backcolor=#FF0000]输入文字[/backcolor]</td>
+        <td>字体背景颜色</td>
+      </tr>
+      <tr>
+        <td>[forecolor=#FF0000]输入文字[/forecolor]</td>
+        <td>字体颜色</td>
+      </tr>
+      <tr>
+        <td>[strike]处输入文字[/strike]</td>
+        <td>删除线</td>
+      </tr>
+      <tr>
+        <td>[fly]处输入文字[/fly]</td>
+        <td>文字飞动</td>
+      </tr>
+      <tr>
+        <td>[div=x]内容[/div]</td>
+        <td>使用css控制内容的样式</td>
+      </tr>
+      <tr>
+        <td>[p=x]内容[/p]</td>
+        <td>使用css控制内容的样式</td>
+      </tr>
+      <tr>
+        <td>[span=x]内容[/span]</td>
+        <td>使用css控制内容的样式</td>
+      </tr>
+      <tr>
+        <td>[div=x]内容[/div]</td>
+        <td>使用css控制内容的样式</td>
+      </tr>
+      <tr>
+        <td>[text]纯文本内容[/text]</td>
+        <td>纯文本内容，方便UBB可视化解析</td>
+      </tr>
+    </table>
+  </div>
+  <div class="var-type">
+    <h2>功能类</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[url=URL地址]链接标题[/url]</td>
+        <td>文本链接</td>
+      </tr>
+      <tr>
+        <td>[imgurl=320*200]图片地址*链接地址[/imgurl] </td>
+        <td>图片链接</td>
+      </tr>
+      <tr>
+        <td>[float=图长*图宽*离左边距离*离顶部距离*X]图片地址*链接地址[/float]</td>
+        <td>浮动图片链接<br>
+          X：0时左边，1时右边显示</td>
+      </tr>
+      <tr>
+        <td>[img]图片URL地址[/img]</td>
+        <td>显示图片</td>
+      </tr>
+      <tr>
+        <td>[img=图片URL地址]说明[/img]</td>
+        <td>显示图片2，注意：图片后缀为gif|jpg|bmp|jpeg|png其它只能首页显示。</td>
+      </tr>
+      <tr>
+        <td>[js]地址[/js]</td>
+        <td>调用js文件</td>
+      </tr>
+      <tr>
+        <td>[css]地址[/css]</td>
+        <td>调用css文件</td>
+      </tr>
+      <tr>
+        <td>[iframe=320*200]链接地址[/iframe]</td>
+        <td>插入iframe框架</td>
+      </tr>
+      <tr>
+        <td>[anchor=广告地址]广告标题[/anchor]</td>
+        <td>无下划线链接</td>
+      </tr>
+      <tr>
+        <td>[rndurl=地址1|地址2]说明或图片地址1|说明或图片地址2[/rndurl]</td>
+        <td>随机图文链接</td>
+      </tr>
+      <tr>
+        <td>[rndtxt]说明或图片地址1|说明或图片地址2[/rndtxt]</td>
+        <td>随机图文显示，多个用|或｜区分开，支持文字或图片混合链接</td>
+      </tr>
+      <tr>
+        <td>[picurl8=320*200]图片地址1|图片地址2*链接地址1|链接地址2[/picurl8]</td>
+        <td>带数字滚动图片(=布局8)</td>
+      </tr>
+      <tr>
+        <td>[picurl9=320*200]图片地址1|图片地址2*链接地址1|链接地址2[/picurl9]</td>
+        <td>从右向左平滑滚动图片(=布局9)</td>
+      </tr>
+      <tr>
+        <td>[picurl10=320*200]图片地址1|图片地址2*链接地址1|链接地址2[/picurl10]</td>
+        <td>带点滑滚动图片(=布局10)</td>
+      </tr>
+      <tr>
+        <td>[movie=320*180]视频地址|图片地址[/movie]</td>
+        <td>视频播放</td>
+      </tr>
+      <tr>
+        <td>[audio=X]音频地址[/audio]</td>
+        <td>音频播放<br>
+          X：0时不自动播放，1为自动播放,2自动并循环播放</td>
+      </tr>
+      <tr>
+        <td>[map]320*240[/map]</td>
+        <td>手机定位地图(HTML5)</td>
+      </tr>
+      <tr>
+        <td>[map=纬度*经度]320*240[/map]</td>
+        <td>纬度经度定位地图(HTML5)，例:[map=23.02978910711622*113.30886358323664]320*240[/map]</td>
+      </tr>
+      <tr>
+        <td>[ul=myclass]智能判断分行[/ul]</td>
+        <td>UI标签，列表使用li标签</td>
+      </tr>
+      <tr>
+        <td>[call]手机号码[/call]</td>
+        <td>直接拨号</td>
+      </tr>
+      <tr>
+        <td>[call=号码]说明[/call]</td>
+        <td>带说明的直接拨号</td>
+      </tr>
+      <tr>
+        <td>[url=sms:手机号码?body=短信内容]点击此发送[/url]</td>
+        <td>发短信到手机</td>
+      </tr>
+      <tr>
+        <td>[tq=X]默认地区的区号[/tq]</td>
+        <td>天气预报<br>
+          X：0时样式0，X=1时样式1，X=2时样式2</td>
+      </tr>
+    </table>
+  </div>
+  <div class="var-type">
+    <h2>常用连接</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]</td>
+        <td>通用返回原地址参数</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&classid=栏目ID]栏目名称[/url] </td>
+        <td>未开启伪静态，通用栏目地址</td>
+      </tr>
+      <tr>
+        <td>[url=/目录名如bbs/list.aspx?classid=栏目ID]栏目名称[/url]</td>
+        <td>未开启伪静态，具体栏目地址，建议用这个方便搜索引擎收录</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex-网站ID-栏目ID.html]栏目名称[/url]</td>
+        <td>开启伪静态，通用栏目地址</td>
+      </tr>
+      <tr>
+        <td>[url=/模块名称list-栏目ID-页码.html]栏目名称[/url]</td>
+        <td>开启伪静态，具体栏目地址</td>
+      </tr>
+      <tr>
+        <td>[url=/模块名称-标题ID.html]标题[/url]</td>
+        <td>开启伪静态，查看内容地址</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]]首页[/url]</td>
+        <td>网站首页</td>
+      </tr>
+      <tr>
+        <td>[url=/waplogin.aspx?siteid=[siteid]&classid=[classid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]登录[/url] </td>
+        <td>登录界面</td>
+      </tr>
+      <tr>
+        <td>[url=/wapreg.aspx?siteid=[siteid]&classid=[classid]]注册[/url] </td>
+        <td>会员WAP注册</td>
+      </tr>
+      <tr>
+        <td>[url=/waplogout.aspx?siteid=[siteid]]退出[/url]</td>
+        <td>退出界面</td>
+      </tr>
+      <tr>
+        <td>[url=/wapstyle/skin.aspx?siteid=[siteid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]换肤[/url] </td>
+        <td>换肤</td>
+      </tr>
+      <tr>
+        <td>[url=/wapstyle/lang.aspx?siteid=[siteid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]语言[/url] </td>
+        <td>语言</td>
+      </tr>
+      <tr>
+        <td>[url=/wapstyle/mobileua.aspx?siteid=[siteid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]机型[/url] </td>
+        <td>机型</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&classid=[classid]&sid=-1-[cs]-[lang]-[myua]-[width]]简版[/url] </td>
+        <td>WAP1.0链接</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&classid=[classid]&sid=-2-[cs]-[lang]-[myua]-[width]]彩版[/url] </td>
+        <td>WAP2.0链接</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&classid=[classid]&sid=-3-[cs]-[lang]-[myua]-[width]]电脑[/url] </td>
+        <td>电脑链接</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&classid=[classid]&sid=-4-[cs]-[lang]-[myua]-[width]]平板[/url] </td>
+        <td>平板链接</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&sid=-[ver]-[cs]-0-[myua]-[width]]简体[/url] </td>
+        <td>简体</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&sid=-[ver]-[cs]-1-[myua]-[width]]繁体[/url] </td>
+        <td>繁体</td>
+      </tr>
+      <tr>
+        <td>[url=/wapindex.aspx?siteid=[siteid]&sid=-[ver]-[cs]-2-[myua]-[width]]英文[/url] </td>
+        <td>英文</td>
+      </tr>
+      <tr>
+        <td>[url=/myfile.aspx?siteid=[siteid]]我的地盘[/url]</td>
+        <td>我的地盘</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/messagelist.aspx?siteid=[siteid]&classid=[classid]&types=0&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]信息[/url] </td>
+        <td>信息</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/FriendList.aspx?siteid=[siteid]&classid=[classid]&friendtype=0&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]好友[/url] </td>
+        <td>好友</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/toGroupInfo.aspx?siteid=[siteid]&classid=[classid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]购买勋章[/url] </td>
+        <td>购买勋章</td>
+      </tr>
+      <tr>
+        <td>[url=/xinzhang/book_view_my.aspx?siteid=[siteid]&classid=[classid]]我的勋章[/url] </td>
+        <td>我的勋章</td>
+      </tr>
+      <tr>
+        <td>[url=/chinabank_wap/selbank_wap.aspx?siteid=[siteid]]在线充值[/url]</td>
+        <td>在线充值</td>
+      </tr>
+      <tr>
+        <td>[url=/chinabank_wap/RMBtoMoney.aspx?siteid=[siteid]]购买虚拟币[/url]</td>
+        <td>购买虚拟币</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/userinfo.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]我的空间[/url] </td>
+        <td>我的空间</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/myfav.aspx?siteid=[siteid]&classid=[classid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]我的收藏[/url] </td>
+        <td>我的收藏</td>
+      </tr>
+      <tr>
+        <td>[url=/album/myalbum.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]我的相册[/url] </td>
+        <td>我的相册</td>
+      </tr>
+      <tr>
+        <td>[url=/rizhi/myrizhi.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]我的微博[/url] </td>
+        <td>我的微博</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/book_list.aspx?action=search&siteid=[siteid]&classid=0&key=[userid]&type=pub]我的帖子[/url] </td>
+        <td>我的帖子</td>
+      </tr>
+      <tr>
+        <td>[url=/bbs/book_re_my.aspx?action=class&siteid=[siteid]&classid=0&touserid=[userid]]我的回帖[/url] </td>
+        <td>我的回帖</td>
+      </tr>
+      <tr>
+        <td>[url=/admin/basesitemodifywml.aspx?siteid=[siteid]]站长管理WAP后台[/url]</td>
+        <td>站长管理WAP后台</td>
+      </tr>
+      <tr>
+        <td>[url=/admin/basesitemodifywml00.aspx?siteid=[siteid]]超级管理员WAP后台[/url]</td>
+        <td>超级管理员WAP后台</td>
+      </tr>
+      <tr>
+        <td>[url=/admin/login.aspx]WEB管理后台[/url]</td>
+        <td>WEB管理后台</td>
+      </tr>
+      <tr>
+        <td>[url=/shop/book_view_add.aspx?classid=0&siteid=[siteid]]购物车([shopcard])[/url] </td>
+        <td>购物车</td>
+      </tr>
+      <tr>
+        <td>[url=/shop/orderlistmy.aspx?&classid=0&siteid=[siteid]]我的订单[/url] </td>
+        <td>我的订单，classid=0可以改成具体的栏目值</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

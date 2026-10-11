@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="kelink.com">
+<meta name="keywords" content="wap建站,wap建站帮助,wap建站帮助文档,自助建站,wap帮助文档,3g,3g手机,3g建站,3g门户,wap,wap建站,手机建站,3G门户">
+<meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩 wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫 什么呢？赶快申请吧。">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>页面嵌套</title>
+<link rel="stylesheet" href="../../static/common.css" type="text/css">
+<script src="../../static/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/common.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="header-nav"> </div>
+<div id="main">
+  <div class="var-type">
+    <h2>页面嵌套</h2>
+    <div class="content"> 格式：[include]页面名称[/include]，该UBB只能在本页面模板中调用
+      <ul>
+        <li>第一步：创建一个页面模板</li>
+        <li>第二步：创建一个页面源码，名称叫【自定义页面】，输入内容：我就是你的页面内容</li>
+        <li>第三步：在其他页面调用方法：[include]自定义页面[/include]，UBB将输出：我就是你的页面内容</li>
+      </ul>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>取页面标签内容</h2>
+    <div class="content"> 格式：[include=标签名称]页面名称[/include]
+      <ul>
+        <li>第一步：创建一个页面模板</li>
+        <li>第二步：创建一个页面源码，名称叫【自定义页面】，输入内容：[标签一]我就是标签的内容[/标签一]</li>
+        <li>第三步：在其他页面调用方法：[include=标签一]自定义页面[/include]，UBB将输出：我就是标签的内容</li>
+      </ul>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>传参和内部变量值</h2>
+    <div class="content"> 格式：[include=标签名称_参数1_参数2_参数3_....依次递增]页面名称[/include]
+      <ul>
+        <li>第一步：创建一个页面模板</li>
+        <li>第二步：创建一个页面源码，名称叫【自定义页面】，输入内容：[标签一]我就是标签的内容，tid={tid}，参数1={t1}，参数2={t2}，......[/标签一]</li>
+        <li>第三步：在其他页面调用方法：[include=标签一_参数1_参数2]自定义页面[/include]，UBB将输出：我就是标签的内容，tid=45454，参数1=参数一，参数2=参数二，......</li>
+      </ul>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>封装万能UBB案例</h2>
+    <div class="content">
+      <ul>
+        <li>第一步：创建一个页面模板</li>
+        <li>第二步：创建一个页面源码，名称叫【自定义UBB】，复制下面内容↓↓↓↓</li>
+      </ul>
+      <pre>
+[布局一] 
+      &lt;!--tid={tid};layout={t0}; start--&gt;
+      &lt;ul id="kl-{tid}"&gt;
+        [{t1}={t2}_{t3}_{t4}_{t5}_100*
+        &lt;li&gt;&lt;a href="{linkurl}"&gt;{title} &lt;/a&gt;&lt;/li&gt;
+        /{t1}]
+      &lt;/ul&gt;
+      &lt;!--tid={tid};layout={t0}; end--&gt; 
+[/布局一] 
+      </pre>
+      <p> 调用方法：[include=布局一_功能模块_N_M_X_Y]自定义UBB[/include] <br>
+        如：[include=布局一_bbs_0_6_1_12]自定义UBB[/include] </p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

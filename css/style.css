@@ -1,0 +1,32 @@
+@charset "utf-8";
+
+/* ztbox */
+#ztbox{width:970px;height:420px;margin:0 auto;}
+#ztbox #left{width:35px;height:63px;float:left;cursor:pointer;background:url(../images/banner_pre.jpg) no-repeat;margin-top:140px;}
+#ztbox #right{width:35px;height:63px;float:left;cursor:pointer;background:url(../images/banner_next.jpg) no-repeat; margin-top:140px;}
+
+#ztbox #conter{width:880px;height:400px;float:left;display:inline;overflow:hidden;position:relative;margin:0px 10px;}
+#ztbox #conter ul{width:auto;height:357px;top:0px;left:0px;position:absolute;overflow:hidden;}
+#ztbox #conter li{width:167px;height:357px;float:left;padding:0px 5px;position:relative;border-radius: 10px;}
+#ztbox #conter li img{width: 160px;
+height: 349px;
+border-radius: 10px;
+border: 3px solid #FFF;}
+#ztbox #scroll{width:880px;height:18px;left:0px;bottom:8px;cursor:pointer;position:absolute;background:url(../images/banner_bg2.jpg) repeat-x left center;}
+#ztbox #scroll span{width:48px;height:18px;left:0px;bottom:0px;cursor:pointer;position:absolute;background:#FFEA00;}
+/* applist */
+.applist{clear:both;position:relative;width:975px;margin:0 auto;display: inline-block;margin-top: 30px;}
+.applist li{float:left;width:75px;height:75px;overflow:hidden}
+.applist a{display:block}
+.appdetail{position:absolute;z-index:1;left:0;top:0;width:300px;height:150px;overflow:hidden;display:none}
+.appdetail_m{position:absolute;z-index:2;left:0;top:0;width:300px;height:150px;background:#000;opacity:.9;filter:alpha(opacity=90);}
+.appdetail_w{position:absolute;z-index:9;left:0;top:0;padding:5px;width:290px;height:140px;overflow:hidden}
+.appdetail_n{float:right;color:#fff;font-size:14px;}
+.appdetail_n h3{font-size:20px;display:block;width:130px;height:30px;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+.appdetail_s{text-align:right;font-size:16px;color:#FFC000;padding-top:20px;padding-right:15px}
+.applist .app_more{width:150px;height:75px;line-height:75px;background:#169AFF;overflow:hidden}
+.app_more a{display:block;color:#D8EEFF}
+.app_more span{font-size:20px;display:block;float:left;margin-left:20px;_margin-left:12px}
+.app_more_arr{width:15px;height:32px;margin-top:24px;background:url(../images/icon.png) no-repeat;}
+.app_more_current a{color:#fff}
+.app_more_current .app_more_arr{background-position:-89px -190px}

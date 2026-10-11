@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="kelink.com">
+<meta name="keywords" content="wap建站,wap建站帮助,wap建站帮助文档,自助建站,wap帮助文档,3g,3g手机,3g建站,3g门户,wap,wap建站,手机建站,3G门户">
+<meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩 wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫 什么呢？赶快申请吧。">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>页面配置</title>
+<link rel="stylesheet" href="../../static/common.css" type="text/css">
+<script src="../../static/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/common.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="header-nav"> </div>
+<div id="main">
+  <div class="var-type">
+    <h2>创建模板</h2>
+    <div class="content">
+      <ul>
+        <li>第一步：登录【电脑管理后台】，地址：http://你的域名/admin/login.aspx</li>
+        <li>第二步：左边导航栏【网站管理】→点击【页面模板管理】</li>
+        <li>第三步：左上角【模板名称管理】→输入页面名称→输入顺序号，随便写个数字就行，一般0</li>
+        <li>第四步：模板创建成功后，点击【返回】→点击我们刚才创建的模板</li>
+      </ul>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>创建页面源码</h2>
+    <div class="content">
+      <ul>
+        <li>第一步：左上角【新增页面源码】</li>
+        <li>第二步：输入页面名称</li>
+        <li>第三步：输入页面源码</li>
+        <li>第四步：根据自己的需要，配置相关使用条件后保存即可。具体可以查下面的详解。↓↓↓↓</li>
+      </ul>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>版本配置</h2>
+    <div class="content"> 只能选择一个版本
+      <ul>
+        <li>ver=0：自动识别，所有ver均可使用。</li>
+        <li>ver=1：wap1.0简版已经淘汰，配置该属性，此页面只能ver1使用。</li>
+        <li>ver=2：html5触屏版，当ver=2的时候是一</li>
+        <li>ver=3：电脑版，当ver=3的时候使用</li>
+        <li>ver=4：自定义拓展版本1，当ver=4的时候使用</li>
+        <li>ver=5：自定义拓展版本2，当ver=5的时候使用</li>
+      </ul>
+      <p>
+      优先级顺序：<br>
+      如当前页面有ver0和ver2两个页面，ver2会被优先使用。1,2,3,4,5,都优先级都比0高
+      
+      </p>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>页面位置</h2>
+    <div class="content">
+      <ul>
+        <li>顶部：默认网站顶部使用</li>
+        <li>底部： 默认网站底部使用</li>
+        <li>普通栏目：需要配置指定栏目id使用</li>
+        <li>指定栏目顶部：需要配置指定栏目id使用 </li>
+        <li>指定栏目底部：需要配置指定栏目id使用 </li>
+        <li>指定栏目中部 ：需要配置指定栏目id使用 </li>
+      </ul>
+      <p>
+      系统会优先使用指定栏目的
+      </p>
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>指定栏目id</h2>
+    <div class="content">此页面模板只能在该栏目id下面使用，多个使用,隔开，栏目下级格式用栏目ID+*,例:128*,栏目128下下级用128**,以此类推，多组用,区分，例：128*,158**。
+    </div>
+  </div>
+  <div class="var-type">
+    <h2>指定模块</h2>
+    <div class="content"> 页面只能在该模块下使用
+    </div>
+  </div>
+</div>
+</body>
+</html>

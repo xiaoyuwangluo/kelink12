@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>单行栏目左右滑动切换</title>
+<style>
+* { margin: 0; padding: 0; font-family:"Microsoft YaHei";}
+a { text-decoration: none;}
+.ul1 { position: absolute; top: 0; width: 100%; border-bottom: 1px solid #ebebeb;}
+.ul1 li { float: left; text-align: center; list-style: none; line-height: 50px;}
+.pyq_nav { height: 50px; width: 100%; background: #fff; border-bottom: 1px solid #ebebeb; }
+.pyq_nav::after {content: "";background: -webkit-gradient(linear,left top,right top,color-stop(100%,#fff),color-stop(0%,rgba(249,249,249,0)));width: 50px;height: 51px;position: absolute;right: 0;top: 0;}
+.pyq_nav a { color: #000; text-align: center; line-height: 50px; padding: 0 10px;display:block;}
+.pyq_nav a:hover { background: #F7F7F7; color: #B23737;border-bottom: 3px solid #B23737; height: 47px;}
+.pyq_nav .yes  { color: #B23737; border-bottom: 3px solid #B23737; height: 47px;}
+</style>
+<script src="TouchLine.js"></script>
+</head>
+
+<body>
+<div class="pyq_nav">
+<ul id="ul1" class="ul1">
+  <li><a href="#" class="yes">综合</a></li>
+  <li><a href="#">娱乐</a></li>
+  <li><a href="#">游戏</a></li>
+  <li><a href="#">资讯</a></li>
+  <li><a href="#">健康</a></li>
+  <li><a href="#">政府</a></li>
+  <li><a href="#">社区</a></li>
+  <li><a href="#">摄影</a></li>
+  <li><a href="#">极客</a></li>
+  <li><a href="#">柯林</a></li>
+  <li><a href="#">WAP</a></li>
+  <li><a href="#">APP</a></li>
+  <li><a href="#">CMS</a></li>
+  <li><a href="#">其他</a></li>
+  </ul>
+</div>
+
+</div>
+<script>
+new TouchLine({
+	container : document.getElementById('ul1'),
+	nodeTagName : 'li'
+});
+</script>
+</body>
+</html>

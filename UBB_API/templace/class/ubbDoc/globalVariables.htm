@@ -1,0 +1,288 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="kelink.com">
+<meta name="keywords" content="wap建站,wap建站帮助,wap建站帮助文档,自助建站,wap帮助文档,3g,3g手机,3g建站,3g门户,wap,wap建站,手机建站,3G门户">
+<meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩 wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫 什么呢？赶快申请吧。">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>全局变量</title>
+<link rel="stylesheet" href="../../static/common.css" type="text/css">
+<script src="../../static/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/common.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="header-nav"> </div>
+<div id="main">
+  <div class="var-type">
+    <h2>基本信息</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[keywords]</td>
+        <td>SEO关键字</td>
+      </tr>
+      <tr>
+        <td>[description]</td>
+        <td>SEO描述</td>
+      </tr>
+      <tr>
+        <td>[sitename]</td>
+        <td>网站名称</td>
+      </tr>
+      <tr>
+        <td>[siteimg]</td>
+        <td>网站logo图片地址</td>
+      </tr>
+      <tr>
+        <td>[siteid]</td>
+        <td>网站id</td>
+      </tr>
+      <tr>
+        <td>[id]</td>
+        <td>标题id</td>
+      </tr>
+      <tr>
+        <td>[title]</td>
+        <td>标题UBB</td>
+      </tr>
+      <tr>
+        <td>[domain]</td>
+        <td>域名地址</td>
+      </tr>
+      <tr>
+        <td>[ver]</td>
+        <td>网站版本，0为自动识别，1为wap1.0，2是手机触屏版，3是电脑版，其他拓展！</td>
+      </tr>
+      <tr>
+        <td>[cs]</td>
+        <td>皮肤样式</td>
+      </tr>
+      <tr>
+        <td>[myua]</td>
+        <td>手机型号</td>
+      </tr>
+      <tr>
+        <td>[width]</td>
+        <td>网站宽度</td>
+      </tr>
+      <tr>
+        <td>[lang]</td>
+        <td>选择的语言</td>
+      </tr>
+      <tr>
+        <td>[nv]</td>
+        <td>栏目导航</td>
+      </tr>
+      <tr>
+        <td>[json=nv]</td>
+        <td>取栏目导航的json</td>
+      </tr>
+      <tr>
+        <td>[vs]</td>
+        <td>版本及语言选择1</td>
+      </tr>
+      <tr>
+        <td>[vs2]</td>
+        <td>版本及语言选择2</td>
+      </tr>
+      <tr>
+        <td>[vs3]</td>
+        <td>版本及语言选择3</td>
+      </tr>
+    </table>
+  </div>
+  <div class="var-type">
+    <h2>当前栏目</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[classid]</td>
+        <td>栏目id</td>
+      </tr>
+      <tr>
+        <td>[classname]</td>
+        <td>栏目名称</td>
+      </tr>
+      <tr>
+        <td>[parentid]</td>
+        <td>栏目的父级id</td>
+      </tr>
+      <tr>
+        <td>[func]</td>
+        <td>栏目的模块名称</td>
+      </tr>
+      <tr>
+        <td>[classtop]</td>
+        <td>栏目顶的内容</td>
+      </tr>
+      <tr>
+        <td>[classdown]</td>
+        <td>栏目底的内容</td>
+      </tr>
+      <tr>
+        <td>[classinsert]</td>
+        <td>栏目插的内容</td>
+      </tr>
+      <tr>
+        <td>[classimageurl]</td>
+        <td>栏目logo图片地址</td>
+      </tr>
+      <tr>
+        <td>[classtime]</td>
+        <td>栏目添加时间yyyy-MM-dd HH:mm:ss</td>
+      </tr>
+      <tr>
+        <td>[classtime1]</td>
+        <td>栏目添加时间添加时间 MM-dd</td>
+      </tr>
+      <tr>
+        <td>[classtime2]</td>
+        <td>栏目添加时间 yyyy-MM-dd</td>
+      </tr>
+      <tr>
+        <td>[classtime3]</td>
+        <td>栏目添加时间 MM-dd HH:mm</td>
+      </tr>
+      <tr>
+        <td>[classclick]</td>
+        <td>栏目点击量</td>
+      </tr>
+      <tr>
+        <td>[classadmin]</td>
+        <td>栏目管理员id</td>
+      </tr>
+      <tr>
+        <td>[online=[classid]]</td>
+        <td>栏目在线人数</td>
+      </tr>
+    </table>
+  </div>
+  <div class="var-type">
+    <h2>当前用户</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[userid]</td>
+        <td>会员id</td>
+      </tr>
+      <tr>
+        <td>[nickname]</td>
+        <td>昵称</td>
+      </tr>
+      <tr>
+        <td>[money]</td>
+        <td>金币</td>
+      </tr>
+      <tr>
+        <td>[rmb]</td>
+        <td>人民币</td>
+      </tr>
+      <tr>
+        <td>[myvip]</td>
+        <td>身份</td>
+      </tr>
+      <tr>
+        <td>[myaction]</td>
+        <td>任务</td>
+      </tr>
+      <tr>
+        <td>[ua]</td>
+        <td>手机品牌</td>
+      </tr>
+      <tr>
+        <td>[ua1]</td>
+        <td>手机品牌+型号</td>
+      </tr>
+      <tr>
+        <td>[message]</td>
+        <td>显示站内信息条数</td>
+      </tr>
+      <tr>
+        <td>[automsg]</td>
+        <td>自动显隐站内信息</td>
+      </tr>
+      <tr>
+        <td>[automsg2]</td>
+        <td>自动显隐站内信息(无链接，纯数字)</td>
+      </tr>
+      <tr>
+        <td>[msg]您有x条信息![/msg]</td>
+        <td>x会替换成实际数量</td>
+      </tr>
+    </table>
+  </div>
+  <div class="var-type">
+    <h2>系统时间</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[now]</td>
+        <td>系统日期和时间</td>
+      </tr>
+      <tr>
+        <td>[year]</td>
+        <td>年份</td>
+      </tr>
+      <tr>
+        <td>[month]</td>
+        <td>月份</td>
+      </tr>
+      <tr>
+        <td>[day]</td>
+        <td>天数</td>
+      </tr>
+      <tr>
+        <td>[hour]</td>
+        <td>时钟</td>
+      </tr>
+      <tr>
+        <td>[minute]</td>
+        <td>分数</td>
+      </tr>
+      <tr>
+        <td>[second]</td>
+        <td>秒数</td>
+      </tr>
+      <tr>
+        <td>[date]</td>
+        <td>日期</td>
+      </tr>
+      <tr>
+        <td>[time]</td>
+        <td>时间</td>
+      </tr>
+      <tr>
+        <td>[weekday]</td>
+        <td>公历星期</td>
+      </tr>
+      <tr>
+        <td>[ttcc]</td>
+        <td>农历星期</td>
+      </tr>
+      <tr>
+        <td>[hello]</td>
+        <td>问候语</td>
+      </tr>
+      <tr>
+        <td>[codo]2018-12-21[/codo]</td>
+        <td>倒计天数</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

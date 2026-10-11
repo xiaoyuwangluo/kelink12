@@ -1,0 +1,86 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="kelink.com">
+<meta name="keywords" content="wap建站,wap建站帮助,wap建站帮助文档,自助建站,wap帮助文档,3g,3g手机,3g建站,3g门户,wap,wap建站,手机建站,3G门户">
+<meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩 wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫 什么呢？赶快申请吧。">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; minimum-scale=1.0; maximum-scale=2.0">
+<title>逻辑判断</title>
+<link rel="stylesheet" href="../../static/common.css" type="text/css">
+<script src="../../static/jquery.min.js" type="text/javascript"></script>
+<script src="../../static/common.js" type="text/javascript"></script>
+</head>
+
+<body>
+<div id="header-nav"> </div>
+<div id="main">
+  <div class="var-type">
+    <h2>基本逻辑判断</h2>
+    <table class="ubb">
+      <tr>
+        <th>UBB</th>
+        <th>说明</th>
+      </tr>
+      <tr>
+        <td>[logins]登录后内容[/logins] </td>
+        <td>登录后显示内容</td>
+      </tr>
+      <tr>
+        <td>[nologins]未登录内容[/nologins]</td>
+        <td>未登录显示内容</td>
+      </tr>
+      <tr>
+        <td>[show=X_Y]条件成立显示内容[/show]</td>
+        <td>指定条件下显示的内容<br>
+          X：可以是指定模块（如：bbs），指定路径（如：/bbs/list.aspx），指定栏目id（如：0）<br>
+          Y：0时表示所有网站,1时VIP网站,2时非VIP网站<br>
+          PS：多个条件使用  |  隔开 ,首页固定标识default，所有类型网站只首页显示内容:[show=default_0]内容[/show]</td>
+      </tr>
+      <tr>
+        <td>[noshow=X_Y]条件不成立显示内容[/noshow]</td>
+        <td>指定条件下不显示的内容<br>
+          X：可以是指定模块（如：bbs），指定路径（如：/bbs/list.aspx），指定栏目id（如：0）<br>
+          Y：0时表示所有网站,1时VIP网站,2时非VIP网站<br>
+          PS：多个条件使用  |  隔开,首页固定标识default，所有类型网站除了首页显示内容:[noshow=default_0]内容[/noshow]</td>
+      </tr>
+      <tr>
+        <td>[wap=X]指定版本显示内容[/wap]</td>
+        <td>指定版本显示内容<br>
+          X：为0,1,2,3,4...<br>
+          PS：1为简版，2为触屏版，3为电脑版，其他属于自定义拓展</td>
+      </tr>
+      <tr>
+        <td>[mobi]手机可见内容[/mobi]</td>
+        <td>指定版本显示内容</td>
+      </tr>
+      <tr>
+        <td>[coin=金钱数]输入内容[/coin]</td>
+        <td>指定版本显示内容
+          金钱可见内容</td>
+      </tr>
+      <tr>
+        <td>[grade=等级]输入内容[/grade]</td>
+        <td>等级可见内容</td>
+      </tr>
+      <tr>
+        <td>[vip=身份级别ID多个用|区分]输入内容[/vip]</td>
+        <td> 身份级别可见内容 </td>
+      </tr>
+      <tr>
+        <td> [switch=X]<br>
+          {case=1}<br>
+          X=1显示我<br>
+          {case=3}<br>
+          X=2显示我<br>
+          ......可以自行添加更多条件<br>
+          {default}<br>
+          上面的条件都不成立，就显示我<br>
+          [/switch]</td>
+        <td> X,可以是UBB，基于不同的条件来显示不同的内容</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

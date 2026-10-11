@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" Codebehind="reads.aspx.cs" Inherits="KeLin.WebSite.PageModel.reads" %>

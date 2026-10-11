@@ -1,0 +1,1 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ajax_ubb.aspx.cs" Inherits="KeLin.WebSite.ajax_ubb" %><%@ Import Namespace="KeLin.ClassManager.Tool" %><%string ubb = Request["ubb"]; ubb=ubb.Replace("{", "["); ubb=ubb.Replace("}", "]"); string content = ubb; Response.Write(WapTool.ToWML(ubb, wmlVo)); %>
