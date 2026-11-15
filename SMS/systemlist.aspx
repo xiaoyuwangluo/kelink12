@@ -328,8 +328,8 @@
            <font color=red>
                     <br /><b>接口说明：</b> 此表[sendSMS]是存放所有用于发送短信内容的记录，需要短信发送端口将它取得并发送出去。
                     <br />方法一：按第三方短信发送端口接口进行读取本表数据，并发送到第三方的短信端口上，实现发送。
-                    <br />方法二：用柯林短信猫(手机+SIM卡)+软件进行读取并发送。
-                    <br />(1)柯林短信猫安卓版软件（最新发布）<a href="http://sms.kelink.com/appsms/sms.apk">点击下载免费使用</a><br />
+                    <br />方法二：用小宇网络短信猫(手机+SIM卡)+软件进行读取并发送。
+                    <br />(1)小宇网络短信猫安卓版软件（最新发布）<a href="http://sms.kelink.com/appsms/sms.apk">点击下载免费使用</a><br />
                     
 <table border="0" width="65%" id="table3">
 	<tr>
@@ -346,7 +346,7 @@
                   
                    
                     <br />----------<br />
-                    (2)柯林电脑客户端软件（已淘汰）
+                    (2)小宇网络电脑客户端软件（已淘汰）
                     <br /><a href="http://www.kelink.com/images/sms2.gif" target=_blank>查看软件图(右边配置)</a>，其中取手机号码和短信内容的URL地址为：
                     <br /><%=base.http_start  %>sms/getMobile.aspx?siteid=<%=base.SiteId  %>&codes=utf-8&checkcode=校验码(校验码为自己定义字符，防止别人知道地址进行非法读取。)
                     <br />校验码配置在【站长管理】→【基本信息设置】→【网站默认配置】→第[32]属性

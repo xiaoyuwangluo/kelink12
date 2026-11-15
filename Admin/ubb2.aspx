@@ -8,7 +8,7 @@
 <style type="text/css"> 
 body   {font-size:18px; width:90%; margin:10 auto;background:#C7EDCC;}
 </style>
-<title>柯林秘技-UBB大全</title>
+<title>小宇网络秘技-UBB大全</title>
 </head>
 <body>
 UBB大全|<a href="ubb3.aspx">网站资源链接</a>|<a href="ubb4.aspx">用户手册</a>|<a href="ubb5.aspx">技术员手册</a>|<a href="http://bbs.kelink.com">WAP建站知识库</a>

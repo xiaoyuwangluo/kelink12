@@ -8,7 +8,7 @@
 <style type="text/css"> 
 body   {font-size:18px; width:90%; margin:10 auto;background:#C7EDCC;}
 </style>
-<title>柯林秘技-用户手册</title>
+<title>小宇网络秘技-用户手册</title>
 </head>
 <body>
 <a href="ubb2.aspx">UBB大全</a>|<a href="ubb3.aspx">网站资源链接</a>|用户手册|<a href="ubb5.aspx">技术员手册</a>|<a href="http://bbs.kelink.com">WAP建站知识库</a>
@@ -33,7 +33,7 @@ body   {font-size:18px; width:90%; margin:10 auto;background:#C7EDCC;}
 DIY版在个人版上选取六大功能模块。以上所有版本的区别就是功能模块的或多或少问题，所有操作后台及使用方式都一样。<br>
 具体可以看详细的功能列表：http://www.kelink.com/products.html<br>
 <br>
-<b>2.柯林建站系统用户权限有哪些？</b><br>
+<b>2.小宇网络建站系统用户权限有哪些？</b><br>
 答：管理角色有超级管理员，站长，总编辑，总版主，栏目管理员，普通<br>
 ［00］超级管理员：管理所有网站及所有数据。分正超级管理员(网站ID等于会员ID)和副超级管理员(网站ID不等于会员ID)，权限一样。 <br>
 ［01］站长：管理自己网站内的所有数据，分正站长(网站ID等于会员ID)和副站长(网站ID不等于会员ID)，权限一样。 <br>
@@ -380,7 +380,7 @@ NET版：Web.Config中配置。
 在界面上点击右键--&gt;encoding设为utf-8，不然提交中文乱码！<br>
 <br>
 <br>
-<b>39.柯林建站系统视频下载地址？</b><br>
+<b>39.小宇网络建站系统视频下载地址？</b><br>
 答：访问 http://bbs.kelink.com 可以下载视频教程地址。<p align="left"><b>40.如何去掉网站默认自带的：登录|注册|皮肤|语言|机型？ </b><br>
 答：先在页面综合排版中，隐慝注册，这样上面的就没有了，用到UBB：登录显示：［logins］登录后内容［/logins］ 
 游客显示：［nologins］未登录内容［/nologins］,写成动态显示效果是： 

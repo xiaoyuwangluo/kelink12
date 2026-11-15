@@ -177,7 +177,7 @@ Response.Write(WapTool.showTop(this.GetLang("网站默认设置|网站默认设�
     Response.Write("<input type=\"text\" name=\"par20\" value=\"" + this.par20 + "\"/><br/>");
     Response.Write("[21].首页选平板电脑版(ver=4)时跳转至：<br/>");
     Response.Write("<input type=\"text\" name=\"par21\" value=\"" + this.par21 + "\"/><br/>");
-    Response.Write("如已有非柯林WEB版站，用http开头录入URL地址。<br/>");
+    Response.Write("如已有非小宇网络WEB版站，用http开头录入URL地址。<br/>");
     if (KL_Open_Redirect != "1")
     {
         Response.Write("<b>(超级管理员已关闭[20][21]地址跳转功能！)</b><br/>");

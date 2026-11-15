@@ -18,7 +18,7 @@ body{boder:0px}
     if (this.StrType == "-2")
     {
 
-        Response.Write("请联系柯林官方网购买正版软件：<a href=\"http://kelink.com\">kelink.com</a>");
+        Response.Write("请联系小宇网络官方网购买正版软件：<a href=\"http://kelink.com\">kelink.com</a>");
     }
     else if (this.StrType == "-1")
     {

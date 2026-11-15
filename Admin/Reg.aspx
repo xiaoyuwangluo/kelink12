@@ -8,8 +8,8 @@ Response.CacheControl = "no-cache";
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=GB2312" />
-<title>测试体验 -联速科技出品</title>
-<meta name="author" content="kelink,kelink.com,chinastrong" />
+<title>测试体验 -小宇网络出品</title>
+<meta name="author" content="小宇网络" />
 <meta name="keywords" content="3g,3g手机,3g建站,3g门户,wap,wap建站,手机上网,手机建站,手机看电影,手机游戏,手机看小说,手机流媒体,手机门户,3G门户" />
 <meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫什么呢？赶快申请吧。" />
 <link rel="stylesheet" type="text/css" href="/netcss/index/css/start.css"/>

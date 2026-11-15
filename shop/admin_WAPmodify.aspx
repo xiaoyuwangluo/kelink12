@@ -26,8 +26,8 @@ body { line-height: 28px; font: 16px/30px "Microsoft YaHei"; margin-bottom: 0px;
 .pic li .del{ position:absolute; top:-10px; right:-10px; z-index:10; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 0 3px #ccc;}
 </style>
 <meta name="keywords" content=" 成品网站&amp;模版 微网站，手机网站，APP制作" />
-<meta name="description" content=" 柯林程序官方网_手机自助建站平台,柯林CMS,手机CMS,APP制作,微网站 柯林程序官方网_手机自助建站平台,柯林CMS,手机CMS,APP制作,微网站 kelink.com专注于WAP建站,手机建站,WAP网站,WAPCMS,微信CMS,微信营销CMS,微网站,APP制作 " />
-<meta name="author" content="柯林程序官方网_手机自助建站平台,柯林CMS,手机CMS,APP制作,微网站 kelink.com" />
+<meta name="description" content=" 小宇网络官方网_手机自助建站平台,小宇网络CMS,手机CMS,APP制作,微网站 小宇网络官方网_手机自助建站平台,小宇网络CMS,手机CMS,APP制作,微网站 kelink.com专注于WAP建站,手机建站,WAP网站,WAPCMS,微信CMS,微信营销CMS,微网站,APP制作 " />
+<meta name="author" content="小宇网络官方网_手机自助建站平台,小宇网络CMS,手机CMS,APP制作,微网站 kelink.com" />
 <meta name="baidu-site-verification" content="585b8f9e100f8cf17ebc100554648927" />
 <title>修改内容</title>
 <body>

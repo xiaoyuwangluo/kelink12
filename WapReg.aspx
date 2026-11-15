@@ -1,5 +1,5 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WapReg.aspx.cs" Inherits="KeLin.WebSite.WapReg" %><%@ Import namespace="KeLin.ClassManager.Tool" %><%
-//柯林短信中心号码
+//小宇网络短信中心号码
 string m1,m2,m3;
 m1 = "13556000271";
 m2 = "13556000271";

@@ -29,7 +29,7 @@ if (ver == "1")
     Response.Write("<b>机器码：</b><br/><input type=\"text\" name=\"reg"+r+"\" value=\""+this.regcode+"\" size=\"20\" /><br /><b>"+ this.isReg+"</b><br/>");
    
     
-    Response.Write("说明：机器码将绑定您的域名，请确保你的域名正确！将机器码填入授权中心<a href=\"http://sms.kelink.com\">http://sms.kelink.com</a>(注册会员，添加我的网站)，然后联系柯林客服QQ85403498/企业QQ:800007757/Tel:<a href=\"wtai://wp/mc;13048036868\">13048036868</a>进行授权，并取得授权码，配置到Web.Config中，完成注册软件！<br/>");
+    Response.Write("说明：机器码将绑定您的域名，请确保你的域名正确！将机器码填入授权中心<a href=\"http://sms.kelink.com\">http://sms.kelink.com</a>(注册会员，添加我的网站)，然后联系小宇网络客服QQ85403498/企业QQ:800007757/Tel:<a href=\"wtai://wp/mc;13048036868\">13048036868</a>进行授权，并取得授权码，配置到Web.Config中，完成注册软件！<br/>");
  
     Response.Write("------------<br/>");
 
@@ -68,7 +68,7 @@ else //2.0界面
     Response.Write("<b>机器码：</b><br/><input type=\"text\" name=\"reg"+r+"\" value=\""+this.regcode+"\" size=\"20\" /><br /><b>"+ this.isReg+"</b><br/>");
     Response.Write("</div>");
     Response.Write("<div class=\"tip\">");
-    Response.Write("说明：机器码将绑定您的域名，请确保你的域名正确！将机器码填入授权中心<a href=\"http://sms.kelink.com\">http://sms.kelink.com</a>(注册会员，添加我的网站)，然后联系柯林客服QQ85403498/企业QQ:800007757/Tel:<a href=\"wtai://wp/mc;13048036868\">13048036868</a>进行授权，并取得授权码，配置到Web.Config中，完成注册软件！<br/>");
+    Response.Write("说明：机器码将绑定您的域名，请确保你的域名正确！将机器码填入授权中心<a href=\"http://sms.kelink.com\">http://sms.kelink.com</a>(注册会员，添加我的网站)，然后联系小宇网络客服QQ85403498/企业QQ:800007757/Tel:<a href=\"wtai://wp/mc;13048036868\">13048036868</a>进行授权，并取得授权码，配置到Web.Config中，完成注册软件！<br/>");
     Response.Write("</div>");
    
     Response.Write("<div class=\"btBox\"><div class=\"bt1\">");

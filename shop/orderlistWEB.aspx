@@ -5,7 +5,7 @@ Response.Write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=u
 Response.Write("<meta http-equiv=\"Cache-Control\" content=\"no-cache\"/>");
 Response.Write("<meta http-equiv=\"refresh\" content=\"1800;url=/shop/orderlistWEB.aspx?siteid="+this.siteid +"&amp;classid="+this.classid+"\" />");
 Response.Write("<meta name=\"keywords\" content=\" shop 微网站，手机网站，APP制作\" />");
-Response.Write("<meta name=\"description\" content=\"柯林NET版本 Kelink.Com于WAP建站,手机建站,WAP网站,WAPCMS,微信CMS,微信营销CMS,微网站,APP制作 \" />");
+Response.Write("<meta name=\"description\" content=\"小宇网络NET版本 小宇网络于WAP建站,手机建站,WAP网站,WAPCMS,微信CMS,微信营销CMS,微网站,APP制作 \" />");
 Response.Write("<link rel=\"stylesheet\" href=\"/shop/css/shoporderlistWEB.css\" type=\"text/css\" />");
 Response.Write("<title>电脑管理-商城订单</title>");
 Response.Write("<script language =\"javascript\" type = \"text/javascript\">\n ");

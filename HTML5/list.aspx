@@ -1,9 +1,9 @@
-ï»¿<%@ Page Language="C#" ContentType="text/html" ResponseEncoding="utf-8" %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ï»?<%@ Page Language="C#" ContentType="text/html" ResponseEncoding="utf-8" %><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="html5å»ºç«™_html5è‡ªåŠ©å»ºç«™_wapæ‰‹æœºè‡ªåŠ©å»ºç«™_å¾®ç½‘ç«™_3Gæ‰‹æœº_kelink.com_wapå¼€å‘_æ‰‹æœºwapç½‘ç«™_æ‰‹æœºè‡ªåŠ©å»ºç«™">
-<title>HTML5æºç </title>
+<meta name="keywords" content="html5å»ºç??_html5?????©å»ºç«?_wap?????ºè????©å»ºç«?_å¾?ç½?ç«?_3G??????_kelink.com_wapå¼????_??????wapç½?ç«?_?????ºè????©å»ºç«?">
+<title>HTML5æº????</title>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <link href="../css/index.css" type="text/css" rel="stylesheet">
 </head>
@@ -12,17 +12,17 @@
 <div id="header">
 <div class="top" style="height: 70px;"><div id="rq" style="position:absolute;top:0;right:40px;text-align:center;"> </div>
     <div class="topCon clearfix">
-        <h1 style="margin-top: 0;"><font color="white">æºç ç¤ºä¾‹</font></h1>
+        <h1 style="margin-top: 0;"><font color="white">æº????ç¤ºä??</font></h1>
         <ul class="nav">
-            <li><a href="#dh">å¸¸è§„å¯¼èˆª</a></li>
-            <li><a href="#zk">å³è¾¹å±•å¼€å¯¼èˆª</a></li>
-            <li ><a href="#tb">Tabåˆ‡æ¢</a></li>
-            <li><a href="#lb">è½®æ’­å¹»ç¯ç‰‡</a></li>
-            <li><a href="#sc">æœç´¢ç­‰</a></li>          
+            <li><a href="#dh">å¸¸è??å¯¼è??</a></li>
+            <li><a href="#zk">??³è¾¹å±?å¼?å¯¼è??</a></li>
+            <li ><a href="#tb">Tab??????</a></li>
+            <li><a href="#lb">è½????å¹»ç?????</a></li>
+            <li><a href="#sc">???ç´¢ç??</a></li>          
           
-            <li class="hover"><a href="#">æ‰€æœ‰</a></li>
+            <li class="hover"><a href="#">??????</a></li>
         </ul>
-        <!--<div class="nom">å®˜æ–¹æ‰‹æœºç«™ï¼š<a href="http://kelink.com">Kelink.Com</a><p>137-9898-1178</p></div>-->
+        <!--<div class="nom">å®???¹æ????ºç??ï¼?<a href="http://kelink.com">Ğ¡ÓîÍøÂç</a><p>137-9898-1178</p></div>-->
     </div>
 </div>
 </div>
@@ -32,68 +32,68 @@
 	
 	
 <a name="dh"></a>
-<p>æ’ç‰ˆæ–¹å¼ä¸€ï¼šã€ç”µè„‘/HTML5é¡µé¢æ¨¡æ¿ç®¡ç†ã€‘+ ç›´æ¥å†™HTML5ä»£ç  + ä¸‡èƒ½UBBï¼Œé€‚åˆå‰ç«¯è®¾è®¡å¸ˆå¼€å‘ã€‚</p>
+<p>????????¹å??ä¸?ï¼??????µè??/HTML5é¡µé?¢æ¨¡??¿ç?¡ç?????+ ??´æ?¥å??HTML5ä»£ç?? + ä¸????UBBï¼??????????ç«?è®¾è?¡å??å¼???????</p>
 <p>
-æ’ç‰ˆæ–¹å¼äºŒï¼šã€æ‰‹æœº/HTML5é¡µé¢ç»¼åˆæ’ç‰ˆã€‘+ HTML5è‡ªå†™ä»£ç æ’ä»¶ + ä¸‡èƒ½UBBã€‚è¯·ç¡®ä¿é¡µé¢ä¸­æœ‰ï¼š&lt;link rel="stylesheet" href="<a href="/Template/default/default.css" target="_blank">/Template/default/default.css</a>" type="text/css" /&gt;
-(ç³»ç»Ÿé»˜è®¤è‡ªå¸¦ï¼Œå¯è‡ªè¡Œæ›´æ”¹æˆ–ç¼–è¾‘default.css ï¼Œé¡µé¢å¼ºåˆ¶è‡ªå¸¦js) ä¸‹é¢ä»£ç å¤åˆ¶åˆ°â€œHTML5è‡ªå†™ä»£ç â€æ¨¡å—ä¸­ï¼Œç„¶åç”¨UBB:[getwml=ID]æ’å…¥åˆ°ã€æ‰‹æœº/HTML5é¡µé¢ç»¼åˆæ’ç‰ˆã€‘çš„ã€å…¨é¡¶ã€‘ã€é¡¶ã€‘ã€æ’ã€‘ã€ä½ã€‘ã€å…¨ä½ã€‘ä¸­æ˜¾ç¤ºã€‚
+????????¹å??äº?ï¼??????????/HTML5é¡µé?¢ç»¼????????????+ HTML5??????ä»£ç?????ä»? + ä¸????UBB???è¯·ç¡®ä¿?é¡µé??ä¸????ï¼?&lt;link rel="stylesheet" href="<a href="/Template/default/default.css" target="_blank">/Template/default/default.css</a>" type="text/css" /&gt;
+(ç³»ç??é»?è®¤è??å¸?ï¼???????è¡???´æ?¹æ??ç¼?è¾?default.css ï¼?é¡µé?¢å¼º??¶è??å¸?js) ä¸????ä»£ç??å¤???¶å?°â??HTML5??????ä»£ç?????æ¨¡å??ä¸?ï¼???¶å?????UBB:[getwml=ID]?????¥å?°ã????????/HTML5é¡µé?¢ç»¼????????????????????¨é¡¶??????é¡¶ã??????????????ä½?????????¨ä?????ä¸???¾ç¤º???
 </p>
-<b>ä¸€ã€é¦–é¡µèœå•å¯¼èˆª</b>
+<b>ä¸????é¦?é¡µè?????å¯¼è??</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="xk_nav">
-	<a href="/shoplist-6517-1.html">äº§å“</a> 
-	<a href="/wapindex-2108-99169.html">è”ç³»</a> 
-	<a href="/wapindex-2108-6516.html">å…³äº</a> 
-	<a href="/wapindex-2108-99173.html">æ¡ˆä¾‹</a> 
-	<a href="/wapindex-2108-6518.html">æ”¯æŒ</a> 
-	<a href="/wapindex-2108-204570.html">è®ºå›</a> 
-	<a href="http://sms.kelink.com">æˆæƒ</a> 
-	<a href="/wapindex.aspx?siteid=2108&amp;classid=204663">åŠŸèƒ½</a> 
-	<a href="/wapindex.aspx?siteid=2108&amp;classid=204664">å¸®åŠ©</a> 
+	<a href="/shoplist-6517-1.html">äº§å??</a> 
+	<a href="/wapindex-2108-99169.html">???ç³?</a> 
+	<a href="/wapindex-2108-6516.html">??³ä??</a> 
+	<a href="/wapindex-2108-99173.html">æ¡?ä¾?</a> 
+	<a href="/wapindex-2108-6518.html">??????</a> 
+	<a href="/wapindex-2108-204570.html">è®ºå??</a> 
+	<a href="http://sms.kelink.com">??????</a> 
+	<a href="/wapindex.aspx?siteid=2108&amp;classid=204663">??????</a> 
+	<a href="/wapindex.aspx?siteid=2108&amp;classid=204664">å¸????</a> 
 	<a href="http://kelink.com/shop-1522.html">APP</a>
 	
 </div>
 	
 </textarea>	
 <br/><a name="tb"></a>
-<b>äºŒã€é¦–é¡µtabåˆ‡æ¢</b>
+<b>äº????é¦?é¡?tab??????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 	<div id="tabBox1" class="tabBox">
 		<div class="hd">
-			<h3>å…¬å‘Šæ–°é—»<span>News</span></h3>
+			<h3>????????°é??<span>News</span></h3>
 			<ul>
-				<li><a href="javascript:void(0)">å®˜æ–¹</a></li>
-				<li><a href="javascript:void(0)">æ–¹æ¡ˆ</a></li>
-				<li><a href="javascript:void(0)">ç§‘æŠ€</a></li>
+				<li><a href="javascript:void(0)">å®????</a></li>
+				<li><a href="javascript:void(0)">??¹æ??</a></li>
+				<li><a href="javascript:void(0)">ç§????</a></li>
 			</ul>
 		</div>
 		<div class="bd" id="tabBox1-bd">
-			<div class="con"><!-- é«˜åº¦è‡ªé€‚åº”éœ€æ·»åŠ å¤–å±‚ -->
+			<div class="con"><!-- é«?åº???????åº????æ·»å??å¤?å±? -->
     <div class="mxbg">
     <div class="mx">
     [bbs=204571_3_1_20_0]<br>  
-    <a href="http://kelink.com/bbs-182158.html">å¾®ä¿¡æ’ä»¶å·²å‘å¸ƒï¼Œå…è´¹ä½¿ç”¨</a><br>
-    <a href="http://app.kelink.com">æ‰‹æœºç½‘ç«™å…è´¹ç”ŸæˆAPP(è¯·ç”µè„‘è®¿é—®)</a>
+    <a href="http://kelink.com/bbs-182158.html">å¾?ä¿¡æ??ä»¶å·²???å¸?ï¼????è´¹ä½¿???</a><br>
+    <a href="http://app.kelink.com">?????ºç??ç«????è´¹ç?????APP(è¯·ç?µè??è®¿é??)</a>
     </div>
     <div class="zix_more">
-    <a href="/bbslist-204571-1.html">è¿›å…¥é¢‘é“</a>
+    <a href="/bbslist-204571-1.html">è¿???¥é?????</a>
     </div></div>
 			</div>
-			<div class="con"><!-- é«˜åº¦è‡ªé€‚åº”éœ€æ·»åŠ å¤–å±‚ -->
+			<div class="con"><!-- é«?åº???????åº????æ·»å??å¤?å±? -->
 				<div class="mxbg">
 				<div class="mx">[article=204593_6_5_15_0]</div>
     <div class="zix_more">
-    <a href="/articlelist-204593-1.html">è¿›å…¥é¢‘é“</a>
+    <a href="/articlelist-204593-1.html">è¿???¥é?????</a>
     </div>
 			</div>
 			</div>
-			<div class="con"><!-- é«˜åº¦è‡ªé€‚åº”éœ€æ·»åŠ å¤–å±‚ -->
+			<div class="con"><!-- é«?åº???????åº????æ·»å??å¤?å±? -->
 				<div class="mxbg">
 				[article=204665_1_0_0_12*100*100*1]
 				<div class="mx">[article=204665_4_5_15_0]</div>
     <div class="zix_more">
-    <a href="/articlelist-204665-1.html">è¿›å…¥é¢‘é“</a>
+    <a href="/articlelist-204665-1.html">è¿???¥é?????</a>
     </div>
 			</div>
 		</div>
@@ -101,20 +101,20 @@
 	</div>
 	<script type="text/javascript">
 	TouchSlide( { slideCell:"#tabBox1",
-		endFun:function(i){ //é«˜åº¦è‡ªé€‚åº”
+		endFun:function(i){ //é«?åº???????åº?
 			var bd = document.getElementById("tabBox1-bd");
 			bd.parentNode.style.height = bd.children[i].children[0].offsetHeight+"px";
-			if(i>0)bd.parentNode.style.transition="200ms";//æ·»åŠ åŠ¨ç”»æ•ˆæœ
+			if(i>0)bd.parentNode.style.transition="200ms";//æ·»å????¨ç?»æ?????
 		}
 	} );</script>
 	
 </textarea>	
 <br/>
-<b>ä¸‰ã€è®ºå›çŒœä½ å–œæ¬¢</b>
+<b>ä¸????è®ºå?????ä½????æ¬?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="dh_bg">
-<div class="dh_h4"><p>çŒœä½ å–œæ¬¢</p><span class="new"><div id="click-2"><img src="/Template/default/img/xk_new.png" alt="åˆ·æ–°"> æ¢ä¸€æ‰¹</div></span></div>
+<div class="dh_h4"><p>???ä½????æ¬?</p><span class="new"><div id="click-2"><img src="/Template/default/img/xk_new.png" alt="??·æ??"> ???ä¸????</div></span></div>
 <div class="mx">
 <div id="ubbBox-2">
 [bbs=0_5_5_16_0]
@@ -123,27 +123,27 @@
 
 <script>
 readUbb({
-	mode : "click",//è§¦å‘ajaxæ–¹å¼ï¼Œclickä¸ºç‚¹å‡»,setIntervalä¸ºè‡ªåŠ¨è¯·æ±‚ajax
-	thisEvent : "click-2",//äº‹ä»¶è§¦å‘å…ƒç´ 
-	ubbBox : "ubbBox-2",//ubbå†…å®¹æ”¾ç½®çš„å…ƒç´ 
-	readCount : -1,//åŠ è½½æ¬¡æ•°ï¼Œ-1ä¸ºæ— é™
-	ubb : "{bbs=0_5_5_16_0}",//ubbå¿…é¡»ä½¿ç”¨{},è€Œä¸æ˜¯ä½¿ç”¨[]
+	mode : "click",//è§????ajax??¹å??ï¼?clickä¸ºç?¹å??,setIntervalä¸ºè????¨è?·æ??ajax
+	thisEvent : "click-2",//äº?ä»¶è§¦??????ç´?
+	ubbBox : "ubbBox-2",//ubb???å®¹æ?¾ç½®??????ç´?
+	readCount : -1,//???è½½æ?¡æ?°ï??-1ä¸ºæ?????
+	ubb : "{bbs=0_5_5_16_0}",//ubbå¿?é¡»ä½¿???{},???ä¸????ä½¿ç??[]
 	siteid : "[siteid]"
 })
 </script>
 </div>
 </textarea>	
 <br/>
-<b>å››ã€è®ºå›TABæ»‘åŠ¨æ•ˆæœ</b>
+<b>??????è®ºå??TABæ»???¨æ?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="mod_box" id="mod_box">
   <div class="tit_tab">
     <ul class="clearfix">
-      <li class="cur"><span>æœ€æ–°</span><em></em></li>
-      <li><span>çƒ­ç‚¹</span><em></em></li>
-      <li><span>ç²¾å</span><em></em></li>
-      <li><span>å›å¤</span><em></em></li>
+      <li class="cur"><span>??????</span><em></em></li>
+      <li><span>??????</span><em></em></li>
+      <li><span>ç²¾å??</span><em></em></li>
+      <li><span>???å¤?</span><em></em></li>
     </ul>
   </div>
     <div class="tb tit_tab_con mid01_box swipe-wrap">
@@ -151,23 +151,23 @@ readUbb({
 <ul class="mx2">
           [bbs=0_7_1_15_2]
         </ul>
-        <div class="zix_more">[new=bbs_0]æŸ¥çœ‹æ›´å¤šæœ€æ–°å¸–å­[/new]</div>
+        <div class="zix_more">[new=bbs_0]??¥ç????´å???????°å??å­?[/new]</div>
       </div>
       <div class="touch_roll">
         <ul class="mx2">
           [bbs=0_7_2_15_15]
         </ul>
-        <div class="zix_more">[hot=bbs_0]æŸ¥çœ‹æ›´å¤šçƒ­é—¨å¸–å­[/hot]</div>
+        <div class="zix_more">[hot=bbs_0]??¥ç????´å???????¨å??å­?[/hot]</div>
       </div>
       <div class="touch_roll">
         <ul class="son xk2">
           [bbs=0_7_3_15_1]
         </ul>
-        <div class="zix_more">[good=bbs_0]æŸ¥çœ‹æ›´å¤šç²¾åå¸–å­[/good]</div>
+        <div class="zix_more">[good=bbs_0]??¥ç????´å??ç²¾å??å¸?å­?[/good]</div>
       </div>
       <div class="touch_roll">
         <ul class="mx2"> [bbs=0_7_6_15_14] </ul>
-        <div class="zix_more">[re=bbs_0]æŸ¥çœ‹æ›´å¤šæœ€ç«å›å¸–[/re]</div>
+        <div class="zix_more">[re=bbs_0]??¥ç????´å???????????å¸?[/re]</div>
       </div>
   </div>
 </div>
@@ -181,11 +181,11 @@ TouchSlide({
 </script>
 </textarea>	
 <br/>
-<b>äº”ã€è®ºå›Ajaxæ¢ä¸€æ‰¹æ•ˆæœ</b>
+<b>äº????è®ºå??Ajax???ä¸???¹æ?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="dh_bg">
-<div class="dh_h4"><p>éšæœºæ¨è</p><span class="new"><div id="click-2"><img src="/Template/default/img/xk_new.png" alt="åˆ·æ–°"> æ¢ä¸€æ‰¹</div></span></div>
+<div class="dh_h4"><p>?????ºæ?¨è??</p><span class="new"><div id="click-2"><img src="/Template/default/img/xk_new.png" alt="??·æ??"> ???ä¸????</div></span></div>
 <div class="mx">
 <div id="ubbBox-2">
 [bbs=0_5_5_16_0]
@@ -194,38 +194,38 @@ TouchSlide({
 
 <script>
 readUbb({
-	mode : "click",//è§¦å‘ajaxæ–¹å¼ï¼Œclickä¸ºç‚¹å‡»,setIntervalä¸ºè‡ªåŠ¨è¯·æ±‚ajax
-	thisEvent : "click-2",//äº‹ä»¶è§¦å‘å…ƒç´ 
-	ubbBox : "ubbBox-2",//ubbå†…å®¹æ”¾ç½®çš„å…ƒç´ 
-	readCount : -1,//åŠ è½½æ¬¡æ•°ï¼Œ-1ä¸ºæ— é™
-	ubb : "{bbs=0_5_5_16_0}",//ubbå¿…é¡»ä½¿ç”¨{},è€Œä¸æ˜¯ä½¿ç”¨[]
+	mode : "click",//è§????ajax??¹å??ï¼?clickä¸ºç?¹å??,setIntervalä¸ºè????¨è?·æ??ajax
+	thisEvent : "click-2",//äº?ä»¶è§¦??????ç´?
+	ubbBox : "ubbBox-2",//ubb???å®¹æ?¾ç½®??????ç´?
+	readCount : -1,//???è½½æ?¡æ?°ï??-1ä¸ºæ?????
+	ubb : "{bbs=0_5_5_16_0}",//ubbå¿?é¡»ä½¿???{},???ä¸????ä½¿ç??[]
 })
 </script>
 </div>
 </textarea>	
 <br/><a name="lb"></a>
-<b>å…­ã€è®ºå›ä¼šå‘˜AjaxåŠ¨æ€æ˜¾ç¤º</b>
+<b>??????è®ºå??ä¼????Ajax??¨æ????¾ç¤º</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="bbsdt">
-<b>å½“å‰åœ¨çº¿æ´»åŠ¨äººæ•°:[online=0]</b>
+<b>å½??????¨çº¿æ´»å?¨äºº???:[online=0]</b>
 <div id="ubbBox-3">
 [users=1_6_7_0_Z]
 </div>
 
 <script>
 readUbb({
-	mode : "setInterval",//è§¦å‘ajaxæ–¹å¼ï¼Œclickä¸ºç‚¹å‡»,setIntervalä¸ºè‡ªåŠ¨è¯·æ±‚ajax
-	modeTime :5000,//è‡ªåŠ¨è¯·æ±‚ajaxæ—¶é—´é—´éš”
-	ubbBox : "ubbBox-3",//ubbå†…å®¹æ”¾ç½®çš„å…ƒç´ 
-	readCount : -1,//åŠ è½½æ¬¡æ•°ï¼Œ-1ä¸ºæ— é™
-	ubb : "{users=1_5_7_0_Z}",//ubbå¿…é¡»ä½¿ç”¨{},è€Œä¸æ˜¯ä½¿ç”¨[]
+	mode : "setInterval",//è§????ajax??¹å??ï¼?clickä¸ºç?¹å??,setIntervalä¸ºè????¨è?·æ??ajax
+	modeTime :5000,//?????¨è?·æ??ajax??¶é?´é?´é??
+	ubbBox : "ubbBox-3",//ubb???å®¹æ?¾ç½®??????ç´?
+	readCount : -1,//???è½½æ?¡æ?°ï??-1ä¸ºæ?????
+	ubb : "{users=1_5_7_0_Z}",//ubbå¿?é¡»ä½¿???{},???ä¸????ä½¿ç??[]
 })
 </script>
 </div>
 </textarea>	
 <br/>
-<b>ä¸ƒã€é¦–é¡µè½®æ’­å¹»ç¯ç‰‡</b>
+<b>ä¸????é¦?é¡µè½®???å¹»ç?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div id="slideBox" class="slideBox">
@@ -248,20 +248,20 @@ readUbb({
 			<script type="text/javascript">
 				TouchSlide({ 
 					slideCell:"#slideBox",
-					titCell:".hd ul", //å¼€å¯è‡ªåŠ¨åˆ†é¡µ autoPage:true ï¼Œæ­¤æ—¶è®¾ç½® titCell ä¸ºå¯¼èˆªå…ƒç´ åŒ…è£¹å±‚
+					titCell:".hd ul", //å¼?????????¨å??é¡? autoPage:true ï¼?æ­¤æ?¶è?¾ç½® titCell ä¸ºå?¼è?????ç´????è£¹å??
 					mainCell:".bd ul", 
 					effect:"leftLoop", 
-					autoPage:true,//è‡ªåŠ¨åˆ†é¡µ
-					autoPlay:true //è‡ªåŠ¨æ’­æ”¾
+					autoPage:true,//?????¨å??é¡?
+					autoPlay:true //?????¨æ?????
 				});
 			</script>
 </textarea>	
 <br/>
-<b>å…«ã€è®ºå›Ajaxè°ƒç”¨</b>
+<b>??????è®ºå??Ajaxè°????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="dh_bg">
-<div class="dh_h3"><p>æœ€æ–°å‘è¡¨</p></div>
+<div class="dh_h3"><p>?????°å??è¡?</p></div>
 <div class="mx2">
 <div id="ubbBox-1">
 [bbs=0_5_1_12_2]
@@ -269,45 +269,45 @@ readUbb({
 </div>
 <div class="p_newsmore">
 <div id="click-1">
-ç‚¹å‡»åŠ è½½æ›´å¤šæ•°æ®<img src="http://kelink.com/Template/default/img/xk_more.png" alt="åŠ è½½æ›´å¤š">
+??¹å?»å??è½½æ?´å????°æ??<img src="http://kelink.com/Template/default/img/xk_more.png" alt="???è½½æ?´å??">
 </div>
 </div>
 <script>
 readUbb({
-	mode : "click",//è§¦å‘ajaxæ–¹å¼ï¼Œclickä¸ºç‚¹å‡»,setIntervalä¸ºè‡ªåŠ¨è¯·æ±‚ajax
-	thisEvent : "click-1",//ç‚¹å‡»äº‹ä»¶è§¦å‘å…ƒç´ 
-	ubbBox : "ubbBox-1",//ubbå†…å®¹æ”¾ç½®çš„å…ƒç´ 
-	readCount : 3,//åŠ è½½æ¬¡æ•°ï¼Œ-1ä¸ºæ— é™
-	ubb : "{bbs=0_3_1_12_2}",//ubbå¿…é¡»ä½¿ç”¨{},è€Œä¸æ˜¯ä½¿ç”¨[]
-	ubbTag : "a", //åˆ—è¡¨çš„æ ‡ç­¾åç§°ï¼Œæ²¡æœ‰å¯ä»¥ç•™ç©º
-	loadHref : "/bbs/book_list.aspx?action=new&siteid=1000&classid=0",//åŠ è½½æ¬¡æ•°å®Œæˆåï¼Œè·³è·³è½¬åˆ°æœ¬åœ°å€ï¼Œç•™ç©ºä¸è·³è½¬
-	loadFn : function(){//åŠ è½½æ¬¡æ•°å®Œæˆåä¼šæ‰§è¡Œæ­¤å‡½æ•°
-		document.getElementById("click-1").innerHTML = "è¿›å…¥æ­¤é¢‘é“";
+	mode : "click",//è§????ajax??¹å??ï¼?clickä¸ºç?¹å??,setIntervalä¸ºè????¨è?·æ??ajax
+	thisEvent : "click-1",//??¹å?»ä??ä»¶è§¦??????ç´?
+	ubbBox : "ubbBox-1",//ubb???å®¹æ?¾ç½®??????ç´?
+	readCount : 3,//???è½½æ?¡æ?°ï??-1ä¸ºæ?????
+	ubb : "{bbs=0_3_1_12_2}",//ubbå¿?é¡»ä½¿???{},???ä¸????ä½¿ç??[]
+	ubbTag : "a", //???è¡¨ç?????ç­¾å??ç§°ï??æ²¡æ?????ä»¥ç??ç©?
+	loadHref : "/bbs/book_list.aspx?action=new&siteid=1000&classid=0",//???è½½æ?¡æ?°å????????ï¼?è·³è·³è½???°æ????°å??ï¼????ç©ºä??è·³è½¬
+	loadFn : function(){//???è½½æ?¡æ?°å????????ä¼???§è??æ­¤å?½æ??
+		document.getElementById("click-1").innerHTML = "è¿???¥æ?¤é?????";
 	},
 	failure : function(){
-		alert("ç½‘ç»œé”™è¯¯");
+		alert("ç½?ç»????è¯?");
 	}
 })
 </script>
 </div>
 </textarea>	
 <br/><a name="sc"></a>
-<b>ä¹ã€è®ºå›åˆ†ç±»æ’ç‰ˆ</b>
+<b>ä¹????è®ºå?????ç±»æ?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="forum" id="forum">
   <div class="ban-kuai">
     <div class="tit">
-      <h2><a href="#">äº¤æµè®ºå›</a><i></i></h2>
+      <h2><a href="#">äº¤æ??è®ºå??</a><i></i></h2>
     </div>
     <div class="bbslist">
-      <div class="forum-style"> <a href="/bbslist-204571.html"><span class="img"><img src="/Template/default/img/bbs-gg.jpg"></span><span class="name">å®˜æ–¹å…¬å‘Š</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204571_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204571_100]</em></span><span class="today">[bbs=204571_101]</span></a></div>
-      <div class="forum-style"> <a href="/bbslist-204576.html"><span class="img"><img src="/Template/default/img/bbs-sp.jpg"></span><span class="name">è§†é¢‘æ•™ç¨‹</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204576_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204576_100]</em></span><span class="today">[bbs=204576_101]</span></a></div>
-      <div class="forum-style"> <a href="/bbslist-99524.html"><span class="img"><img src="/Template/default/img/bbs-jl.jpg"></span><span class="name">ä½¿ç”¨äº¤æµ</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=99524_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=99524_100]</em></span><span class="today">[bbs=99524_101]</span></a></div>
-      <div class="forum-style"> <a href="/bbslist-204572.html"><span class="img"><img src="/Template/default/img/bbs-az.jpg"></span><span class="name">ç¨‹åºå®‰è£…</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204572_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204572_100]</em></span><span class="today">[bbs=204572_101]</span></a></div>
-      <div class="forum-style"> <a href="/bbslist-204573.html"><span class="img"><img src="/Template/default/img/bbs-rm.jpg"></span><span class="name">èœé¸Ÿå…¥é—¨</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204573_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204573_100]</em></span><span class="today">[bbs=204573_101]</span></a></div>
-      <div class="forum-style"> <a href="/bbslist-204609.html"><span class="img"><img src="/Template/default/img/bbs-pb.jpg"></span><span class="name">æ’ç‰ˆè®¾è®¡</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204609_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204609_100]</em></span><span class="today">[bbs=204609_101]</span></a></div>
-      <div class="forum-style" style="border-bottom:0px;"> <a href="/bbslist-204607.html"><span class="img"><img src="/Template/default/img/bbs-ad.jpg"></span><span class="name">å¹¿å‘Šäº¤æ˜“</span><span class="bbsre">ä¸»é¢˜ï¼š<em>[bbs=204607_100]</em><i></i>äº’åŠ¨ï¼š<em>[bbsre=204607_100]</em></span><span class="today">[bbs=204607_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-204571.html"><span class="img"><img src="/Template/default/img/bbs-gg.jpg"></span><span class="name">å®???¹å?????</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204571_100]</em><i></i>äº????ï¼?<em>[bbsre=204571_100]</em></span><span class="today">[bbs=204571_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-204576.html"><span class="img"><img src="/Template/default/img/bbs-sp.jpg"></span><span class="name">è§?é¢????ç¨?</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204576_100]</em><i></i>äº????ï¼?<em>[bbsre=204576_100]</em></span><span class="today">[bbs=204576_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-99524.html"><span class="img"><img src="/Template/default/img/bbs-jl.jpg"></span><span class="name">ä½¿ç?¨äº¤æµ?</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=99524_100]</em><i></i>äº????ï¼?<em>[bbsre=99524_100]</em></span><span class="today">[bbs=99524_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-204572.html"><span class="img"><img src="/Template/default/img/bbs-az.jpg"></span><span class="name">ç¨?åº?å®?è£?</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204572_100]</em><i></i>äº????ï¼?<em>[bbsre=204572_100]</em></span><span class="today">[bbs=204572_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-204573.html"><span class="img"><img src="/Template/default/img/bbs-rm.jpg"></span><span class="name">???é¸???¥é??</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204573_100]</em><i></i>äº????ï¼?<em>[bbsre=204573_100]</em></span><span class="today">[bbs=204573_101]</span></a></div>
+      <div class="forum-style"> <a href="/bbslist-204609.html"><span class="img"><img src="/Template/default/img/bbs-pb.jpg"></span><span class="name">??????è®¾è??</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204609_100]</em><i></i>äº????ï¼?<em>[bbsre=204609_100]</em></span><span class="today">[bbs=204609_101]</span></a></div>
+      <div class="forum-style" style="border-bottom:0px;"> <a href="/bbslist-204607.html"><span class="img"><img src="/Template/default/img/bbs-ad.jpg"></span><span class="name">å¹¿å??äº¤æ??</span><span class="bbsre">ä¸»é??ï¼?<em>[bbs=204607_100]</em><i></i>äº????ï¼?<em>[bbsre=204607_100]</em></span><span class="today">[bbs=204607_101]</span></a></div>
     </div>
   </div>
 </div>
@@ -345,7 +345,7 @@ forum({
 </script>	
 </textarea>	
 <br/>
-<b>åã€HTMLæœç´¢</b>
+<b>??????HTML???ç´?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <style type="text/css">
@@ -364,90 +364,90 @@ forum({
 			<input type="hidden" name="classid" value="0">
 		 </div>
        <select name="function" class="search-opt">
-			<option value="download_0">è½¯ä»¶</option>
-			<option value="bbs_0">å¸–å­</option>
-			<option value="article_0">æ–‡ç« </option>
+			<option value="download_0">è½?ä»?</option>
+			<option value="bbs_0">å¸?å­?</option>
+			<option value="article_0">???ç«?</option>
 		</select>
-		<input id="search-word" type="text" name="key" size="15" id="keyword" placeholder="è¾“å…¥æœç´¢å…³é”®å­—" value="" autocomplete="off" autocorrect="off" class="search-input">
+		<input id="search-word" type="text" name="key" size="15" id="keyword" placeholder="è¾???¥æ??ç´¢å?³é??å­?" value="" autocomplete="off" autocorrect="off" class="search-input">
 		<button type="submit" class="search-btn"></button>
 	</form>
 </div>
 </textarea>	
 <br/>
-<b>åä¸€ã€ä½éƒ¨å¹¿å‘Šä½</b>
+<b>???ä¸????ä½???¨å¹¿???ä½?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="xk_live">
-<li style="background: #de6761;">æ¨å¹¿</li>
-<p><a href="http://www.kelink.com/shoplist-204661-1.html">æ­£å“è¿›å£è‘¡è„é…’å¨å£«å¿Œ</a></p>
+<li style="background: #de6761;">??¨å¹¿</li>
+<p><a href="http://www.kelink.com/shoplist-204661-1.html">æ­£å??è¿???£è?¡è?????å¨?å£?å¿?</a></p>
 </div>
 </textarea>
 <br/>
-<b>åäºŒã€é¦–é¡µåŠŸèƒ½æ¨¡å—å±•ç¤º</b>
+<b>???äº????é¦?é¡µå????½æ¨¡???å±?ç¤?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <ul class="list-pic" style="height: 180px;">
   <li> <a href="/articlelist-204665-1.html">
     <div class="icon"> <img src="/Template/default/img/ico-wz.gif" alt=""> </div>
     <div class="name">
-      <h4>å›¾æ–‡æ–‡ç« </h4>
-      <p>å¤šåŠŸèƒ½å›¾æ–‡åŠŸèƒ½ï¼Œå¯ç”¨äºæ–°é—»æ ç›®</p>
+      <h4>??¾æ?????ç«?</h4>
+      <p>å¤??????½å?¾æ???????½ï???????¨ä????°é?»æ?????</p>
     </div>
     </a> </li>
     <li> <a href="/wapindex-2108-204570.html">
     <div class="icon"> <img src="/Template/default/img/ico-bbs.gif" alt=""> </div>
     <div class="name">
-      <h4>äº’åŠ¨è®ºå›</h4>
-      <p>ç»å…¸bbsè®ºå›ï¼Œä¼šå‘˜å‘å¸–å›å¸–</p>
+      <h4>äº???¨è?ºå??</h4>
+      <p>ç»????bbsè®ºå??ï¼?ä¼???????å¸????å¸?</p>
     </div>
     </a> </li>
     <li> <a href="/shoplist-6517-1.html">
     <div class="icon"> <img src="/Template/default/img/ico-sc.gif" alt=""> </div>
     <div class="name">
-      <h4>è´­ç‰©å•†åŸ</h4>
-      <p>åœ¨çº¿è´­ç‰©å•†åŸåŠŸèƒ½</p>
+      <h4>è´???©å?????</h4>
+      <p>??¨çº¿è´???©å???????????</p>
     </div>
     </a> </li>
     <li> <a href="/downloadlist-204622-1.html">
     <div class="icon"> <img src="/Template/default/img/ico-xz.gif" alt=""> </div>
     <div class="name">
-      <h4>ä¸‹è½½æ¨¡å—</h4>
-      <p>æ–‡ä»¶ä¸‹è½½åŠŸèƒ½ï¼Œèµ„æºç«™å¿…å¤‡</p>
+      <h4>ä¸?è½½æ¨¡???</h4>
+      <p>???ä»¶ä??è½½å????½ï??èµ?æº?ç«?å¿?å¤?</p>
     </div>
     </a> </li>
     <li style="border-bottom:none;"> <a href="/picturelist-204621-1.html">
     <div class="icon"> <img src="/Template/default/img/ico-xc.gif" alt=""> </div>
     <div class="name">
-      <h4>å›¾ç‰‡ç›¸å†Œ</h4>
-      <p>å›¾ç‰‡æ ç›®ï¼Œå¯ç”¨äºå±•ç¤ºç¾å›¾é£æ™¯</p>
+      <h4>??¾ç????¸å??</h4>
+      <p>??¾ç????????ï¼??????¨ä??å±?ç¤ºç????¾é?????</p>
     </div>
     </a> </li>
     <li style="border-bottom:none;"> <a href="/novellist-204626-1.html">
     <div class="icon"> <img src="/Template/default/img/ico-xs.gif" alt=""> </div>
     <div class="name">
-      <h4>å°è¯´ä¹¦åŸ</h4>
-      <p>åœ¨çº¿å°è¯´é˜…è¯»åŠŸèƒ½ï¼Œæ”¯æŒä¸‹è½½å’Œåˆ†äº«</p>
+      <h4>å°?è¯´ä¹¦???</h4>
+      <p>??¨çº¿å°?è¯´é??è¯»å????½ï????????ä¸?è½½å?????äº?</p>
     </div>
     </a> </li>
 </ul>
-<div class="xk_more"><a href="/wapindex.aspx?siteid=2108&classid=204663">æŸ¥çœ‹å…¨éƒ¨åŠŸèƒ½æ¨¡å—</a></div>
+<div class="xk_more"><a href="/wapindex.aspx?siteid=2108&classid=204663">??¥ç????¨é?¨å????½æ¨¡???</a></div>
 
 </textarea>
 <br/>
-<b>åä¸‰ã€é¦–é¡µæ´»åŠ¨ä½ç½®</b>
+<b>???ä¸????é¦?é¡µæ´»??¨ä??ç½?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="xk_live">
-<li style="background: #de6761;">æ´»åŠ¨</li>
-<p><a href="#">ç¬¬å››å±Šæ‰‹æœºæ’ç‰ˆæ¯”èµ›</a></p>
+<li style="background: #de6761;">æ´»å??</li>
+<p><a href="#">ç¬????å±??????ºæ?????æ¯?èµ?</a></p>
 </div>
 </textarea>
 <br/>
-<b>åå››ã€é¦–é¡µç‰¹è‰²åŠŸèƒ½å±•ç¤º</b>
+<b>?????????é¦?é¡µç?¹è?²å????½å??ç¤?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="xk_h1">
-<p>ç‰¹è‰²åŠŸèƒ½</p><y><a href="#">More</a></y>
+<p>??¹è?²å?????</p><y><a href="#">More</a></y>
 </div>
 
       <div id="focus" class="focus">
@@ -459,36 +459,36 @@ forum({
           <div class="pic-box">
             <ul>
               <li><a href="#"><img src="/Template/default/img/ico_pc.jpg">
-                <p>PCåŒæ­¥</p>
+                <p>PC???æ­?</p>
                 </a></li>
               <li><a href="#"><img src="/Template/default/img/ico_qq.jpg">
-                <p>QQç™»å½•</p>
+                <p>QQ??»å??</p>
                 </a></li>
               <li><a href="#"><img src="/Template/default/img/ico_weix.jpg">
-                <p>å¾®ä¿¡æ¥å…¥</p>
+                <p>å¾?ä¿¡æ?¥å??</p>
                 </a></li>
               <li><a href="#"><img src="/Template/default/img/ico_ubb.jpg">
-                <p>UBBè°ƒç”¨</p>
+                <p>UBBè°????</p>
                 </a></li>
               <li><a href="#"><img src="/Template/default/img/ico_wjt.jpg">
-                <p>ä¼ªé™æ€æŠ€æœ¯</p>
+                <p>ä¼?????????????</p>
                 </a></li>
             </ul>
               <ul>
                 <li><a href="#"><img src="/Template/default/img/ico-jz.gif">
-                <p>å¤šç”¨æˆ·å»ºç«™</p>
+                <p>å¤???¨æ?·å»ºç«?</p>
                 </a></li>
                 <li><a href="#"><img src="/Template/default/img/ico-zx.gif">
-                <p>è‡ªå†™ä»£ç </p>
+                <p>??????ä»£ç??</p>
                 </a></li>
                 <li><a href="#"><img src="/Template/default/img/ico-ksh.gif">
-                <p>å¯è§†åŒ–æ’ç‰ˆ</p>
+                <p>???è§??????????</p>
                 </a></li>
                 <li><a href="#"><img src="/Template/default/img/ico-dgn.gif">
-                <p>å¼€æ”¾æ‹“å±•</p>
+                <p>å¼???¾æ??å±?</p>
                 </a></li>
                 <li><a href="#"><img src="/Template/default/img/ico-fw.gif">
-                <p>æ°¸ä¹…æ›´æ–°</p>
+                <p>æ°¸ä????´æ??</p>
                 </a></li>
             </ul>
           </div>
@@ -497,44 +497,44 @@ forum({
       <script type="text/javascript">
 				TouchSlide({ 
 					slideCell:"#focus",
-					titCell:".focus-o ul", //å¼€å¯è‡ªåŠ¨åˆ†é¡µ autoPage:true ï¼Œæ­¤æ—¶è®¾ç½® titCell ä¸ºå¯¼èˆªå…ƒç´ åŒ…è£¹å±‚
+					titCell:".focus-o ul", //å¼?????????¨å??é¡? autoPage:true ï¼?æ­¤æ?¶è?¾ç½® titCell ä¸ºå?¼è?????ç´????è£¹å??
 					mainCell:".bd .box", 
 					effect:"left", 
-					autoPage:true, //è‡ªåŠ¨åˆ†é¡µc" 
+					autoPage:true, //?????¨å??é¡?c" 
 				});
 			</script> 
 </textarea>
 <br/>
-<b>åäº”ã€é¦–é¡µç¨‹åºç‰¹æ€§æ»šåŠ¨</b>
+<b>???äº????é¦?é¡µç??åº???¹æ?§æ?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <div class="xk_box">
-  <p>ç¨‹åºç‰¹æ€§</p>
+  <p>ç¨?åº???¹æ??</p>
   <div class="t_news">
     <ul class="news_li"id="news_li">
-      <li>.netç‰ˆé«˜æ•ˆå®‰å…¨ï¼Œ1.0/2.0/ç”µè„‘ä¸‰åˆä¸€ï¼</li>
-      <li>æ‰“é€ æŸ¯æ—å¼€æ”¾å¹³å°ï¼Œæ’ä»¶è½»æ¾å¼€å‘</li>
-      <li>wapæ”¯ä»˜/æ”¯ä»˜å®wapæ”¯ä»˜/æ‰‹æœºç½‘é“¶ï¼Œå•†åº—</li>
-      <li>å¼€æ”¾å¹³å°æ¥å£ï¼Œè°éƒ½å¯ä»¥å¼€å‘æ’ä»¶åº”ç”¨</li>
-      <li>æä¾›å¾®ä¿¡æ¥å…¥å¾®ä¿¡è¥é”€!</li>
-      <li>æä¾›ubbè§£æå¼•æ“æ‰©å±•æ¥å£åŠå¼€å‘æ’ä»¶ç¤ºä¾‹æºç </li>
-      <li>å…¨å›½é¦–æ¬¾WAP+HTML5å¤šç”¨æˆ·è‡ªåŠ©å»ºç«™ç³»ç»Ÿã€‚</li>
-      <li>WAPç•Œæœ€å—æ¬¢è¿ï¼Œæœ€å…·äººæ°”ï¼Œæœ€ä¸“ä¸šå¹³å°ã€‚</li>
-      <li>æ‰€è§å³æ‰€å¾—é¡µé¢ç»¼åˆæ’ç‰ˆï¼Œè‡ªå®šCSSæ ·å¼ã€‚</li>
-      <li>æ¨¡å—åŒ–è®¾è®¡ï¼Œæä¾›æºç åŠäºŒæ¬¡å¼€å‘</li>
-      <li>å¾®ä¿¡æ¥å…¥ï¼Œç”Ÿæˆè‹¹æœAPP+å®‰å“APP+äºŒç»´ç </li>
-      <li>æä¾›å¾®ä¿¡æ¥å…¥å¾®ä¿¡è¥é”€ï¼</li>
-      <li>è¿è¡Œç¯å¢ƒï¼šNET2.5/3.0 + Mssqlæ•°æ®åº“</li>
-      <li>æœºå‹é€‚é…/çš®è‚¤/å¤šè¯­è¨€é€‰æ‹©ï¼ŒåŒåå°ç®¡ç†</li>
-      <li>æ‰€è§å³æ‰€å¾—é¡µé¢ç»¼åˆæ’ç‰ˆï¼Œæƒ³å“ªæ˜¾å°±å¾€å“ªé‡Œæ’</li>
-      <li>è‡ªå®šCSSæ ·å¼ï¼Œæ— æ‰€ä¸èƒ½UBBè°ƒç”¨åŠŸèƒ½</li>
-      <li>åœ¨çº¿ç”Ÿæˆjarã€umdã€chmã€pdfã€epubç­‰æ ¼å¼</li>
-      <li>å‚»ç“œå¼æ“ä½œï¼Œä¼šæ‰“å­—å°±ä¼šå»ºç«™</li>
-      <li>æ¨¡æ¿å„æ€§å®šä¹‰ï¼Œæ’ä»¶æ¨¡å—äººæ€§åŒ–é…ç½®</li>
-      <li>Web.Configä¸­å‡ åé¡¹è¶…å¼ºåŠŸèƒ½é…ç½®ï¼Œé«˜æ‰‹æœ€çˆ±</li>
-      <li>ç”¨æˆ·èº«ä»½çº§åˆ«å¯åœ¨çº¿è´­ä¹°</li>
-      <li>æä¾›UBBè§£æå¼•æ“æ‰©å±•æ¥å£åŠå¼€å‘æ’ä»¶ç¤ºä¾‹æºç </li>
-      <li>æ‰“é€ æŸ¯æ—å¼€æ”¾å¹³å°ï¼Œæ’ä»¶è½»æ¾å¼€å‘</li>
+      <li>.net???é«????å®????ï¼?1.0/2.0/??µè??ä¸????ä¸?ï¼?</li>
+      <li>????????????å¼???¾å¹³??°ï?????ä»¶è½»??¾å?????</li>
+      <li>wap???ä»?/???ä»?å®?wap???ä»?/?????ºç????¶ï?????åº?</li>
+      <li>å¼???¾å¹³??°æ?¥å?£ï??è°???½å??ä»¥å????????ä»¶å?????</li>
+      <li>???ä¾?å¾?ä¿¡æ?¥å?¥å¾®ä¿¡è?¥é??!</li>
+      <li>???ä¾?ubbè§£æ??å¼??????©å????¥å?£å??å¼???????ä»¶ç¤ºä¾?æº????</li>
+      <li>??¨å?½é??æ¬?WAP+HTML5å¤???¨æ?·è????©å»ºç«?ç³»ç?????</li>
+      <li>WAP?????????æ¬¢è??ï¼??????·äººæ°?ï¼????ä¸?ä¸?å¹³å?°ã??</li>
+      <li>???è§???³æ??å¾?é¡µé?¢ç»¼?????????ï¼????å®?CSS??·å?????</li>
+      <li>æ¨¡å?????è®¾è?¡ï?????ä¾?æº???????äº?æ¬¡å?????</li>
+      <li>å¾?ä¿¡æ?¥å?¥ï??????????¹æ??APP+å®????APP+äº?ç»´ç??</li>
+      <li>???ä¾?å¾?ä¿¡æ?¥å?¥å¾®ä¿¡è?¥é??ï¼?</li>
+      <li>è¿?è¡????å¢?ï¼?NET2.5/3.0 + Mssql??°æ??åº?</li>
+      <li>??ºå????????/??????/å¤?è¯?è¨??????©ï??????????°ç?¡ç??</li>
+      <li>???è§???³æ??å¾?é¡µé?¢ç»¼?????????ï¼???³å????¾å°±å¾??????????</li>
+      <li>???å®?CSS??·å??ï¼???????ä¸????UBBè°???¨å?????</li>
+      <li>??¨çº¿??????jar???umd???chm???pdf???epubç­???¼å??</li>
+      <li>??»ç??å¼????ä½?ï¼?ä¼????å­?å°±ä??å»ºç??</li>
+      <li>æ¨¡æ?¿å????§å??ä¹?ï¼????ä»¶æ¨¡???äººæ?§å?????ç½?</li>
+      <li>Web.Configä¸???????é¡¹è??å¼ºå????½é??ç½?ï¼?é«??????????</li>
+      <li>??¨æ?·èº«ä»½çº§????????¨çº¿è´?ä¹?</li>
+      <li>???ä¾?UBBè§£æ??å¼??????©å????¥å?£å??å¼???????ä»¶ç¤ºä¾?æº????</li>
+      <li>????????????å¼???¾å¹³??°ï?????ä»¶è½»??¾å?????</li>
     </ul>
     <ul class="swap">
     </ul>
@@ -545,36 +545,36 @@ tervalTop();
 </script>
 </textarea>
 <br/>
-<b>åå…­ã€é¦–é¡µå®˜æ–¹å…¬å‘Š</b>
+<b>?????????é¦?é¡µå????¹å?????</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
    <div class="xk_gfnew">
-    <li>[month]æœˆ[day]æ—¥ å‘¨[weekday]</li>
-    <p>[b][url=http://kelink.com/bbs-184476.html]ç¬¬å››å±Šæ’ç‰ˆè®¾è®¡å¤§èµ›ç»“æœå…¬å¸ƒï¼[/url][/b]</p>
-<p>[b][url=http://kelink.com/wapindex.aspx?siteid=2108&classid=204650]ç¬¬å››å±Š(2014)â€œæŸ¯æ—æ¯â€æ‰‹æœºæ’ç‰ˆè®¾è®¡å¤§èµ›[/url][/b]</p>
+    <li>[month]???[day]??? ???[weekday]</li>
+    <p>[b][url=http://kelink.com/bbs-184476.html]ç¬????å±???????è®¾è?¡å¤§èµ?ç»???????å¸?ï¼?[/url][/b]</p>
+<p>[b][url=http://kelink.com/wapindex.aspx?siteid=2108&classid=204650]ç¬????å±?(2014)????????????????????ºæ?????è®¾è?¡å¤§èµ?[/url][/b]</p>
 
-    <p>2015å¹´1æœˆå°†å‘å¸ƒæœ€æ–°è§¦å±ç‰ˆæ¨¡æ¿ï¼æ‰€æœ‰æ­£ç‰ˆå®¢æˆ·å…è´¹å‡çº§ã€‚</p>
+    <p>2015å¹?1???å°????å¸??????°è§¦å±????æ¨¡æ?¿ï????????æ­£ç??å®¢æ?·å??è´¹å??çº§ã??</p>
     </div>
     <div class="xk_t1">
-    <p><a href="/bbslist-204571-1.html">å®˜æ–¹å…¬å‘ŠåŠ¨æ€</a></p>
+    <p><a href="/bbslist-204571-1.html">å®???¹å???????¨æ??</a></p>
     <y>
     <iframe allowtransparency="true" frameborder="0" width="105" height="29" scrolling="no" src="http://tianqi.2345.com/plugin/widget/index.htm?s=3&z=3&t=1&v=0&d=3&bd=0&k=&f=&q=1&e=1&a=1&c=59287&w=105&h=29&align=center"></iframe>
     </y>
     </div>
     <div class="mx">
     [bbs=204571_2_1_20_0]<br>
-    <a href="http://kelink.com/bbs-182302.html">ç¬¬ä¸‰å±Šæ’ç‰ˆå¤§èµ›è·å¥–åå•å…¬å¸ƒï¼</a><br>
-    <a href="http://kelink.com/bbs-182158.html">å¾®ä¿¡æ’ä»¶å·²å‘å¸ƒï¼Œå…è´¹ä½¿ç”¨</a><br>
-    <a href="http://app.kelink.com">æ‰‹æœºç½‘ç«™å…è´¹ç”ŸæˆAPP(è¯·ç”µè„‘è®¿é—®)</a>
+    <a href="http://kelink.com/bbs-182302.html">ç¬?ä¸?å±???????å¤§è????·å???????????å¸?ï¼?</a><br>
+    <a href="http://kelink.com/bbs-182158.html">å¾?ä¿¡æ??ä»¶å·²???å¸?ï¼????è´¹ä½¿???</a><br>
+    <a href="http://app.kelink.com">?????ºç??ç«????è´¹ç?????APP(è¯·ç?µè??è®¿é??)</a>
     </div>
 </textarea>
 <br/>
-<b>åä¸ƒã€å…¨å±€é¡¶éƒ¨ï¼Œå³ä¸Šè§’å±•å¼€èœå•å¯¼èˆª</b>
+<b>???ä¸??????¨å??é¡¶é??ï¼???³ä??è§?å±?å¼???????å¯¼è??</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
 <header class="aside-left header" id="header">
   <div class="logo"><a href="/"><img src="/Template/default/img/logo.gif" alt="logo"></a></div>
-  <div class="menu-btn"> <a id="menu-js" href="javascript:;"><img src="/Template/default/img/menu-btn.png" alt="èœå•æŒ‰é’®"></a> <a id="search-js" href="javascript:;">
+  <div class="menu-btn"> <a id="menu-js" href="javascript:;"><img src="/Template/default/img/menu-btn.png" alt="????????????"></a> <a id="search-js" href="javascript:;">
     <div class="search-box" id="search-box">
       <form id="search-form" name="g" method="get" action="/bbs/book_list.aspx">
         <input type="hidden" name="siteid" value="1000">
@@ -582,18 +582,18 @@ tervalTop();
         <input type="hidden" name="action" value="search">
         <input type="hidden" name="type" value="title">
         <div class="search-box-text">
-          <input type="text" name="key" placeholder="è¯·è¾“å…¥å…³é”®å­—">
+          <input type="text" name="key" placeholder="è¯·è????¥å?³é??å­?">
         </div>
       </form>
-      <img src="/Template/default/img/search-btn.png" alt="èœå•æŒ‰é’®"> </div>
-    </a> [nologins]<a id="user-js" href="/waplogin.aspx?siteid=1000"><img src="/Template/default/img/user-btn.png" alt="èœå•æŒ‰é’®"></a> [/nologins]</div>
+      <img src="/Template/default/img/search-btn.png" alt="????????????"> </div>
+    </a> [nologins]<a id="user-js" href="/waplogin.aspx?siteid=1000"><img src="/Template/default/img/user-btn.png" alt="????????????"></a> [/nologins]</div>
 </header>
 <div class="aside-left main" id="main">
   <div class="mains">
 [nv]
 </textarea>
 <br/><a name="zk"></a>
-<b>åå…«ã€å…¨å±€åº•éƒ¨ï¼ˆé…åˆå…¨å±€é¡¶éƒ¨ä½¿ç”¨ï¼Œå®ç°èœå•åŠ¨æ€å¯¼èˆªï¼‰</b>
+<b>???????????¨å??åº????ï¼?????????¨å??é¡¶é?¨ä½¿???ï¼?å®???°è???????¨æ??å¯¼è??ï¼?</b>
 <br/>
 <textarea name="content"  rows="10" class="KL_textarea" style="width:99%; color:#2B2B2B;">
   </div>
@@ -601,10 +601,10 @@ tervalTop();
 <div class="xk_quandibg">
 <div class="xk_quandi">
 <h1>
-<a href="/wapindex-2108-99169.html">è”ç³»</a>|<a href="http://sms.kelink.com">æœåŠ¡</a>|<a href="/guessbooklist-99170-1.html">åé¦ˆ</a>|<a href="/wapstyle/skin.aspx?siteid=[siteid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]">åˆ‡æ¢</a>
+<a href="/wapindex-2108-99169.html">???ç³?</a>|<a href="http://sms.kelink.com">??????</a>|<a href="/guessbooklist-99170-1.html">???é¦?</a>|<a href="/wapstyle/skin.aspx?siteid=[siteid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]">??????</a>
 </h1>
-<p><a href="/wapindex-2108-6516.html">è”é€Ÿç§‘æŠ€</a>  å¾®ä¿¡:<a href="http://www.kelink.com/help/weixin.html">KelinkSoft</a>[br]
-?2015 [url=http://www.kelink.com/images/kelinkwap.jpg]Kelink CMS[/url] ç²¤ICP-13087322</p>
+<p><a href="/wapindex-2108-6516.html">??????ç§????</a>  å¾?ä¿?:<a href="http://www.kelink.com/help/weixin.html">KelinkSoft</a>[br]
+?2015 [url=http://www.kelink.com/images/kelinkwap.jpg]Kelink CMS[/url] ç²?ICP-13087322</p>
 </div>
 </div>
 </footet>
@@ -617,15 +617,15 @@ tervalTop();
       <li><a href="/waplogin.aspx?siteid=1000&amp;classid=0&amp;backurl=wapindex.aspx%3fsiteid%3d1000%26classid%3d0"><img 
 
 src="/Template/default/img/dl.png" alt="."><br>
-        ç™» å½•</a></li>
+        ??? å½?</a></li>
       <y><a href="/wapreg.aspx?siteid=1000&amp;classid=0"><img src="/Template/default/img/zc.png" alt="."><br>
-        æ³¨ å†Œ</a></y>
+        æ³? ???</a></y>
     </div>
     <div class="xk_sverqq">
-      <li> <a href="/oauth/qq/qqlogin.aspx?siteid=1000&amp;classid=0"><img src="/Template/default/img/qq.png" alt="."> ä½¿ç”¨QQå·ç™»å½•</a> 
+      <li> <a href="/oauth/qq/qqlogin.aspx?siteid=1000&amp;classid=0"><img src="/Template/default/img/qq.png" alt="."> ä½¿ç??QQ??·ç?»å??</a> 
 
 </li>
-      <y> <a href="/oauth/qq/qqlogin.aspx?siteid=1000&amp;classid=0"><img src="/Template/default/img/wx.png" alt="."> ä½¿ç”¨å¾®ä¿¡ç™»å½•</a> 
+      <y> <a href="/oauth/qq/qqlogin.aspx?siteid=1000&amp;classid=0"><img src="/Template/default/img/wx.png" alt="."> ä½¿ç?¨å¾®ä¿¡ç?»å??</a> 
 
 </y>
     </div>
@@ -638,28 +638,28 @@ src="/Template/default/img/dl.png" alt="."><br>
 <y>[url=/waplogout.aspx?siteid=[siteid]] [/url]</y>
 </div>
 <div class="xk_usercd">
-<li>[url=/bbs/userinfo.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]ç©ºé—´[/url]</li>
-<li>[url=/bbs/book_list.aspx?action=search&siteid=[siteid]&classid=0&key=[userid]&type=pub]å¸–å­[/url]</li>
-<li>[url=/rizhi/myrizhi.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]å¾®åš[/url]</li>
-<li>[url=/album/myalbum.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]ç›¸å†Œ[/url]</li>
-<li>[url=/bbs/messagelist.aspx?siteid=[siteid]&classid=[classid]&types=0&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]ä¿¡ç®±[/url]</li>
+<li>[url=/bbs/userinfo.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]ç©ºé??[/url]</li>
+<li>[url=/bbs/book_list.aspx?action=search&siteid=[siteid]&classid=0&key=[userid]&type=pub]å¸?å­?[/url]</li>
+<li>[url=/rizhi/myrizhi.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]å¾????[/url]</li>
+<li>[url=/album/myalbum.aspx?siteid=[siteid]&touserid=[userid]&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]??¸å??[/url]</li>
+<li>[url=/bbs/messagelist.aspx?siteid=[siteid]&classid=[classid]&types=0&backurl=wapindex.aspx%3fsiteid%3d[siteid]%26classid%3d[classid]]ä¿¡ç??[/url]</li>
 </div>
 </div>
 [/logins]
   <div class="nv">
     <ul>
-      <li><a href="http://kelink.com/wapindex-2108-0.html">ç½‘ç«™é¦–é¡µ</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-6516.html">å…¬å¸ä»‹ç»</a></li>
-      <li><a href="http://kelink.com/shoplist-6517-1.html">äº§å“å±•ç¤º</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-99169.html">è”ç³»æˆ‘ä»¬</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-99173.html">æˆåŠŸæ¡ˆä¾‹</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-6518.html">æŠ€æœ¯æ”¯æŒ</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-99168.html">è´­ä¹°æŒ‡å—</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-204577.html">æ±‡æ¬¾å¸å·</a></li>
-      <li><a href="http://sms.kelink.com/index.asp?action=go">å®¢æœä¸­å¿ƒ</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-175544.html">ç›—ç‰ˆè½¬æ­£</a></li>
-      <li><a href="http://sms.kelink.com/wap.asp">æ­£ç‰ˆæŸ¥è¯¢</a></li>
-      <li><a href="http://kelink.com/wapindex-2108-204570.html">å®˜æ–¹è®ºå›</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-0.html">ç½?ç«?é¦?é¡?</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-6516.html">?????¸ä??ç»?</a></li>
+      <li><a href="http://kelink.com/shoplist-6517-1.html">äº§å??å±?ç¤?</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-99169.html">???ç³»æ??ä»?</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-99173.html">??????æ¡?ä¾?</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-6518.html">????????????</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-99168.html">è´?ä¹°æ?????</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-204577.html">æ±?æ¬¾å?????</a></li>
+      <li><a href="http://sms.kelink.com/index.asp?action=go">å®¢æ??ä¸?å¿?</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-175544.html">??????è½?æ­?</a></li>
+      <li><a href="http://sms.kelink.com/wap.asp">æ­£ç????¥è??</a></li>
+      <li><a href="http://kelink.com/wapindex-2108-204570.html">å®???¹è?ºå??</a></li>
     </ul>
   </div>
 </aside>
@@ -667,19 +667,19 @@ src="/Template/default/img/dl.png" alt="."><br>
 <div class="quick_btn"></div>
 <div class="quick_con hide">
   <ul class="quick_list">
-    <li class="qnav_home"><a href="/wapindex.aspx?siteid=[siteid]&classid=0">é¦–é¡µ</a></li>
-    <li class="qnav_one"><a href="/shoplist-6517-1.html">è´­ä¹°</a></li>
-    <li class="qnav_two"><a href="tencent://message/?uin=800007757&Site=http://qbar.qq.com/application/&Menu=yes">å®¢æœ</a></li>
-    <li class="qnav_three"><a href="/wapindex-2108-204570.html">è®ºå›</a></li>
-    <li class="qnav_four"><a href="/wapindex.aspx?siteid=2108&classid=204663">åŠŸèƒ½</a></li>
-    <li class="qnav_five"><a href="/wapindex.aspx?siteid=2108&classid=204664">å¸®åŠ©</a></li>
-    <li class="qnav_six"><a href="#">å®¢æˆ·ç«¯</a></li>
+    <li class="qnav_home"><a href="/wapindex.aspx?siteid=[siteid]&classid=0">é¦?é¡?</a></li>
+    <li class="qnav_one"><a href="/shoplist-6517-1.html">è´?ä¹?</a></li>
+    <li class="qnav_two"><a href="tencent://message/?uin=800007757&Site=http://qbar.qq.com/application/&Menu=yes">å®¢æ??</a></li>
+    <li class="qnav_three"><a href="/wapindex-2108-204570.html">è®ºå??</a></li>
+    <li class="qnav_four"><a href="/wapindex.aspx?siteid=2108&classid=204663">??????</a></li>
+    <li class="qnav_five"><a href="/wapindex.aspx?siteid=2108&classid=204664">å¸????</a></li>
+    <li class="qnav_six"><a href="#">å®¢æ?·ç??</a></li>
   </ul>
 </div>
 </div>
 </textarea>
 <br/>
-<img src="1.png" alt="æ•ˆæœå›¾"/> <img src="2.png" alt="æ•ˆæœå›¾"/> <img src="3.png" alt="æ•ˆæœå›¾"/>
+<img src="1.png" alt="?????????"/> <img src="2.png" alt="?????????"/> <img src="3.png" alt="?????????"/>
 </div>
 </div>
 </div>
@@ -689,7 +689,7 @@ src="/Template/default/img/dl.png" alt="."><br>
                                 
                                 <div id="outerfooter">
         	<div id="footercontainer">
-            	<footer id="footer">Copyright Â© 2015  æœ¬ç³»ç»Ÿç‰ˆæƒæ‰€æœ‰ </footer>
+            	<footer id="footer">Copyright Â© 2015  ???ç³»ç?????????????? </footer>
             </div>
         </div>
 

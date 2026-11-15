@@ -3,8 +3,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=GB2312" />
-<title>成功案例 -联速科技出品</title>
-<meta name="author" content="kelink,kelink.com,chinastrong" />
+<title>成功案例 -小宇网络出品</title>
+<meta name="author" content="小宇网络" />
 <meta name="keywords" content="3g,3g手机,3g建站,3g门户,wap,wap建站,手机上网,手机建站,手机看电影,手机游戏,手机看小说,手机流媒体,手机门户,3G门户" />
 <meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫什么呢？赶快申请吧。" />
 <link rel="stylesheet" type="text/css" href="/netcss/index/css/start.css"/>
@@ -13,7 +13,7 @@
 <header>
   <div class="header">
     <div class="top">
-      <div class="top_con"> <span class="Belongs">广州市联速计算机科技有限公司</span> <span class="zzdl"><a href="admin/login.aspx">站长登录</a></span> <span class="mail"><img alt="企业QQ" src="/netcss/index/images/qq.png" align="Baseline" /> 企业QQ：<span>800007757</span></span> <span class="tel"><img alt="咨询热线" src="/netcss/index/images/tel.png" align="Baseline" /> 咨询热线：<span>4000-588-605</span></span> <span><a href="http://t.qq.com/kelinkCom" rel="noFollow" target="_blank"><img alt="微博" src="/netcss/index/images/xinlang.png" align="Baseline" /></a></span> </div>
+      <div class="top_con"> <span class="Belongs">小宇网络</span> <span class="zzdl"><a href="admin/login.aspx">站长登录</a></span> <span class="mail"><img alt="企业QQ" src="/netcss/index/images/qq.png" align="Baseline" /> 企业QQ：<span>800007757</span></span> <span class="tel"><img alt="咨询热线" src="/netcss/index/images/tel.png" align="Baseline" /> 咨询热线：<span>4000-588-605</span></span> <span><a href="http://t.qq.com/kelinkCom" rel="noFollow" target="_blank"><img alt="微博" src="/netcss/index/images/xinlang.png" align="Baseline" /></a></span> </div>
     </div>
     <div class="head_bg">
       <div class="head">
@@ -46,10 +46,10 @@
     <div class="item_list" id="case_list" style="height: 2700px;">
       <div class="items waterfall" style="display: block; position: absolute; left: 0px; top: 0px;">
         <dl>
-          <dt><a target="_blank" href="http://kelink.com"><img alt="联速科技" src="/netcss/index/images/al-1.png" style="width: 280px; height:480px; display: block;"></a></dt>
-          <dd class="case_name"><a target="_blank" href="http://kelink.com">联速科技</a></dd>
+          <dt><a target="_blank" href="http://kelink.com"><img alt="小宇网络科技" src="/netcss/index/images/al-1.png" style="width: 280px; height:480px; display: block;"></a></dt>
+          <dd class="case_name"><a target="_blank" href="http://kelink.com">小宇网络科技</a></dd>
           <dd class="case_tag">企业网站</dd>
-          <dd class="case_int"><a href="http://kelink.com">柯林CMS建站系统官网，柯林程序官方网_手机自助建站平台,手机CMS,APP制作,微网站 kelink.com</a></dd>
+          <dd class="case_int"><a href="http://kelink.com">小宇网络CMS建站系统官网，小宇网络_手机自助建站平台,手机CMS,APP制作,微网站 kelink.com</a></dd>
         </dl>
       </div>
       <div class="items waterfall" style="display: block; position: absolute; left: 302px; top: 0px;">
@@ -142,16 +142,16 @@
       </div>
       <div class="items waterfall" style="display: block; position: absolute; left: 0px; top: 2020px;">
         <dl>
-          <dt><a target="_blank" href="http://kelink.cc/"><img alt="柯林站长" src="/netcss/index/images/al-13.png" style="width: 280px; height: 480px; display: block;"></a></dt>
-          <dd class="case_name"><a target="_blank" href="http://kelink.cc/">柯林站长</a></dd>
+          <dt><a target="_blank" href="http://kelink.cc/"><img alt="小宇网络站长" src="/netcss/index/images/al-13.png" style="width: 280px; height: 480px; display: block;"></a></dt>
+          <dd class="case_name"><a target="_blank" href="http://kelink.cc/">小宇网络站长</a></dd>
           <dd class="case_tag">站长平台</dd>
-          <dd class="case_int"><a target="_blank" href="http://kelink.cc/">柯林最早的站长网之一，经历多次更新迭代！现在再次全新登场！</a></dd>
+          <dd class="case_int"><a target="_blank" href="http://kelink.cc/">小宇网络最早的站长网之一，经历多次更新迭代！现在再次全新登场！</a></dd>
         </dl>
       </div>
       <div class="items waterfall" style="display: block; position: absolute; left: 302px; top: 2020px;">
         <dl>
-          <dt><a target="_blank" href="http://kelink.com/ringlist-204623-1.html"><img alt="柯林音乐" src="/netcss/index/images/al-14.png" style="width: 280px; height: 480px; display: block;"></a></dt>
-          <dd class="case_name"><a target="_blank" href="http://kelink.com/ringlist-204623-1.html">柯林音乐</a></dd>
+          <dt><a target="_blank" href="http://kelink.com/ringlist-204623-1.html"><img alt="小宇网络音乐" src="/netcss/index/images/al-14.png" style="width: 280px; height: 480px; display: block;"></a></dt>
+          <dd class="case_name"><a target="_blank" href="http://kelink.com/ringlist-204623-1.html">小宇网络音乐</a></dd>
           <dd class="case_tag">影音播放</dd>
           <dd class="case_int"><a target="_blank" href="http://kelink.com/ringlist-204623-1.html">强大的HTML5音乐铃声模块，适配手机展现完美效果。</a></dd>
         </dl>
@@ -177,7 +177,7 @@
 </div>
 <footer>
   <div class="bottom">
-    <div class="bottom_con">CopyRight (C) Kelink Soft.All Rights Reserved. 粤ICP-13087322</div>
+    <div class="bottom_con">CopyRight (C) 小宇网络 All Rights Reserved. 粤ICP-13087322</div>
   </div>
 </footer>
 </body>

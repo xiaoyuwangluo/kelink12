@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=GB2312" />
 <title>企业网站模板</title>
-<meta name="author" content="kelink,kelink.com,chinastrong" />
+<meta name="author" content="小宇网络" />
 <meta name="keywords" content="微网站,APP开发,wap建站,手机上网,手机建站,手机看电影,手机游戏,手机看小说,手机流媒体,手机门户,3G门户" />
 <meta name="description" content="体验神奇的WAP建站经历，走进一个全新的wap网站时代！无需专业知识，无需特殊软件，只要您会打字，十分钟的简单制作，您就可以拥有自己的精彩wap站点，让亿万手机用户分享您的设计成果与乐趣；同时本站有成熟完善的商业合作模式，致力于与各wap站长一起创造互惠互利的双赢局面,给大家提供一个3G时代创造财富的机会。还犹豫什么呢？赶快申请吧。" />
 <link rel="stylesheet" type="text/css" href="/netcss/index/css/start.css"/>
@@ -52,7 +52,7 @@
 <header>
   <div class="header">
     <div class="top">
-      <div class="top_con"> <span class="Belongs">广州市联速计算机科技有限公司</span> <span class="zzdl"><a href="admin/login.aspx">站长登录</a></span> <span class="mail"><img alt="企业QQ" src="/netcss/index/images/qq.png" align="Baseline" /> 企业QQ：<span>800007757</span></span> <span class="tel"><img alt="咨询热线" src="/netcss/index/images/tel.png" align="Baseline" /> 咨询热线：<span>4000-588-605</span></span> <span><a href="http://t.qq.com/kelinkCom" rel="noFollow" target="_blank"><img alt="微博" src="/netcss/index/images/xinlang.png" align="Baseline" /></a></span> </div>
+      <div class="top_con"> <span class="Belongs">小宇网络</span> <span class="zzdl"><a href="admin/login.aspx">站长登录</a></span> <span class="mail"><img alt="企业QQ" src="/netcss/index/images/qq.png" align="Baseline" /> 企业QQ：<span>800007757</span></span> <span class="tel"><img alt="咨询热线" src="/netcss/index/images/tel.png" align="Baseline" /> 咨询热线：<span>4000-588-605</span></span> <span><a href="http://t.qq.com/kelinkCom" rel="noFollow" target="_blank"><img alt="微博" src="/netcss/index/images/xinlang.png" align="Baseline" /></a></span> </div>
     </div>
     <div class="head_bg">
       <div class="head">
@@ -211,7 +211,7 @@
 
 <footer>
   <div class="bottom">
-    <div class="bottom_con">CopyRight ? Kelink Soft.All Rights Reserved. 粤ICP-13087322</div>
+    <div class="bottom_con">CopyRight ? 小宇网络.All Rights Reserved. 粤ICP-13087322</div>
   </div>
 </footer>
 </body>

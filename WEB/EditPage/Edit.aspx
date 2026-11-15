@@ -50,7 +50,7 @@ function window.onload() {
             htmlcode = htmlcode + "<head>\n";
             htmlcode = htmlcode + "<meta http-equiv=\"Content-type\" content=\"text/html; charset=gb2312\" />\n";           
             htmlcode = htmlcode + "<meta name=\"keywords\" content=\"wap建站,wap建站系统,wap自助建站,wap网站,wap下载\"> <!--此处为SEO搜索优化-->\n";
-            htmlcode = htmlcode + "<meta name=\"description\" content=\"柯林手机WAP自助建站系统提供完整全面的无线应用解决方案。\">\n";
+            htmlcode = htmlcode + "<meta name=\"description\" content=\"小宇网络手机WAP自助建站系统提供完整全面的无线应用解决方案。\">\n";
             htmlcode = htmlcode + "<title>[classname]</title> <!--录入网站标题-->\n";
             htmlcode = htmlcode + "<link rel=\"SHORTCUT ICON\" href=\"favicon.ico\" />  <!--地址栏小图标-->\n";
             htmlcode = htmlcode + "</head>\n";

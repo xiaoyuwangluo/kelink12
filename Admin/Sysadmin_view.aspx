@@ -181,7 +181,7 @@ function bt_return_onclick()
                                                         <font face="宋体">产品开发： </font>
                                                     </td>
                                                     <td class="fh3">
-                                                        &nbsp;<b>广州市联速计算机科技有限公司 (柯林软件)</b></td>
+                                                        &nbsp;<b>小宇网络 (小宇网络软件)</b></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="f" style="width: 16%">
@@ -207,7 +207,7 @@ function bt_return_onclick()
                                                             <br>
                                                             TEL:13048036868/4000-588-605
                                                           <br><br>
-                                                          此程序为商业程序，柯林专利受法律保护！ 请保留此【版权信息】信息，只有超级管理员能看到。 
+                                                          此程序为商业程序，小宇网络专利受法律保护！ 请保留此【版权信息】信息，只有超级管理员能看到。 
                                                            
                                                             
                                                             </font>

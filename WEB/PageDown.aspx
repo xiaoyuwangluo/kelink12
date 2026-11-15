@@ -57,7 +57,7 @@
 																<br />WAP2.0链接:<%=base.http_start %>wapindex.aspx?siteid=<%=base.SiteId %>&sid=[sid1]-2-[cs]-[lang]-[myua]-[width]
 																<br />电脑页面链接:<%=base.http_start %>wapindex.aspx?siteid=<%=base.SiteId %>&sid=[sid1]-3-[cs]-[lang]-[myua]-[width]
 																<br />平板页面链接:<%=base.http_start %>wapindex.aspx?siteid=<%=base.SiteId %>&sid=[sid1]-4-[cs]-[lang]-[myua]-[width]
-<br />更详细的请参考柯林二次开发文档。
+<br />更详细的请参考小宇网络二次开发文档。
 																</p>
 																<p>&nbsp;<br />											    
 													    

@@ -1,0 +1,55 @@
+# 小宇网络 WAP建站系统 PHP版 伪静态规则
+# 对应原 ASP.NET web.config 中的 URL Rewrite 规则
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# 伪静态开关 (ISAPI_Rewrite3_Open)
+RewriteRule ^(.*/)*index.html\?*(.*)$ $1/index.php [L,QSA]
+
+# WAP核心页面
+RewriteRule ^wapindex-([0-9]+)-([0-9]+).html$ wapindex.php?siteid=$1&classid=$2 [L,QSA]
+RewriteRule ^waplogin-([0-9]+)-([0-9]+).html$ waplogin.php?siteid=$1&classid=$2 [L,QSA]
+RewriteRule ^myfile-([0-9]+)-([0-9]+).html$ myfile.php?siteid=$1&classid=$2 [L,QSA]
+RewriteRule ^wapreg-([0-9]+)-([0-9]+).html$ wapreg.php?siteid=$1&classid=$2 [L,QSA]
+
+# 文章模块
+RewriteRule ^article-([0-9]+).html$ article/view.php?id=$1 [L,QSA]
+RewriteRule ^articlelist-([0-9]+).html$ article/list.php?classid=$1 [L,QSA]
+RewriteRule ^articlelist-([0-9]+)-([0-9]+).html$ article/list.php?classid=$1&page=$2 [L,QSA]
+RewriteRule ^articlere-([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+).html$ article/book_re.php?siteid=$1&classid=$2&id=$3&page=$4 [L,QSA]
+
+# 论坛模块
+RewriteRule ^bbs-([0-9]+).html$ bbs/view.php?id=$1 [L,QSA]
+RewriteRule ^bbslist-([0-9]+).html$ bbs/list.php?classid=$1 [L,QSA]
+RewriteRule ^bbslist-([0-9]+)-([0-9]+).html$ bbs/list.php?classid=$1&page=$2 [L,QSA]
+RewriteRule ^bbsre-([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+).html$ bbs/book_re.php?siteid=$1&classid=$2&id=$3&page=$4 [L,QSA]
+
+# 商城模块
+RewriteRule ^shop-([0-9]+).html$ shop/view.php?id=$1 [L,QSA]
+RewriteRule ^shoplist-([0-9]+).html$ shop/list.php?classid=$1 [L,QSA]
+RewriteRule ^shoplist-([0-9]+)-([0-9]+).html$ shop/list.php?classid=$1&page=$2 [L,QSA]
+
+# 小说模块
+RewriteRule ^novel-([0-9]+).html$ novel/view.php?id=$1 [L,QSA]
+RewriteRule ^novellist-([0-9]+).html$ novel/list.php?classid=$1 [L,QSA]
+RewriteRule ^novellist-([0-9]+)-([0-9]+).html$ novel/list.php?classid=$1&page=$2 [L,QSA]
+
+# 视频模块
+RewriteRule ^video-([0-9]+).html$ video/view.php?id=$1 [L,QSA]
+RewriteRule ^videolist-([0-9]+).html$ video/list.php?classid=$1 [L,QSA]
+RewriteRule ^videolist-([0-9]+)-([0-9]+).html$ video/list.php?classid=$1&page=$2 [L,QSA]
+
+# 其他内容模块 (通用规则)
+RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|guangbo|adlink|airplane|album|hotel|rizhi|xinzhang)-([0-9]+).html$ $1/view.php?id=$2 [L,QSA]
+RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|guangbo|adlink|airplane|album|hotel|rizhi|xinzhang)list-([0-9]+).html$ $1/list.php?classid=$2 [L,QSA]
+RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|guangbo|adlink|airplane|album|hotel|rizhi|xinzhang)list-([0-9]+)-([0-9]+).html$ $1/list.php?classid=$2&page=$3 [L,QSA]
+
+</IfModule>
+
+# 安全: 禁止访问敏感文件
+<FilesMatch "\.(sql|md|log)$">
+    Require all denied
+</FilesMatch>
+
+# 默认文档
+DirectoryIndex index.php index.html

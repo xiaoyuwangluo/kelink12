@@ -86,7 +86,7 @@
                                             * 纬度：<asp:TextBox ID="lat" runat="server" Width="80px"></asp:TextBox>  经度：<asp:TextBox ID="lng" runat="server" Width="80px"></asp:TextBox>  <input type="button" name="back" value=" 选择位置 "  class="bt" style="width:60px;" onclick="UpLoad();" /><br /><br />
                                             * 标题：<asp:TextBox ID="title" runat="server" Width="200px"></asp:TextBox> <br /><br />
                                             * 描述：<asp:TextBox ID="content" runat="server" Width="400px" Height ="50px" TextMode="MultiLine"></asp:TextBox>（详细地址或其它说明）<br /><br />
-                                            高级人员自定义菜单使用本链接：<br />http://api.map.baidu.com/marker?location=23.034403,113.33194&title=联速科技公司&content=地址或说明&src=公司名或应用程序名&output=html
+                                            高级人员自定义菜单使用本链接：<br />http://api.map.baidu.com/marker?location=23.034403,113.33194&title=小宇网络科技公司&content=地址或说明&src=公司名或应用程序名&output=html
                                             
                                         </td>
                                     </tr>
