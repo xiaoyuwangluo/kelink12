@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS `WapNovelChapter` (
   `novelid` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `content` longtext,
+  `orderindex` int(11) NOT NULL DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_novel` (`novelid`)
@@ -529,3 +530,17 @@ ALTER TABLE WapClass ADD COLUMN managegroup VARCHAR(100) DEFAULT '';
 -- 微信/QQ 登录 openid 字段
 ALTER TABLE WapUser ADD COLUMN wx_openid VARCHAR(64) DEFAULT '';
 ALTER TABLE WapUser ADD COLUMN qq_openid VARCHAR(64) DEFAULT '';
+
+-- 帖子举报表
+CREATE TABLE IF NOT EXISTS `WapReport` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `siteid` int(11) NOT NULL DEFAULT 0,
+  `bbsid` int(11) NOT NULL DEFAULT 0,
+  `userid` int(11) NOT NULL DEFAULT 0,
+  `reason` varchar(50) NOT NULL DEFAULT '',
+  `note` varchar(500) DEFAULT '',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0待处理 1已处理 2已驳回',
+  `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_bbs_user` (`bbsid`,`userid`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='帖子举报表';

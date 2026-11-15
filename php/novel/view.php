@@ -40,13 +40,31 @@ class NovelViewPage extends WapPage {
             echo '<div class="subtitle">' . $this->ToHtm($novel['title']) . '</div>';
             echo '<div class="info">作者:' . $this->ToHtm($novel['author'] ?? '佚名') . ' 点击:' . (int)$novel['hits'] . '</div>';
             echo '<div class="content">' . $this->wapTool->ToWML($novel['intro'], $this->wmlVo) . '</div>';
-            // 章节列表
-            $chapters = $db->getAll("SELECT id,title FROM WapNovelChapter WHERE novelid=? ORDER BY id ASC", [$id]);
+            // 章节列表 (按排序值+ID排序)
+            $chapters = $db->getAll("SELECT id,title FROM WapNovelChapter WHERE novelid=? ORDER BY orderindex ASC, id ASC", [$id]);
+            // 管理员或小说作者(author 匹配当前会员用户名/昵称)可管理章节
+            $canManage = $this->userSession->isAdminLogin();
+            if (!$canManage && $this->userSession->isLogin()) {
+                $author = trim((string)($novel['author'] ?? ''));
+                $name = $this->userSession->getUserName();
+                $nick = (string)($_SESSION['kl_nickname'] ?? '');
+                $canManage = $author !== '' && ($author === $name || ($nick !== '' && $author === $nick));
+            }
             echo '<div class="chapterlist"><ul>';
             foreach ($chapters as $c) {
-                echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&cid=' . $c['id'] . '">' . $this->ToHtm($c['title']) . '</a></li>';
+                echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&cid=' . $c['id'] . '">' . $this->ToHtm($c['title']) . '</a>';
+                if ($canManage) {
+                    echo ' <a href="chapter_mod.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">修改</a>'
+                       . ' <a href="chapter_del.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">删除</a>';
+                }
+                echo '</li>';
             }
             echo '</ul></div>';
+            if ($canManage) {
+                echo '<div class="actionbar">'
+                    . '<a href="chapter_add.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&novelid=' . $id . '">添加章节</a> '
+                    . '<a href="import.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&novelid=' . $id . '">导入TXT</a></div>';
+            }
         }
         echo '<div><a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回书单</a></div>';
         $this->showDown();

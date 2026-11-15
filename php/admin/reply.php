@@ -28,6 +28,13 @@ class AdminReplyPage extends WapPage {
             } elseif ($action === 'delete') {
                 $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
                 $this->showSuccess('评论已删除', $back);
+            } elseif ($action === 'edit') {
+                $content = trim($_POST['content'] ?? '');
+                if ($content === '') {
+                    $this->showError('评论内容不能为空', $back);
+                }
+                $n = $db->execute("UPDATE " . $table . " SET content=? WHERE id=? AND siteid=?", [$content, $id, $this->siteid]);
+                $this->showSuccess($n > 0 ? '评论已保存' : '评论不存在或无变更', $back);
             } else {
                 $this->showError('非法操作', $back);
             }
@@ -41,6 +48,24 @@ class AdminReplyPage extends WapPage {
         echo '<div class="content">'
             . '<a href="reply.php?siteid=' . (int)$this->siteid . '&tab=wap">内容评论' . ($tab === 'wap' ? '√' : '') . '</a> | '
             . '<a href="reply.php?siteid=' . (int)$this->siteid . '&tab=bbs">论坛回复' . ($tab === 'bbs' ? '√' : '') . '</a></div>';
+
+        // 编辑表单 (GET edit=ID)
+        $editId = (int)($_GET['edit'] ?? 0);
+        if ($editId > 0) {
+            $table = $tab === 'bbs' ? 'WapBbsReply' : 'WapReply';
+            $row = $db->getOne("SELECT * FROM " . $table . " WHERE id=? AND siteid=?", [$editId, $this->siteid]);
+            if ($row) {
+                echo '<div class="content"><form method="post" action="' . $back . '">'
+                    . '<input type="hidden" name="action" value="edit"/>'
+                    . '<input type="hidden" name="id" value="' . $editId . '"/>'
+                    . '<input type="hidden" name="from" value="' . $tab . '"/>'
+                    . '<div>评论内容<br/><textarea name="content" rows="4" cols="40">' . $this->ToHtm($row['content'] ?? '') . '</textarea></div>'
+                    . '<div><input type="submit" value="保存评论"/> <a href="' . $back . '">取消</a></div>'
+                    . '</form></div>';
+            } else {
+                echo '<div class="error">评论不存在</div>';
+            }
+        }
 
         // 分页列表
         $page = max(1, (int)($_GET['page'] ?? 1));
@@ -58,7 +83,8 @@ class AdminReplyPage extends WapPage {
             $time = !empty($row['addtime']) ? date('m-d H:i', strtotime($row['addtime'])) : '';
             $content = mb_substr(trim(preg_replace('/\s+/', ' ', (string)($row['content'] ?? ''))), 0, 50);
             echo '<li>' . $hide . 'ID:' . $rid . ' [' . $src . '] ' . $this->ToHtm($row['nickname'] ?? '游客')
-                . ': ' . $this->ToHtm($content) . ' <span class="time">' . $time . '</span><br/>';
+                . ': ' . $this->ToHtm($content) . ' <span class="time">' . $time . '</span> '
+                . '<a href="' . $back . '&edit=' . $rid . '">编辑</a><br/>';
             echo '<form method="post" action="' . $back . '" style="display:inline">'
                 . '<input type="hidden" name="action" value="toggle_show"/><input type="hidden" name="id" value="' . $rid . '"/>'
                 . '<input type="hidden" name="from" value="' . $tab . '"/>'

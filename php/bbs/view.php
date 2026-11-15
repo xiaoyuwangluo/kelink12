@@ -80,6 +80,9 @@ class BbsViewPage extends WapPage {
             echo '<a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">回复</a> ';
         }
         echo '<a href="fav.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a> ';
+        if ($this->userSession->isLogin()) {
+            echo '<a href="report.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">举报</a> ';
+        }
         // 作者或管理员显示管理入口
         $isOwner = $this->userSession->isLogin() && (int)$thread['userid'] === (int)$this->userSession->getUserId();
         $isAdmin = !empty($_SESSION['kl_adminid']);

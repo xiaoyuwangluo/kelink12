@@ -1,0 +1,57 @@
+# 小宇网络 WAP建站系统 PHP版 — Nginx 部署样例
+# 用法：将本段加入站点 server 块，root 指向 php 目录
+
+server {
+    listen 80;
+    server_name wap.example.com;
+    root /var/www/xiaoyu-wap;
+    index index.php wapindex.php default.php;
+
+    # 禁止访问敏感目录与文件
+    location ~ ^/(data|install|includes|cache|tests)/ {
+        deny all;
+    }
+    location ~ /\.(ht|git) {
+        deny all;
+    }
+    location ~ \.(db|sql|md)$ {
+        deny all;
+    }
+
+    # uploadfiles 静态直出（下载仍走 down.php 防盗链）
+    location /uploadfiles/ {
+        location ~ \.(php|sh|py)$ { deny all; }
+    }
+
+    # 伪静态（对应 .htaccess 规则，Apache 用户可忽略本段）
+    location ~ ^/([a-z]+)-([0-9]+)-([0-9]+)\.html$ {
+        try_files /$1/list.php?$args =404;
+        rewrite ^/([a-z]+)-([0-9]+)-([0-9]+)\.html$ /$1/list.php?siteid=$2&page=$3 last;
+    }
+    location ~ ^/([a-z]+)-view-([0-9]+)\.html$ {
+        rewrite ^/([a-z]+)-view-([0-9]+)\.html$ /$1/view.php?id=$2&siteid=1 last;
+    }
+    location ~ ^/page-([0-9]+)\.html$ {
+        rewrite ^/page-([0-9]+)\.html$ /page.php?id=$1 last;
+    }
+    location = /sitemap.xml {
+        rewrite ^/sitemap.xml$ /sitemap.php last;
+    }
+
+    # PHP 处理
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # WAP/WML 类型
+    types {
+        text/vnd.wap.wml wml;
+        application/vnd.wap.wmlc wmlc;
+    }
+
+    access_log /var/log/nginx/xiaoyu-wap.access.log;
+    error_log  /var/log/nginx/xiaoyu-wap.error.log;
+}

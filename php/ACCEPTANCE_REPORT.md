@@ -1,7 +1,17 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证
-验收结论：**通过（SQLite PASS 223/223，MySQL PASS 163/163）**
+验收结论：**通过（SQLite PASS 231/231，MySQL PASS 231/231）**
+交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`（313 文件 / 373KB，含部署配置样例）
+
+## 〇〇〇、v5 长尾终审与交付验证
+
+| 项 | 结果 |
+|---|---|
+| 长尾页面终审 | 对原版低频 unique aspx（≤9 次）逐类核查，发现并补齐 6 类缺口：系统设置页(admin/setting)、评论编辑(admin/reply)、会员CSV导出(admin/user)、GD验证码(Captcha.php+captcha_img.php+wapreg 接入)、小说章节增删改+TXT批量分章导入(novel/chapter_*/import)、帖子举报(bbs/report+admin/report+WapReport 表) |
+| MySQL 全量复跑 | 重建库执行更新后 schema.sql（68 表含 WapReport/orderindex），144 行迁移，专用账号 PDO 连接，**231/231 PASS** |
+| SQLite 复跑 | 回切开箱配置，**231/231 PASS**，250 个 PHP 文件 `php -l` 零错误 |
+| 生产交付 | deploy/nginx.conf.example（伪静态/敏感目录封禁/WML 类型）+ deploy/README.md（环境要求/双模式部署/安全建议）+ 整包 zip |
 
 ## 〇、v4 页面级终审与模块管理页
 

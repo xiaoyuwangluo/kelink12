@@ -4,6 +4,7 @@
  * WAP注册 (对应原 WapReg.aspx)
  */
 require_once __DIR__ . '/includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Captcha.php';
 
 class WapRegPage extends WapPage {
     public function run() {
@@ -25,9 +26,9 @@ class WapRegPage extends WapPage {
         echo '昵称:<input type="text" name="nickname"/><br/>';
         echo '邮箱:<input type="email" name="email"/><br/>';
         if (KL_RegUser_CheckCode == 1) {
-            $code = WapTool::makeCheckCode();
-            $_SESSION['kl_reg_code'] = $code;
-            echo '验证码:<input type="text" name="checkcode"/> <span>' . $code . '</span><br/>';
+            echo '验证码:<input type="text" name="checkcode" required/>'
+                . '<img src="captcha_img.php?siteid=' . $this->siteid . '&t=' . time() . '" alt="验证码" '
+                . 'onclick="this.src=\'captcha_img.php?siteid=' . $this->siteid . '&t=\'+Date.now()"/><br/>';
         }
         echo '<input type="submit" value="注册"/></form></div>';
     }
@@ -45,7 +46,7 @@ class WapRegPage extends WapPage {
             $this->showForm();
             return;
         }
-        if (KL_RegUser_CheckCode == 1 && $checkcode !== ($_SESSION['kl_reg_code'] ?? '')) {
+        if (KL_RegUser_CheckCode == 1 && !Captcha::verify($checkcode)) {
             echo '<div class="error">验证码错误</div>';
             $this->showForm();
             return;

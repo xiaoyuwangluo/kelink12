@@ -13,10 +13,38 @@ class AdminUserPage extends WapPage {
         return $map[(int)$ug] ?? ('分组' . (int)$ug);
     }
 
+    /** 导出全部会员 CSV (在任何 HTML 输出前调用) */
+    private function exportCsv($db) {
+        $rows = $db->getAll("SELECT id, username, email, money, point, usergroup, regtime AS addtime FROM WapUser ORDER BY id ASC");
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="users_' . date('Ymd') . '.csv"');
+        $out = fopen('php://output', 'w');
+        fwrite($out, "\xEF\xBB\xBF"); // BOM，兼容 Excel 中文
+        fputcsv($out, ['id', 'username', 'email', 'money', 'point', 'usergroup', 'addtime'], ',', '"', '');
+        foreach ($rows as $r) {
+            fputcsv($out, [
+                (int)$r['id'],
+                (string)($r['username'] ?? ''),
+                (string)($r['email'] ?? ''),
+                (int)($r['money'] ?? 0),
+                (int)($r['point'] ?? 0),
+                (int)($r['usergroup'] ?? 1),
+                (string)($r['addtime'] ?? ''),
+            ], ',', '"', '');
+        }
+        fclose($out);
+        exit;
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
         $back = 'user.php?siteid=' . $this->siteid;
+
+        // CSV 导出 (GET，需在输出前处理)
+        if (($_GET['action'] ?? '') === 'export') {
+            $this->exportCsv($db);
+        }
 
         // POST 操作（防重复提交）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -66,6 +94,10 @@ class AdminUserPage extends WapPage {
         $this->strTitle = '会员管理';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">会员管理</div><div><a href="index.php">返回后台首页</a></div>';
+        echo '<form method="get" action="user.php" style="display:inline">'
+            . '<input type="hidden" name="siteid" value="' . (int)$this->siteid . '"/>'
+            . '<input type="hidden" name="action" value="export"/>'
+            . '<input type="submit" value="导出CSV"/></form>';
 
         // 列表（分页）
         $page = max(1, (int)($_GET['page'] ?? 1));

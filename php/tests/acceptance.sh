@@ -81,6 +81,18 @@ for m in bbs shop novel video picture download ring link guessbook gongqiu paima
   done
 done
 
+# v5 长尾补齐页面
+check_admin "admin:setting" "$BASE/admin/setting.php"
+check_admin "admin:report" "$BASE/admin/report.php"
+check_admin "novel:chapter_add" "$BASE/novel/chapter_add.php?siteid=1&novelid=1"
+check_admin "novel:import" "$BASE/novel/import.php?siteid=1&novelid=1"
+check "novel:chapter_mod" "$BASE/novel/chapter_mod.php?siteid=1&id=1"
+check "novel:chapter_del" "$BASE/novel/chapter_del.php?siteid=1&id=1"
+check "bbs:report" "$BASE/bbs/report.php?siteid=1&id=1"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE/captcha_img.php?siteid=1")
+ctype=$(curl -s -I "$BASE/captcha_img.php?siteid=1" | grep -ci 'image/png')
+if [ "$code" = "200" ] && [ "$ctype" -ge 1 ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL captcha_img [$code]"; fi
+
 # v2 新增页面
 check_admin "admin:upload" "$BASE/admin/upload.php"
 check_admin "admin:caiji" "$BASE/admin/caiji.php"
