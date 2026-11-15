@@ -71,6 +71,21 @@ done
 check "oauth" "$BASE/oauth/index.php?siteid=1"
 check "templates" "$BASE/templates/list.php?siteid=1"
 
+# v2 新增页面
+check_admin "admin:upload" "$BASE/admin/upload.php"
+check_admin "admin:caiji" "$BASE/admin/caiji.php"
+check "utility" "$BASE/utility/index.php?siteid=1"
+for n in notify_ali notify_wx; do
+  b=$(curl -s "$BASE/shop/$n.php"); e=$(echo "$b" | grep -c 'Fatal error\|Warning:\|Notice:')
+  if [ "$e" = "0" ] && echo "$b" | grep -qi 'FAIL\|SUCCESS\|fail'; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL pay:$n body=$b"; fi
+done
+check "weixin:get" "$BASE/weixin.php?siteid=1&echostr=hello123&signature=x&timestamp=1&nonce=1"
+# WAP1.0 WML 校验
+wml=$(curl -s -A 'Mozilla/5.0 (SAMSUNG; series60)' "$BASE/wapindex.php?siteid=1")
+if echo "$wml" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL wml:wapindex"; fi
+wml2=$(curl -s "$BASE/article/list.php?siteid=1&classid=1&ver=1")
+if echo "$wml2" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL wml:article_list"; fi
+
 echo "=============================="
 echo "PASS=$PASS FAIL=$FAIL"
 [ -n "$FAILED_LIST" ] && echo -e "失败明细:$FAILED_LIST"

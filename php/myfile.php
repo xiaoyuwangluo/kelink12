@@ -36,6 +36,12 @@ class MyFilePage extends WapPage {
         echo '<a href="bbs/favlist.php?siteid=' . $this->siteid . '">我的收藏(' . $favNum . ')</a><br/>';
         echo '<a href="zone/index.php?siteid=' . $this->siteid . '&uid=' . $uid . '">我的空间</a><br/>';
 
+        // 第三方账号绑定状态 (微信 wx_openid / QQ qq_openid)
+        $wxBind = trim((string)($this->userVo['wx_openid'] ?? '')) !== '';
+        $qqBind = trim((string)($this->userVo['qq_openid'] ?? '')) !== '';
+        echo '微信:' . ($wxBind ? '已绑定' : '未绑定') . ' | QQ:' . ($qqBind ? '已绑定' : '未绑定') . '<br/>';
+        echo '<a href="oauth/index.php?siteid=' . $this->siteid . '&act=bind">绑定微信/绑定QQ</a><br/>';
+
         echo '<a href="waplogout.php?siteid=' . $this->siteid . '">退出登录</a>';
         echo '</div>';
         $this->showDown();

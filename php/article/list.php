@@ -37,7 +37,7 @@ class ArticleListPage extends WapPage {
 
         // 正常列表
         $where = "siteid=? AND classid=? AND istop=0 AND isshow=1";
-        $result = $db->getPage($table, 'id,title,addtime,hits', $where, 'id DESC', $page, $pageSize);
+        $result = $db->getPage($table, 'id,title,addtime,hits', $where, 'id DESC', $page, $pageSize, [$this->siteid, $classid]);
 
         echo '<ul class="list">';
         foreach ($result['list'] as $row) {

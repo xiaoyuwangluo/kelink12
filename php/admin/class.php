@@ -2,7 +2,7 @@
 /**
  * 小宇网络 WAP建站系统 PHP版
  * 管理后台 - 栏目管理 (对应原 admin/classlist.aspx)
- * 栏目增删改，module 下拉指定栏目对应模块
+ * 栏目增删改，module 下拉指定栏目对应模块；postgroup/managegroup 指定投稿/版主分组
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 
@@ -34,13 +34,16 @@ class AdminClassPage extends WapPage {
                 $orderid = (int)($_POST['orderid'] ?? 0);
                 $parentid = (int)($_POST['parentid'] ?? 0);
                 $isshow = isset($_POST['isshow']) ? 1 : 0;
+                // 栏目权限分组：postgroup=允许投稿的会员分组(逗号分隔，空=不限)；managegroup=版主分组(空=仅超管)
+                $postgroup = preg_replace('/[^0-9,]/', '', trim($_POST['postgroup'] ?? ''));
+                $managegroup = preg_replace('/[^0-9,]/', '', trim($_POST['managegroup'] ?? ''));
                 if ($action === 'save' && $id > 0) {
-                    $db->execute("UPDATE WapClass SET classname=?, module=?, orderid=?, parentid=?, isshow=? WHERE id=? AND siteid=?",
-                        [$classname, $module, $orderid, $parentid, $isshow, $id, $siteid]);
+                    $db->execute("UPDATE WapClass SET classname=?, module=?, orderid=?, parentid=?, isshow=?, postgroup=?, managegroup=? WHERE id=? AND siteid=?",
+                        [$classname, $module, $orderid, $parentid, $isshow, $postgroup, $managegroup, $id, $siteid]);
                     $this->showSuccess('栏目保存成功', $back);
                 } else {
-                    $newId = $db->insert("INSERT INTO WapClass (siteid,parentid,classname,module,orderid,isshow) VALUES (?,?,?,?,?,?)",
-                        [$siteid, $parentid, $classname, $module, $orderid, $isshow]);
+                    $newId = $db->insert("INSERT INTO WapClass (siteid,parentid,classname,module,orderid,isshow,postgroup,managegroup) VALUES (?,?,?,?,?,?,?,?)",
+                        [$siteid, $parentid, $classname, $module, $orderid, $isshow, $postgroup, $managegroup]);
                     $this->showSuccess('栏目添加成功，ID=' . $newId, $back);
                 }
             } elseif ($action === 'delete') {
@@ -64,7 +67,8 @@ class AdminClassPage extends WapPage {
             if (!$row) { echo '<div class="error">栏目不存在</div>'; $row = []; }
         } else {
             $isEdit = false;
-            $row = ['id' => 0, 'classname' => '', 'module' => 'article', 'orderid' => 0, 'parentid' => 0, 'isshow' => 1];
+            $row = ['id' => 0, 'classname' => '', 'module' => 'article', 'orderid' => 0, 'parentid' => 0, 'isshow' => 1,
+                'postgroup' => '', 'managegroup' => ''];
         }
         $act = $isEdit ? 'save' : 'add';
         echo '<div class="content"><form method="post" action="' . $back . '">'
@@ -79,6 +83,10 @@ class AdminClassPage extends WapPage {
         echo '</select></div>'
             . '<div>排序 <input type="text" name="orderid" value="' . (int)($row['orderid'] ?? 0) . '" size="5"/></div>'
             . '<div>父栏目 <input type="text" name="parentid" value="' . (int)($row['parentid'] ?? 0) . '" size="5"/></div>'
+            . '<div>投稿分组 <input type="text" name="postgroup" value="' . $this->ToHtm($row['postgroup'] ?? '') . '" size="10"/>'
+            . ' <span class="info">逗号分隔如 1,2,9 (1普通/2VIP/9超管)，空=不限</span></div>'
+            . '<div>版主分组 <input type="text" name="managegroup" value="' . $this->ToHtm($row['managegroup'] ?? '') . '" size="10"/>'
+            . ' <span class="info">逗号分隔分组ID，空=仅超管</span></div>'
             . '<div><label><input type="checkbox" name="isshow" value="1"' . (empty($row['isshow']) ? '' : ' checked="checked"') . '/>前台显示</label></div>'
             . '<div><input type="submit" value="' . ($isEdit ? '保存栏目' : '添加栏目') . '"/></div>'
             . '</form></div>';

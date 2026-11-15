@@ -96,6 +96,28 @@ define('KL_SMTP_EMAIL', '85403498@qq.com');
 // ============ 微信 ============
 define('KL_Weixin_Reg_Open', 0);
 
+// ============ 支付网关 (正式凭据填入后自动启用真实通道) ============
+define('KL_AliPay_Open', 0);               // 支付宝 0关1开
+define('KL_AliPay_Partner', '');           // 商户PID
+define('KL_AliPay_Seller', '');            // 收款账号
+define('KL_AliPay_Key', '');               // MD5密钥(旧版) 或 RSA2私钥路径
+define('KL_AliPay_PrivateKey', '');        // RSA2应用私钥
+define('KL_AliPay_PublicKey', '');         // 支付宝公钥
+define('KL_WxPay_Open', 0);                // 微信支付 0关1开
+define('KL_WxPay_Appid', '');
+define('KL_WxPay_Mchid', '');
+define('KL_WxPay_Key', '');                // APIv3密钥
+define('KL_WxPay_CertPath', '');           // 商户证书目录
+
+// ============ QQ 登录 (对应原 OAuth) ============
+define('KL_QQ_Login_Open', 0);
+define('KL_QQ_AppID', '');
+define('KL_QQ_AppKey', '');
+
+// ============ 上传限制 ============
+define('KL_UpMaxSize', 2048);              // 上传大小限制(KB)
+define('KL_UpAllowExt', 'jpg|jpeg|png|gif|bmp|mp3|mp4|txt|zip|rar');
+
 // ============ 版本 ============
 define('KL_Version', '12.2018.05.18');
 

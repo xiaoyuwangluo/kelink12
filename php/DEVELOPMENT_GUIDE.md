@@ -249,13 +249,17 @@ $page->run();
 - [x] SEO：sitemap.php、robots.txt、全模块伪静态
 - [x] 顶层页面：建站注册/找回密码/帮助/动态/排行/ajax_ubb/清缓存/微信/短信/QQ登录/短链/自定义页
 
-### 待完善（按优先级）
-1. **真实支付网关**：支付宝/微信正式对接（当前为余额+点卡+模拟网关）
-2. **微信公众平台正式对接**（当前 weixin.php 为回调框架+本地应答）
-3. **文件上传管理**（uploadfiles 目录可视化上传管理页）
-4. **WAP1.0 WML 渲染完善**（复杂页面的 WML 适配）
-5. **栏目级权限系统**（版主/分组投稿权限细化）
-6. **QQ 登录正式对接**（当前 oauth/ 为模拟回调流程）
+### v2 已完成
+- [x] 文件上传管理（includes/Upload.php、admin/upload.php 文件管理器、文章附件/论坛图帖）
+- [x] 栏目级权限（WapUser.usergroup + WapClass.postgroup/managegroup，基类自动守卫投稿/评论页）
+- [x] 支付宝(RSA2)/微信(APIv3) 支付正式接口（includes/PayGateway.php + notify 幂等回调，凭据填入 config.php 即启用）
+- [x] 微信公众平台对接（access_token 缓存/菜单/关注自动注册会员，WapWeixin 填凭据即启用）
+- [x] QQ 登录正式流程（oauth/，KL_QQ_Login_Open=1 即走真实互联，支持账号绑定）
+- [x] WAP1.0 WML 完整渲染（合法 XML/DOCTYPE/实体转义/标签降级，UA 自动识别）
+
+### 待完善
+1. 正式商户/开放平台凭据申请与线上联调（代码已就绪）
+2. 高并发场景下 SQLite 建议切换 MySQL
 
 ### 新增模块方法
 参考第四章"模块开发规范"，每个模块只需 4 个标准页面 + 1 张数据表，框架已提供所有基础设施。

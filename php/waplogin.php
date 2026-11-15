@@ -32,6 +32,10 @@ class WapLoginPage extends WapPage {
         echo '<input type="submit" value="' . $this->GetLang('登录|登录|Login') . '"/>';
         echo ' <a href="wapreg.php?siteid=' . $this->siteid . '">' . $this->GetLang('注册|注册|Register') . '</a>';
         echo '</form></div>';
+        // QQ登录入口 (仅 KL_QQ_Login_Open=1 时显示)
+        if (KL_QQ_Login_Open == 1) {
+            echo '<div class="content"><a href="oauth/index.php?siteid=' . $this->siteid . '">QQ登录</a></div>';
+        }
     }
 
     private function doLogin() {

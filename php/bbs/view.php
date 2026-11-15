@@ -30,6 +30,22 @@ class BbsViewPage extends WapPage {
         echo '<div class="content">' . $this->wapTool->ToWML($thread['content'], $this->wmlVo) . '</div>';
         echo '</div>';
 
+        // 帖子图片附件 (WapBbsFile)
+        $bbsFiles = $db->getAll("SELECT * FROM WapBbsFile WHERE bbsid=? AND siteid=? ORDER BY id", [$id, $this->siteid]);
+        if ($bbsFiles) {
+            echo '<div class="content"><div class="time">图片附件:</div>';
+            foreach ($bbsFiles as $bf) {
+                $url = '../uploadfiles/' . implode('/', array_map('rawurlencode', explode('/', $bf['filepath'])));
+                $ext = strtolower(pathinfo($bf['filepath'], PATHINFO_EXTENSION));
+                if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'bmp'], true)) {
+                    echo '<a href="' . $url . '" target="_blank"><img src="' . $url . '" alt="' . $this->ToHtm($bf['filename']) . '" style="max-width:100%"/></a> ';
+                } else {
+                    echo '<a href="' . $url . '" target="_blank">' . $this->ToHtm($bf['filename']) . '</a> ';
+                }
+            }
+            echo '</div>';
+        }
+
         // 回复列表
         $replys = $db->getAll(
             "SELECT * FROM WapBbsReply WHERE bbsid=? AND isshow=1 ORDER BY id ASC LIMIT " . (($page-1)*$pageSize) . ",$pageSize",

@@ -4,9 +4,12 @@
  * 商城模块 - 订单支付 (对应原版 chinabank 支付网关页)
  * 途径a: 余额支付 —— 校验 WapUser.money >= 订单额，扣款+写AccountLog(out)+订单置1+扣库存
  * 途径b: 充值卡支付 —— 校验 WapCard(cardno+md5(cardpwd),isused=0)，卡置已用、加余额、写AccountLog(in)，再以余额完成支付
+ * 途径c/d: 支付宝/微信第三方网关 —— 仅当 KL_AliPay_Open/KL_WxPay_Open=1 且凭据齐全时显示并跳转网关，
+ *          否则显示"通道未启用"说明；实际结算由 shop/notify_ali.php、notify_wx.php 回调完成
  * 全程参数化SQL + 事务
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/PayGateway.php';
 
 class ShopPayPage extends WapPage {
     public function run() {
@@ -28,6 +31,10 @@ class ShopPayPage extends WapPage {
                 $this->payByBalance($uid, $order, $total);
             } elseif ($act === 'card') {
                 $this->payByCard($uid, $order, $total);
+            } elseif ($act === 'alipay') {
+                $this->payByGateway('ali', $order, $total, $orderid);
+            } elseif ($act === 'wxpay') {
+                $this->payByGateway('wx', $order, $total, $orderid);
             }
             return;
         }
@@ -49,6 +56,25 @@ class ShopPayPage extends WapPage {
         echo '充值卡卡号:<input type="text" name="cardno" maxlength="32"/><br/>';
         echo '充值卡密码:<input type="password" name="cardpwd" maxlength="32"/><br/>';
         echo '<input type="submit" value="充值卡支付(先充值后扣款)"/></form>';
+        echo '<hr/>';
+        // 第三方网关选项卡: 仅当开关开启且凭据齐全时显示支付按钮，否则显示"通道未启用"说明
+        echo '<div class="subtitle">第三方网关支付</div>';
+        $aliReady = (new AliPay())->ready();
+        $wxReady = (new WxPay())->ready();
+        if ($aliReady) {
+            echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+            echo '<input type="hidden" name="act" value="alipay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
+            echo '<input type="submit" value="支付宝支付"/></form>';
+        } else {
+            echo '支付宝: 通道未启用 (需 KL_AliPay_Open=1 且凭据齐全)<br/>';
+        }
+        if ($wxReady) {
+            echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+            echo '<input type="hidden" name="act" value="wxpay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
+            echo '<input type="submit" value="微信支付(扫码)"/></form>';
+        } else {
+            echo '微信支付: 通道未启用 (需 KL_WxPay_Open=1 且凭据齐全)';
+        }
         echo '</div>';
         echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a></div>';
         $this->showDown();
@@ -137,6 +163,36 @@ class ShopPayPage extends WapPage {
         $n = $db->execute("UPDATE WapShop SET stock=stock-? WHERE id=? AND stock>=?", [$order['num'], $order['shopid'], $order['num']]);
         if ($n != 1) { $db->rollBack(); $this->showError('商品库存不足，支付失败'); return false; }
         return true;
+    }
+
+    /**
+     * 途径c/d：第三方网关支付（支付宝页面跳转 / 微信 Native 下单）
+     * 本方法只发起网关请求，订单状态变更由异步回调 notify_ali.php / notify_wx.php 完成
+     */
+    private function payByGateway($channel, $order, $total, $orderid) {
+        $db = $this->db;
+        $shop = $db->getOne("SELECT title FROM WapShop WHERE id=?", [$order['shopid']]);
+        $subject = mb_substr($shop['title'] ?? '商城订单', 0, 60);
+        $notifyUrl = $this->http_start . 'shop/notify_' . $channel . '.php';
+        if ($channel === 'ali') {
+            $pay = new AliPay();
+            $returnUrl = $this->http_start . 'shop/myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid;
+            $url = $pay->pagePay($orderid, $total, $subject, $notifyUrl, $returnUrl);
+            if ($url === false) $this->showError($pay->getLastError() ?: '支付宝发起支付失败');
+            header('Location: ' . $url);
+            exit;
+        }
+        $pay = new WxPay();
+        $totalFen = (int)round((float)$order['totalprice'] * 100); // 微信按分计价
+        $codeUrl = $pay->nativePay($orderid, $totalFen, $subject, $notifyUrl);
+        if ($codeUrl === false) $this->showError($pay->getLastError() ?: '微信发起支付失败');
+        $this->strTitle = '微信扫码支付';
+        $this->showTop($this->strTitle);
+        echo '<div class="success">下单成功，请使用微信扫描二维码支付</div>';
+        echo '<div class="content">订单 #' . $orderid . ' 金额￥' . $total . '<br/>';
+        echo '支付链接: <a href="' . $this->ToHtm($codeUrl) . '">' . $this->ToHtm($codeUrl) . '</a></div>';
+        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">支付完成后查看订单</a></div>';
+        $this->showDown();
     }
 
     /** 支付成功提示页 */

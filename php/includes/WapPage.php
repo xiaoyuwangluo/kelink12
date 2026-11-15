@@ -10,10 +10,17 @@ require_once KL_ROOT . '/includes/WapTool.php';
 require_once KL_ROOT . '/includes/UserSession.php';
 
 class WapPage {
+    /** 栏目级权限守卫生效的模块目录 (21 个内容模块，含 admin_WAPadd.php / book_re.php) */
+    const POST_GUARD_MODULES = [
+        'article', 'bbs', 'shop', 'novel', 'video', 'picture', 'download', 'ring', 'link',
+        'guessbook', 'gongqiu', 'paimai', 'yuehui', 'wabao', 'guangbo', 'adlink', 'airplane',
+        'album', 'hotel', 'rizhi', 'xinzhang',
+    ];
+
     // 公共属性 (对应原 base.* 属性)
     public $siteid = 0;
     public $classid = 0;
-    public $ver = '2';              // 1=WAP1.0 2=WAP2.0 3=电脑版 4=触屏版
+    public $ver = '';               // 1=WAP1.0 2=WAP2.0 3=电脑版 4=触屏版 (空=待UA识别)
     public $siteVo = null;          // 站点信息
     public $classVo = null;         // 栏目信息
     public $wmlVo = null;           // 版本信息
@@ -53,6 +60,86 @@ class WapPage {
 
         // 在线人数与流量统计
         $this->trackOnline();
+
+        // 栏目级投稿/评论权限自动守卫 (仅对模块目录下 admin_WAPadd.php / book_re.php 生效)
+        $this->guardPost();
+    }
+
+    /**
+     * 读取权限字段 (兼容 classVo/userVo 为数组或对象两种形态)
+     */
+    protected function getPermField($vo, $field) {
+        if (is_array($vo)) return trim((string)($vo[$field] ?? ''));
+        if (is_object($vo)) return trim((string)($vo->$field ?? ''));
+        return '';
+    }
+
+    /**
+     * 解析逗号分隔的分组串 (如 "1,2,9") 为整型数组
+     */
+    protected function parseGroups($str) {
+        $out = [];
+        foreach (explode(',', $str) as $g) {
+            $g = trim($g);
+            if ($g !== '' && ctype_digit($g)) $out[] = (int)$g;
+        }
+        return $out;
+    }
+
+    /**
+     * 当前登录用户的会员分组 (WapUser.usergroup，默认 1=普通会员)
+     */
+    protected function getUserGroup() {
+        if (!$this->userVo) $this->userVo = $this->userSession->getUserVo();
+        return (int)($this->getPermField($this->userVo, 'usergroup') ?: 1);
+    }
+
+    /**
+     * 栏目投稿权限校验：当前用户 usergroup 是否在栏目 postgroup 允许列表内
+     * - postgroup 为空 = 不限分组，放行
+     * - 未登录会员 = 不拦截，维持各模块 KL_*_Anonymous_Open 游客开关现状
+     * - 后台管理员 (kl_adminid) = 放行
+     * @return bool true=有权限
+     */
+    public function checkPostPerm() {
+        if (!$this->userSession->isLogin()) return true;
+        if ($this->userSession->isAdminLogin()) return true;
+        $postgroup = $this->getPermField($this->classVo, 'postgroup');
+        if ($postgroup === '') return true; // 空=不限
+        return in_array($this->getUserGroup(), $this->parseGroups($postgroup), true);
+    }
+
+    /**
+     * 栏目版主(管理)权限校验：managegroup 或后台超管 kl_adminid
+     * - managegroup 为空 = 仅超级管理员可管理
+     * @return bool true=有权限
+     */
+    public function checkManagePerm() {
+        if ($this->userSession->isAdminLogin()) return true; // kl_adminid 超管放行
+        $managegroup = $this->getPermField($this->classVo, 'managegroup');
+        if ($managegroup === '') return false; // 空=仅超管
+        if (!$this->userSession->isLogin()) return false;
+        return in_array($this->getUserGroup(), $this->parseGroups($managegroup), true);
+    }
+
+    /**
+     * 投稿/评论页统一前置守卫：由基类构造末尾自动调用，21 个模块页面无需任何修改。
+     * 通过 SCRIPT_NAME 自动识别：仅当脚本位于模块目录且文件名为
+     * admin_WAPadd.php / book_re.php 时执行 checkPostPerm，失败输出"无权限"页并终止；
+     * wapindex / list / view 等浏览页文件名不匹配，完全不受影响。
+     */
+    protected function guardPost() {
+        $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+        if ($script === '') return;
+        $file = basename($script);
+        if ($file !== 'admin_WAPadd.php' && $file !== 'book_re.php') return;
+        $dir = basename(dirname($script));
+        if (!in_array($dir, self::POST_GUARD_MODULES, true)) return;
+        if (!$this->checkPostPerm()) {
+            $act = ($file === 'book_re.php') ? '发表评论' : '投稿';
+            $this->showError('无权限：您的会员分组不允许在该栏目' . $act . '，请联系管理员调整分组',
+                '../wapindex.php?siteid=' . $this->siteid);
+        }
     }
 
     /**

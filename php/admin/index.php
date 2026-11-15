@@ -56,6 +56,7 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <a href="online.php?siteid=1">在线用户</a>
 <a href="sysmsg.php?siteid=1">系统公告</a>
 <a href="card.php?siteid=1">充值卡</a>
+<a href="upload.php?siteid=1">文件管理</a>
 </div>
 </div>
 </body>

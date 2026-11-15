@@ -5,6 +5,7 @@
  * ?module=xxx 分页列出该模块表内容，操作：显示/隐藏(isshow)、删除、置顶(有istop列的表)
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Upload.php';
 
 class AdminContentPage extends WapPage {
     /** 模块 => 数据表 白名单（内容型模块 + 扩展模块） */
@@ -16,6 +17,12 @@ class AdminContentPage extends WapPage {
         'airplane' => 'WapAirplane', 'album' => 'WapAlbum', 'hotel' => 'WapHotel', 'rizhi' => 'WapRizhi',
         'xinzhang' => 'WapXinzhang', 'chat' => 'WapChatSpeak', 'clan' => 'WapClan', 'games' => 'WapGames',
         'zhdao' => 'WapZhiDao', 'nongchang' => 'WapNongChang', 'signin' => 'WapSignin', 'form' => 'WapFormData',
+    ];
+
+    /** 模块 => 附件表配置（article 附件存 WapArticleFile，bbs 图片存 WapBbsFile） */
+    private $attachTable = [
+        'article' => ['table' => 'WapArticleFile', 'fk' => 'articleid'],
+        'bbs'     => ['table' => 'WapBbsFile', 'fk' => 'bbsid'],
     ];
 
     /** 获取表实际列名（表名来自白名单，无注入风险） */
@@ -45,6 +52,56 @@ class AdminContentPage extends WapPage {
         return '(无标题)';
     }
 
+    /** 处理附件上传并写入对应附件表 */
+    private function doUploadFile($module, $table, $id) {
+        $conf = $this->attachTable[$module];
+        $back = 'content.php?siteid=' . $this->siteid . '&module=' . $module . '&act=files&id=' . $id;
+        $row = $this->db->getOne("SELECT id,classid FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        if (!$row) $this->showError('内容不存在', 'content.php?siteid=' . $this->siteid . '&module=' . $module);
+        if (!isset($_FILES['userfile'])) $this->showError('未选择文件', $back);
+        list($ok, $msg, $info) = Upload::save($_FILES['userfile']);
+        if (!$ok) $this->showError($msg, $back);
+        if ($conf['fk'] === 'articleid') {
+            $this->db->insert("INSERT INTO WapArticleFile (siteid,classid,articleid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,?,NOW())",
+                [$this->siteid, (int)($row['classid'] ?? 0), $id, $info['filename'], $info['relpath'], $info['size']]);
+        } else {
+            $this->db->insert("INSERT INTO WapBbsFile (siteid,bbsid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,NOW())",
+                [$this->siteid, $id, $info['filename'], $info['relpath'], $info['size']]);
+        }
+        $this->showSuccess('附件上传成功', $back);
+    }
+
+    /** 附件查看/上传页 */
+    private function showAttachPage($module, $back) {
+        $conf = $this->attachTable[$module];
+        $fk = $conf['fk'];
+        $id = (int)($_GET['id'] ?? 0);
+        $rows = $this->db->getAll("SELECT * FROM " . $conf['table'] . " WHERE $fk=? AND siteid=? ORDER BY id DESC", [$id, $this->siteid]);
+
+        $this->strTitle = '附件管理';
+        $this->showTop($this->strTitle);
+        echo '<div class="subtitle">' . $this->ToHtm($module) . ' ID:' . $id . ' 附件</div>';
+        echo '<div><a href="' . $back . '">返回内容列表</a></div>';
+
+        echo '<div class="content"><form method="post" action="' . $back . '&act=files&id=' . $id . '" enctype="multipart/form-data">'
+            . '<input type="hidden" name="action" value="upload_file"/>'
+            . '<input type="hidden" name="id" value="' . $id . '"/>'
+            . '选择附件: <input type="file" name="userfile"/><input type="submit" value="上传附件"/>'
+            . '<div class="time">限制: 单文件最大 ' . Upload::formatSize(KL_UpMaxSize * 1024) . '，允许扩展: ' . $this->ToHtm(KL_UpAllowExt) . '</div>'
+            . '</form></div>';
+
+        echo '<div class="content"><ul class="list">';
+        foreach ($rows as $f) {
+            $url = '../' . Upload::url($f['filepath']);
+            echo '<li><a href="' . $url . '" target="_blank">' . $this->ToHtm($f['filename'] ? $f['filename'] : $f['filepath']) . '</a>'
+                . ' [' . Upload::formatSize($f['filesize']) . '] '
+                . '<span class="time">' . ($f['addtime'] ? date('m-d H:i', strtotime($f['addtime'])) : '') . '</span></li>';
+        }
+        if (empty($rows)) echo '<li>暂无附件</li>';
+        echo '</ul></div>';
+        $this->showDown();
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
@@ -72,9 +129,17 @@ class AdminContentPage extends WapPage {
             } elseif ($action === 'delete') {
                 $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
                 $this->showSuccess('内容已删除', $back);
+            } elseif ($action === 'upload_file' && isset($this->attachTable[$module])) {
+                $this->doUploadFile($module, $table, $id);
             } else {
                 $this->showError('非法操作', $back);
             }
+        }
+
+        // 附件管理页 (仅 article/bbs)
+        if (($_GET['act'] ?? '') === 'files' && isset($this->attachTable[$module])) {
+            $this->showAttachPage($module, $back);
+            exit;
         }
 
         $this->strTitle = '内容管理 - ' . $module;
@@ -114,7 +179,11 @@ class AdminContentPage extends WapPage {
             }
             echo '<form method="post" action="' . $back . '" style="display:inline">'
                 . '<input type="hidden" name="action" value="delete"/><input type="hidden" name="id" value="' . $rid . '"/>'
-                . '<input type="submit" value="删除"/></form></li>';
+                . '<input type="submit" value="删除"/></form>';
+            if (isset($this->attachTable[$module])) {
+                echo ' <a href="' . $back . '&act=files&id=' . $rid . '">附件</a>';
+            }
+            echo '</li>';
         }
         if (empty($result['list'])) echo '<li>暂无内容</li>';
         echo '</ul></div>';

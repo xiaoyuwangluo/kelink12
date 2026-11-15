@@ -2,11 +2,17 @@
 /**
  * 小宇网络 WAP建站系统 PHP版
  * 管理后台 - 会员管理 (对应原 admin/userlist.aspx)
- * 会员列表 / 锁定解锁 / 重置密码(md5) / 删除 / 积分余额调整
+ * 会员列表 / 锁定解锁 / 重置密码(md5) / 删除 / 积分余额调整 / 会员分组(usergroup)
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 
 class AdminUserPage extends WapPage {
+    /** 会员分组名称映射 (1=普通会员 2=VIP 9=超级管理员) */
+    private function groupName($ug) {
+        $map = [1 => '普通会员', 2 => 'VIP会员', 9 => '超级管理员'];
+        return $map[(int)$ug] ?? ('分组' . (int)$ug);
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
@@ -41,6 +47,14 @@ class AdminUserPage extends WapPage {
                 $point = (int)($_POST['point'] ?? 0);
                 $db->execute("UPDATE WapUser SET money=?, point=? WHERE id=?", [$money, $point, $id]);
                 $this->showSuccess('积分余额已调整', $back);
+            } elseif ($action === 'setgroup') {
+                // 设置会员分组 (1=普通会员 2=VIP 9=超级管理员)，用于栏目投稿/版主权限
+                $ug = (int)($_POST['usergroup'] ?? 0);
+                if (!in_array($ug, [1, 2, 9], true)) {
+                    $this->showError('非法会员分组', $back);
+                }
+                $db->execute("UPDATE WapUser SET usergroup=? WHERE id=?", [$ug, $id]);
+                $this->showSuccess('会员分组已更新为' . $this->groupName($ug), $back);
             } elseif ($action === 'delete') {
                 $db->execute("DELETE FROM WapUser WHERE id=?", [$id]);
                 $this->showSuccess('会员已删除', $back);
@@ -55,14 +69,15 @@ class AdminUserPage extends WapPage {
 
         // 列表（分页）
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapUser', 'id,username,nickname,money,point,islock,regtime,lastlogintime',
+        $result = $db->getPage('WapUser', 'id,username,nickname,money,point,islock,regtime,lastlogintime,usergroup',
             '', 'id DESC', $page, 20);
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $u) {
             $uid = (int)$u['id'];
             $lockFlag = empty($u['islock']) ? '' : '<span style="color:red">[已锁定]</span>';
             echo '<li>ID:' . $uid . ' ' . $this->ToHtm($u['username']) . $lockFlag
-                . ' 余额:' . (int)$u['money'] . ' 积分:' . (int)$u['point'] . '<br/>';
+                . ' 余额:' . (int)$u['money'] . ' 积分:' . (int)$u['point']
+                . ' 分组:' . $this->groupName((int)($u['usergroup'] ?? 1)) . '<br/>';
             // 锁定/解锁
             if (empty($u['islock'])) {
                 echo '<form method="post" action="' . $back . '" style="display:inline">'
@@ -83,6 +98,16 @@ class AdminUserPage extends WapPage {
                 . '余额<input type="text" name="money" size="5" value="' . (int)$u['money'] . '"/>'
                 . '积分<input type="text" name="point" size="5" value="' . (int)$u['point'] . '"/>'
                 . '<input type="submit" value="调整"/></form>';
+            // 会员分组 (usergroup: 1=普通会员 2=VIP 9=超级管理员)
+            $curGroup = (int)($u['usergroup'] ?? 1);
+            echo '<form method="post" action="' . $back . '" style="display:inline">'
+                . '<input type="hidden" name="action" value="setgroup"/><input type="hidden" name="id" value="' . $uid . '"/>'
+                . '<select name="usergroup">';
+            foreach ([1 => '普通会员', 2 => 'VIP会员', 9 => '超级管理员'] as $gid => $gname) {
+                $sel = ($curGroup === $gid) ? ' selected="selected"' : '';
+                echo '<option value="' . $gid . '"' . $sel . '>' . $gname . '</option>';
+            }
+            echo '</select><input type="submit" value="设置分组"/></form>';
             // 删除
             echo '<form method="post" action="' . $back . '" style="display:inline">'
                 . '<input type="hidden" name="action" value="delete"/><input type="hidden" name="id" value="' . $uid . '"/>'
