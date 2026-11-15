@@ -70,6 +70,19 @@ CREATE TABLE IF NOT EXISTS `WapAudit` (
   KEY `idx_audit_site` (`siteid`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='敏感词审核记录表';
 
+-- v16 审核操作日志
+CREATE TABLE IF NOT EXISTS `WapAuditLog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `siteid` int(11) NOT NULL DEFAULT 0,
+  `auditid` int(11) NOT NULL DEFAULT 0,
+  `adminid` int(11) NOT NULL DEFAULT 0,
+  `act` varchar(10) NOT NULL DEFAULT '',
+  `reason` varchar(255) DEFAULT '',
+  `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_auditlog` (`siteid`,`auditid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审核操作日志表';
+
 -- v7 社区基础能力: 关注 / 点赞 / 通知
 CREATE TABLE IF NOT EXISTS `WapFollow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -108,3 +121,25 @@ CREATE TABLE IF NOT EXISTS `WapNotice` (
   PRIMARY KEY (`id`),
   KEY `idx_uid` (`uid`,`isread`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知表';
+
+CREATE TABLE IF NOT EXISTS `WapBbsTag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `siteid` int(11) NOT NULL DEFAULT 0,
+  `bbsid` int(11) NOT NULL DEFAULT 0,
+  `tagname` varchar(30) NOT NULL DEFAULT '',
+  `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_bbstag` (`siteid`,`bbsid`,`tagname`),
+  KEY `idx_tag` (`siteid`,`tagname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='帖子标签表';
+
+CREATE TABLE IF NOT EXISTS `WapBlock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `siteid` int(11) NOT NULL DEFAULT 0,
+  `userid` int(11) NOT NULL DEFAULT 0 COMMENT '拉黑发起者',
+  `blockuid` int(11) NOT NULL DEFAULT 0 COMMENT '被拉黑者',
+  `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_block` (`siteid`,`userid`,`blockuid`),
+  KEY `idx_blockuid` (`blockuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户拉黑表';

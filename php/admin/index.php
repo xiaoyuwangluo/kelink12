@@ -19,6 +19,12 @@ try {
 } catch (Exception $e) {
     $pointPending = 0;
 }
+$auditPending = 0;
+try {
+    $auditPending = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE status=0");
+} catch (Exception $e) {
+    $auditPending = 0;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,7 +65,9 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <a href="user.php?siteid=1">会员管理</a>
 <a href="content.php?siteid=1&module=article">内容管理</a>
 <a href="reply.php?siteid=1">评论审核</a>
+<a href="audit.php?siteid=1">内容审核（待审 <?php echo $auditPending; ?>）</a>
 <a href="report.php?siteid=1">举报管理</a>
+<a href="community.php?siteid=1">社区报表</a>
 <a href="online.php?siteid=1">在线用户</a>
 <a href="sysmsg.php?siteid=1">系统公告</a>
 <a href="card.php?siteid=1">充值卡</a>

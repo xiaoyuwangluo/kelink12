@@ -152,3 +152,29 @@ if (!function_exists('kl_like_exists')) {
         }
     }
 }
+
+/**
+ * 单向拉黑判断：$userid 是否拉黑了 $blockuid
+ */
+if (!function_exists('kl_block_exists')) {
+    function kl_block_exists($db, $siteid, $userid, $blockuid) {
+        try {
+            $row = $db->getOne("SELECT id FROM WapBlock WHERE siteid=? AND userid=? AND blockuid=?",
+                [(int)$siteid, (int)$userid, (int)$blockuid]);
+            return (bool)$row;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}
+
+/**
+ * 双向拉黑判断：任一方拉黑另一方即视为不可互动
+ */
+if (!function_exists('kl_is_blocked')) {
+    function kl_is_blocked($db, $siteid, $userid, $otheruid) {
+        if ((int)$userid <= 0 || (int)$otheruid <= 0) return false;
+        return kl_block_exists($db, $siteid, $userid, $otheruid)
+            || kl_block_exists($db, $siteid, $otheruid, $userid);
+    }
+}

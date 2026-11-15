@@ -1,10 +1,10 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
-验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（SQLite 241/241；交付包独立环境 241/241；首次安装全流程通过）**
+验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
+验收结论：**通过（SQLite 254/254；交付包独立环境 254/254；首次安装全流程通过）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
-## 〇〇〇〇〇〇〇、v16 二次开发增量（积分商城 / 敏感词库 / 社区基础能力）
+## 〇〇〇〇〇〇〇、v16 二次开发增量（积分商城 / 敏感词库 / 社区运营）
 
 | 能力 | 实现 | 实测 |
 |---|---|---|
@@ -12,7 +12,12 @@
 | 自定义敏感词库 | `WapFilter` 表 + [filter.php](file:///workspace/php/admin/filter.php) 批量新增/删除；`kl_has_sensitive` 扩展为内置词 + 站点自定义词双来源，发帖/回复命中即进审核队列 | 新增词"违禁测试"后发帖被隐藏并生成审核记录；删除词后恢复正常；内置词仍生效 |
 | 社区基础能力 | `WapFollow`/`WapLike`/`WapNotice` 三表；[follow.php](file:///workspace/php/zone/follow.php)/[following.php](file:///workspace/php/zone/following.php)/[fans.php](file:///workspace/php/zone/fans.php) 关注体系、[like.php](file:///workspace/php/bbs/like.php) 主帖与回复点赞、[notice.php](file:///workspace/php/message/notice.php) 通知中心（回复/@提及/点赞/关注/好友）、[active.php](file:///workspace/php/bbs/active.php) 活跃榜 | 关注/取关与计数联动并产生通知；重复点赞不叠加、取消归零；未读/单条已读/全部已读正确；@提及与回复通知双触发；活跃分=发帖×5+回复×2+获赞×1 |
 | 用户等级 | [Level.php](file:///workspace/php/includes/Level.php) 六档积分等级（0/100/300/800/2000/5000） | 11 个边界值断言全对，负分按 Lv1，满级 need=0；空间页/帖子/活跃榜/我的账户展示 |
-| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **241 项** | **241/241 PASS**，跑批后 WapFollow/WapLike/WapNotice 均为 0（零副作用）；14 个改动文件 `php -l` 零错误 |
+| 内容审核队列 | [audit.php](file:///workspace/php/admin/audit.php) 待审/已通过/已拒绝/全部四视图 + 分页；单条与批量通过、驳回理由（写 `WapAuditLog`）并通知作者；`WapAudit` 无后台入口的缺口已补齐 | 敏感词发帖后帖子 `isshow=0` 且进入待审；通过后 `status=1` 且 `WapBbs.isshow=1`；拒绝后 `status=2`、内容保持隐藏、理由落日志并产生审核通知；后台首页显示待审角标 |
+| 帖子标签话题 | `WapBbsTag` 表；发帖标签输入（逗号/空格/顿号分隔、去 `#`、字符白名单、去重、最多 3 个）；[tag.php](file:///workspace/php/bbs/tag.php) 话题聚合、[tags.php](file:///workspace/php/bbs/tags.php) 热门话题、[view.php](file:///workspace/php/bbs/view.php) 标签展示 | 发帖写入 3 个标签且自动去重；话题页按标签聚合、分页正常；待审（`isshow=0`）帖子不出现在话题与热门列表，无标签泄露 |
+| 私信会话 | [sessions.php](file:///workspace/php/message/sessions.php) 按往来用户聚合会话（未读数、最后一条预览）；[chat.php](file:///workspace/php/message/chat.php) 一对一聊天（发送、进入即已读、最近 50 条）；[send.php](file:///workspace/php/message/send.php) 支持 `back=chat` 回跳 | 发送后消息入库并回跳会话；对方来信显示未读，打开会话后 `isread=1`；短信发送成功页正确回跳聊天页 |
+| 用户拉黑 | `WapBlock` 表 + [block.php](file:///workspace/php/zone/block.php) 切换拉黑/取消与黑名单列表；[chat.php](file:///workspace/php/message/chat.php)、[send.php](file:///workspace/php/message/send.php)、[follow.php](file:///workspace/php/zone/follow.php) 双向拦截私信与关注，[book_re.php](file:///workspace/php/bbs/book_re.php) 拦截被拉黑者的 `@` 通知 | 拉黑后双方会话/私信/关注均被拦截；黑名单列表可取消拉黑，取消后会话恢复；被拉黑者 `@` 不产生通知 |
+| 社区报表 | [community.php](file:///workspace/php/admin/community.php) 近 7 天/近 30 天/全部三档；新增会员、帖子、回复、文章、关注、点赞、私信、待审核、拉黑关系；每日趋势与发帖 Top10、热门标签 Top10 | 三种周期均 200 且数值与库内一致；趋势 7/30 天逐日列出；Top10 用户名与标签正确关联 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **254 项** | **254/254 PASS**，跑批后 WapAudit/WapAuditLog/WapBbsTag/WapBlock/WapMessage/WapFollow/WapLike/WapNotice 均为 0（零副作用）；改动文件 `php -l` 零错误；MariaDB 双脚本重建 **79 表零错误** |
 
 ## 〇〇〇〇〇〇、v8 交付包完整性与首次安装验收
 

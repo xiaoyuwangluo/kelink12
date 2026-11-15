@@ -25,6 +25,8 @@ class BbsAddPage extends WapPage {
         echo '<div class="content"><form method="post" enctype="multipart/form-data" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
         echo '标题:<input type="text" name="title" required/><br/>';
         echo '内容:<textarea name="content" rows="8" required></textarea><br/>';
+        echo '标签:<input type="text" name="tags" size="30" maxlength="60"/>';
+        echo '<div class="time">最多 3 个，用逗号/空格分隔，仅支持中英文、数字、下划线 (每个 1-12 字)</div>';
         echo '图片附件:<input type="file" name="attachfile"/><br/>';
         echo '<div class="time">单张最大 ' . Upload::formatSize(KL_UpMaxSize * 1024) . '，允许: ' . $this->ToHtm(KL_UpAllowExt) . '</div>';
         echo '<input type="submit" value="发表"/></form></div>';
@@ -60,6 +62,17 @@ class BbsAddPage extends WapPage {
             kl_audit_add($db, $this->siteid, $uid, 'bbs', $id, $title, $content);
         }
 
+        // 帖子标签 (最多 3 个，白名单字符，去重)
+        $tags = $this->parseTags($_POST['tags'] ?? '');
+        foreach ($tags as $tag) {
+            try {
+                $db->insert("INSERT INTO WapBbsTag (siteid,bbsid,tagname,addtime) VALUES (?,?,?,?)",
+                    [$this->siteid, $id, $tag, date('Y-m-d H:i:s')]);
+            } catch (Exception $e) {
+                // 标签表不可用或重复时跳过，不阻断发帖
+            }
+        }
+
         // 图片附件上传 (存文件 + 写 WapBbsFile)
         $fileCount = 0;
         $fileMsg = '';
@@ -75,8 +88,25 @@ class BbsAddPage extends WapPage {
         }
 
         echo '<div class="success">发表成功' . ($fileCount > 0 ? '，已上传附件 ' . $fileCount . ' 个' : '') . $this->ToHtm($fileMsg)
+            . ($tags ? '，标签 ' . count($tags) . ' 个' : '')
             . ($isSensitive ? '，内容含敏感词，待管理员审核' : '')
             . ' <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+    }
+
+    /** 解析标签：逗号/空白/顿号分隔，去 #，白名单字符，去重，最多 3 个 */
+    private function parseTags($raw) {
+        $raw = (string)$raw;
+        if ($raw === '') return [];
+        $parts = preg_split('/[,，、\s]+/u', $raw);
+        $tags = [];
+        foreach ($parts as $t) {
+            $t = ltrim(trim($t), '#');
+            if ($t === '') continue;
+            if (!preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9_]{1,12}$/u', $t)) continue;
+            $tags[$t] = true;
+            if (count($tags) >= 3) break;
+        }
+        return array_keys($tags);
     }
 }
 

@@ -19,6 +19,9 @@ class ZoneFollowPage extends WapPage {
 
         $user = $db->getOne("SELECT id FROM WapUser WHERE id=?", [$uid]);
         if (!$user) $this->showError('用户不存在', 'index.php?siteid=' . $this->siteid . '&uid=' . $me);
+        if (kl_is_blocked($db, $this->siteid, $me, $uid)) {
+            $this->showError('存在拉黑关系，无法关注', 'index.php?siteid=' . $this->siteid . '&uid=' . $uid);
+        }
 
         $backUrl = 'index.php?siteid=' . $this->siteid . '&uid=' . $uid;
         $exists = $db->getOne("SELECT id FROM WapFollow WHERE siteid=? AND userid=? AND followuid=?",

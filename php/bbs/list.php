@@ -18,7 +18,8 @@ class BbsListPage extends WapPage {
         echo '<div class="subtitle">' . $this->ToHtm($this->classVo->classname ?? '论坛') . '</div>';
 
         // 发帖入口
-        echo '<div class="postbar"><a href="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $classid . '">发表新帖</a></div>';
+        echo '<div class="postbar"><a href="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $classid . '">发表新帖</a> '
+            . '<a href="tags.php?siteid=' . $this->siteid . '">热门话题</a></div>';
 
         // 置顶帖
         $tops = $db->getAll(

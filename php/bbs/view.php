@@ -54,6 +54,18 @@ class BbsViewPage extends WapPage {
         echo '<div class="content">' . $this->wapTool->ToWML($thread['content'], $this->wmlVo) . '</div>';
         echo '</div>';
 
+        // 帖子标签
+        $threadTags = $db->getAll("SELECT tagname FROM WapBbsTag WHERE siteid=? AND bbsid=? ORDER BY id", [$this->siteid, $id]);
+        if ($threadTags) {
+            echo '<div class="tags">标签：';
+            foreach ($threadTags as $tt) {
+                $tname = (string)$tt['tagname'];
+                echo '<a href="tag.php?siteid=' . $this->siteid . '&name=' . rawurlencode($tname) . '">#'
+                    . $this->ToHtm($tname) . '#</a> ';
+            }
+            echo '</div>';
+        }
+
         // 主帖点赞
         $likeCount = kl_like_count($db, $this->siteid, 'bbs', $id, 0);
         $isLogin = $this->userSession->isLogin();

@@ -25,6 +25,7 @@ class MessageIndexPage extends WapPage {
         echo '<a href="index.php?siteid=' . $this->siteid . '&box=in">收件箱' . ($unread > 0 ? '(' . $unread . '未读)' : '') . '</a> | ';
         echo '<a href="index.php?siteid=' . $this->siteid . '&box=out">发件箱</a> | ';
         echo '<a href="notice.php?siteid=' . $this->siteid . '">通知中心' . ($noticeUnread > 0 ? '(未读' . $noticeUnread . ')' : '') . '</a> | ';
+        echo '<a href="sessions.php?siteid=' . $this->siteid . '">会话</a> | ';
         echo '<a href="send.php?siteid=' . $this->siteid . '">发送短信</a>';
         echo '</div>';
 

@@ -89,7 +89,8 @@ class BbsReplyPage extends WapPage {
             foreach ($names as $name) {
                 $target = $db->getOne("SELECT id FROM WapUser WHERE nickname=? OR username=? LIMIT 1",
                     [$name, $name]);
-                if ($target && (int)$target['id'] !== (int)$uid) {
+                if ($target && (int)$target['id'] !== (int)$uid
+                    && !kl_is_blocked($db, $this->siteid, (int)$target['id'], $uid)) {
                     kl_notice_add($db, $this->siteid, (int)$target['id'], $uid, 'mention', 'bbs', $id, '在回复中提到了你');
                 }
             }

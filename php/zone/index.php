@@ -68,8 +68,14 @@ class ZoneIndexPage extends WapPage {
                 "SELECT id FROM WapFollow WHERE siteid=? AND userid=? AND followuid=?",
                 [$this->siteid, $me, $uid]
             ) : false;
+            $blocked = $me > 0 ? (bool)$db->getOne(
+                "SELECT id FROM WapBlock WHERE siteid=? AND userid=? AND blockuid=?",
+                [$this->siteid, $me, $uid]
+            ) : false;
             echo '<div class="actionbar"><a href="follow.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
-                . ($followed ? '已关注' : '关注') . '</a></div>';
+                . ($followed ? '已关注' : '关注') . '</a> '
+                . '<a href="block.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+                . ($blocked ? '已拉黑' : '拉黑') . '</a></div>';
         }
 
         // 关注/粉丝入口
@@ -78,6 +84,9 @@ class ZoneIndexPage extends WapPage {
             . ($isSelf ? '我关注的人' : 'TA关注的人') . '(' . $followingCount . ')</a> | ';
         echo '<a href="fans.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
             . ($isSelf ? '我的粉丝' : 'TA的粉丝') . '(' . $fansCount . ')</a>';
+        if ($isSelf) {
+            echo ' | <a href="block.php?siteid=' . $this->siteid . '">我的黑名单</a>';
+        }
         echo '</div>';
 
         // TA的文章
