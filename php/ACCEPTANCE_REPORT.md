@@ -1,8 +1,19 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
-验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证
-验收结论：**通过（SQLite PASS 231/231，MySQL PASS 231/231）**
-交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`（313 文件 / 373KB，含部署配置样例）
+验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
+验收结论：**通过（SQLite PASS 231/231，MySQL PASS 231/231，安全加固后复跑 231/231）**
+交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
+
+## 〇〇〇〇、v6 安全加固与质量核查
+
+| 项 | 发现 → 处置 |
+|---|---|
+| 暴力破解 | KL_LoginTime 原声明未实现 → UserSession 登录失败锁定（15 分钟窗口，开关驱动，默认 0 不改变原行为） |
+| 会话固定 | 登录成功无会话再生 → login/adminLogin 增加 session_regenerate_id(true)，实测 Cookie ID 变更 |
+| 路径穿越 | down.php 本地文件拼接未封禁 → realpath 限制在 uploadfiles 内；上传/文件管理器此前已实测拒绝穿越 |
+| SQL 注入 | 全站查询均走 PDO 预处理；动态表名仅来自模块白名单；checkSqlInject 覆盖各投稿/评论入口 |
+| 并发压测 | 4 worker × 30 并发 × 300 请求（首页/列表/详情）：**300/300 全 200，日志零 Fatal/Warning/Notice**；基准 76.8 req/s（内置服务器，生产 php-fpm 可线性扩展） |
+| 兼容性 | 无 8.1+ 专属语法（PHP 8.0+ 可运行）；GD 缺失时验证码自动降级返回 false；扩展依赖 pdo/gd/mbstring 已在 deploy/README 声明 |
 
 ## 〇〇〇、v5 长尾终审与交付验证
 

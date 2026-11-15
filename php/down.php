@@ -52,9 +52,11 @@ if (preg_match('/^https?:\/\//i', $downurl)) {
     }
 }
 
-// 本地文件
+// 本地文件（限制在 uploadfiles 目录内，防路径穿越）
 $localPath = KL_ROOT . $downurl;
-if (!file_exists($localPath)) die('文件不存在');
+$real = realpath($localPath);
+if ($real === false || strpos($real, realpath(KL_UPLOAD_DIR)) !== 0) die('文件不存在');
+$localPath = $real;
 
 // 输出下载
 $filename = basename($localPath);

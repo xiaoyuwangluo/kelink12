@@ -52,13 +52,19 @@ class UserSession {
         if (WapTool::checkSqlInject($username) || WapTool::checkSqlInject($password)) {
             return [false, '包含非法字符', null];
         }
+        if ($this->loginLocked()) {
+            return [false, '登录失败次数过多，请15分钟后再试', null];
+        }
         $row = $this->db->getOne("SELECT * FROM WapUser WHERE username=? AND password=?", [$username, md5($password)]);
         if (!$row) {
+            $this->loginFailRecord();
             return [false, '用户名或密码错误', null];
         }
         if (isset($row['islock']) && $row['islock'] == 1) {
             return [false, '账号已被锁定', null];
         }
+        $this->loginFailReset();
+        session_regenerate_id(true); // 防会话固定
         $_SESSION['kl_userid'] = $row['id'];
         $_SESSION['kl_username'] = $row['username'];
         $_SESSION['kl_nickname'] = $row['nickname'] ?? '';
@@ -103,12 +109,32 @@ class UserSession {
 
     /** 管理员登录 */
     public function adminLogin($username, $password) {
+        if ($this->loginLocked()) return [false, '登录失败次数过多，请15分钟后再试', null];
         $row = $this->db->getOne("SELECT * FROM WapAdmin WHERE username=? AND password=?", [$username, md5($password)]);
-        if (!$row) return [false, '账号或密码错误', null];
+        if (!$row) { $this->loginFailRecord(); return [false, '账号或密码错误', null]; }
+        $this->loginFailReset();
+        session_regenerate_id(true); // 防会话固定
         $_SESSION['kl_adminid'] = $row['id'];
         $_SESSION['kl_adminname'] = $row['username'];
         return [true, '登录成功', $row];
     }
+
+    /** KL_LoginTime>0 时启用登录失败锁定（15分钟窗口） */
+    private function loginLocked() {
+        if (KL_LoginTime <= 0) return false;
+        $f = $_SESSION['kl_loginfail'] ?? null;
+        if (!$f) return false;
+        if (time() - $f['t'] > 900) { unset($_SESSION['kl_loginfail']); return false; }
+        return $f['n'] >= KL_LoginTime;
+    }
+    private function loginFailRecord() {
+        if (KL_LoginTime <= 0) return;
+        $f = $_SESSION['kl_loginfail'] ?? ['n' => 0, 't' => time()];
+        if (time() - $f['t'] > 900) $f = ['n' => 0, 't' => time()];
+        $f['n']++;
+        $_SESSION['kl_loginfail'] = $f;
+    }
+    private function loginFailReset() { unset($_SESSION['kl_loginfail']); }
 
     /** 获取客户端真实IP */
     public static function getClientIp() {
