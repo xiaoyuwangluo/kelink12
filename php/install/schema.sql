@@ -463,35 +463,6 @@ CREATE TABLE IF NOT EXISTS `WapXinzhang` (
   KEY `idx_class` (`classid`,`siteid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='新站表';
 
-CREATE TABLE IF NOT EXISTS `WapPicture` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
-  `classid` int(11) NOT NULL DEFAULT 0,
-  `userid` int(11) DEFAULT 0,
-  `title` varchar(255) NOT NULL,
-  `content` text,
-  `picurl` varchar(255) DEFAULT '',
-  `downurl` varchar(255) DEFAULT '',
-  `istop` tinyint(1) DEFAULT 0,
-  `isshow` tinyint(1) DEFAULT 1,
-  `hits` int(11) DEFAULT 0,
-  `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='图片表';
-
-
--- 在线用户表
-CREATE TABLE IF NOT EXISTS `WapOnline` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) DEFAULT 0,
-  `userid` int(11) DEFAULT 0,
-  `ip` varchar(50) DEFAULT '',
-  `lasttime` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_site` (`siteid`,`lasttime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='在线用户表';
-
 -- 默认管理员 (密码: admin123, md5)
 INSERT INTO `WapAdmin` (`username`,`password`,`role`) VALUES ('admin','0192023a7bbd73250516f069df18b500','super')
 ON DUPLICATE KEY UPDATE `username`=`username`;
@@ -500,8 +471,8 @@ ON DUPLICATE KEY UPDATE `username`=`username`;
 INSERT INTO `WapSite` (`id`,`sitename`,`copyright`) VALUES (1,'小宇网络默认站点','Copyright (C) 小宇网络 All Rights Reserved.')
 ON DUPLICATE KEY UPDATE `sitename`=`sitename`;
 -- ===== 补充数据表 (全模块移植新增) =====
-CREATE TABLE WapOnline (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, username VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', page VARCHAR(255) NOT NULL DEFAULT '', lasttime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapSignin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, signdate TEXT, days INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapOnline (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, username VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', page VARCHAR(255) NOT NULL DEFAULT '', lasttime DATETIME DEFAULT CURRENT_TIMESTAMP, KEY idx_site (siteid,lasttime)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapSignin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, signdate VARCHAR(20) DEFAULT '', days INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapMessage (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, fromid INT DEFAULT 0, fromname VARCHAR(255) NOT NULL DEFAULT '', toid INT DEFAULT 0, toname VARCHAR(255) NOT NULL DEFAULT '', title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, isread INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapSysMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapFriend (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, friendid INT DEFAULT 0, status INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

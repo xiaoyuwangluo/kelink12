@@ -1,7 +1,15 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
-验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测
-验收结论：**通过（v2 全量回归 PASS 163 / FAIL 0）**
+验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证
+验收结论：**通过（SQLite PASS 163/163，MySQL PASS 163/163）**
+
+## 〇〇、v3 交付验证（MySQL 引擎 + 安装向导 + 目录终审）
+
+| 项 | 结果 |
+|---|---|
+| MySQL 真实环境 | MariaDB 实机：schema.sql 全量 67 表零错误建立（修复 2 处重复定义、1 处 TEXT 索引），145 行数据迁移零错误，全系统跑通 163/163 |
+| 安装向导 | MySQL/SQLite 双引擎实测：67/68 表建立+管理员种子；新增 SQLite 方言转换器（AUTO_INCREMENT/KEY/ENGINE/ON DUPLICATE 自动转换） |
+| 原版目录终审 | 全部 62 个原版目录逐一对照映射完成；补齐 admin_WAPdelALL 批量删除（admin/content.php 勾选+删除选中，实测通过）；action/class/models/EditTool/HTML5/UBB_API 等目录功能均已有对应实现；PlugIn/Template/djs/NetCSS 等为静态资源目录，由 templates/ 与 assets/ 覆盖 |
 
 ## 〇、v2 增量验收（补齐原"待完善"项）
 

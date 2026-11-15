@@ -113,26 +113,38 @@ class AdminContentPage extends WapPage {
         $hasTop = in_array('istop', $cols, true);
         $back = 'content.php?siteid=' . $this->siteid . '&module=' . $module;
 
-        // POST 操作（防重复提交）
+        // POST 操作（批量删除，对应原 admin_WAPdelALL）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$this->userSession->checkSubmitLimit()) {
                 $this->showError('提交过于频繁，请稍后再试', $back);
             }
             $action = $_POST['action'] ?? '';
-            $id = (int)($_POST['id'] ?? 0);
-            if ($action === 'toggle_show' && $hasShow) {
-                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$id, $this->siteid]);
-                $this->showSuccess('显示状态已切换', $back);
-            } elseif ($action === 'toggle_top' && $hasTop) {
-                $db->execute("UPDATE " . $table . " SET istop=CASE WHEN istop=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$id, $this->siteid]);
-                $this->showSuccess('置顶状态已切换', $back);
-            } elseif ($action === 'delete') {
-                $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
-                $this->showSuccess('内容已删除', $back);
+            if ($action === 'delall') {
+                $ids = array_filter(array_map('intval', (array)($_POST['ids'] ?? [])));
+                if (!$ids) $this->showError('未选择内容', $back);
+                $ph = '(' . rtrim(str_repeat('?,', count($ids)), ',') . ')';
+                $db->execute("DELETE FROM " . $table . " WHERE id IN" . $ph . " AND siteid=?", array_merge($ids, [$this->siteid]));
+                $this->showSuccess('已批量删除 ' . count($ids) . ' 条', $back);
             } elseif ($action === 'upload_file' && isset($this->attachTable[$module])) {
-                $this->doUploadFile($module, $table, $id);
+                $this->doUploadFile($module, $table, (int)($_POST['id'] ?? 0));
             } else {
                 $this->showError('非法操作', $back);
+            }
+        }
+
+        // GET 单条操作（对应原 admin_WAPmodify/del 链接风格）
+        $gact = $_GET['gact'] ?? '';
+        $gid = (int)($_GET['gid'] ?? 0);
+        if ($gact !== '' && $gid > 0) {
+            if ($gact === 'tshow' && $hasShow) {
+                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $this->showSuccess('显示状态已切换', $back);
+            } elseif ($gact === 'ttop' && $hasTop) {
+                $db->execute("UPDATE " . $table . " SET istop=CASE WHEN istop=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $this->showSuccess('置顶状态已切换', $back);
+            } elseif ($gact === 'del') {
+                $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $this->showSuccess('内容已删除', $back);
             }
         }
 
@@ -156,37 +168,31 @@ class AdminContentPage extends WapPage {
         }
         echo '</select> <input type="submit" value="切换"/></form></div>';
 
-        // 分页列表
+        // 分页列表（勾选 + 批量删除表单）
         $page = max(1, (int)($_GET['page'] ?? 1));
         $result = $db->getPage($table, '*', 'siteid=?', 'id DESC', $page, 20, [$this->siteid]);
+        echo '<form method="post" action="' . $back . '"><input type="hidden" name="action" value="delall"/>';
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
             $rid = (int)$row['id'];
             $showFlag = $hasShow ? (empty($row['isshow']) ? '<span style="color:red">[隐藏]</span>' : '') : '';
             $topFlag = $hasTop && !empty($row['istop']) ? '<span style="color:orange">[顶]</span>' : '';
             $time = !empty($row['addtime']) ? date('m-d H:i', strtotime($row['addtime'])) : '';
-            echo '<li>' . $topFlag . $showFlag . 'ID:' . $rid . ' ' . $this->ToHtm($this->displayTitle($row, $cols))
+            echo '<li><input type="checkbox" name="ids[]" value="' . $rid . '"/>'
+                . $topFlag . $showFlag . 'ID:' . $rid . ' ' . $this->ToHtm($this->displayTitle($row, $cols))
                 . ' <span class="time">' . $time . '</span><br/>';
-            if ($hasShow) {
-                echo '<form method="post" action="' . $back . '" style="display:inline">'
-                    . '<input type="hidden" name="action" value="toggle_show"/><input type="hidden" name="id" value="' . $rid . '"/>'
-                    . '<input type="submit" value="' . (empty($row['isshow']) ? '显示' : '隐藏') . '"/></form>';
-            }
-            if ($hasTop) {
-                echo '<form method="post" action="' . $back . '" style="display:inline">'
-                    . '<input type="hidden" name="action" value="toggle_top"/><input type="hidden" name="id" value="' . $rid . '"/>'
-                    . '<input type="submit" value="' . (empty($row['istop']) ? '置顶' : '取消置顶') . '"/></form>';
-            }
-            echo '<form method="post" action="' . $back . '" style="display:inline">'
-                . '<input type="hidden" name="action" value="delete"/><input type="hidden" name="id" value="' . $rid . '"/>'
-                . '<input type="submit" value="删除"/></form>';
+            if ($hasShow) echo '<a href="' . $back . '&gact=tshow&gid=' . $rid . '">' . (empty($row['isshow']) ? '显示' : '隐藏') . '</a> ';
+            if ($hasTop) echo '<a href="' . $back . '&gact=ttop&gid=' . $rid . '">' . (empty($row['istop']) ? '置顶' : '取消置顶') . '</a> ';
+            echo '<a href="' . $back . '&gact=del&gid=' . $rid . '" onclick="return confirm(\'删除?\')">删除</a>';
             if (isset($this->attachTable[$module])) {
                 echo ' <a href="' . $back . '&act=files&id=' . $rid . '">附件</a>';
             }
             echo '</li>';
         }
         if (empty($result['list'])) echo '<li>暂无内容</li>';
-        echo '</ul></div>';
+        echo '</ul>';
+        if (!empty($result['list'])) echo '<input type="submit" value="删除选中" onclick="return confirm(\'批量删除选中内容?\')"/>';
+        echo '</div></form>';
 
         // 分页
         if ($result['pageCount'] > 1) {

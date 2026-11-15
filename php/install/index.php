@@ -8,6 +8,20 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $step = $_GET['step'] ?? '1';
 $msg = '';
 
+/** MySQL 方言转 SQLite */
+function mysqlToSqlite($sql) {
+    $sql = preg_replace('/\bINT\s+NOT\s+NULL\s+AUTO_INCREMENT\s+PRIMARY\s+KEY\b/i', 'INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+    $sql = preg_replace('/`id`\s+int\(\d+\)\s+NOT\s+NULL\s+AUTO_INCREMENT/i', '`id` INTEGER PRIMARY KEY AUTOINCREMENT', $sql);
+    $sql = preg_replace('/AUTO_INCREMENT/i', '', $sql);
+    $sql = preg_replace('/,\s*PRIMARY KEY\s*\(\s*`?id`?\s*\)/i', '', $sql);
+    $sql = preg_replace('/,\s*(?:UNIQUE\s+)?KEY\s+`?\w+`?\s*\([^)]*\)/i', '', $sql);
+    $sql = preg_replace('/\b(tiny|small|medium|big)?int\(\d+\)/i', 'INTEGER', $sql);
+    $sql = preg_replace('/\bENGINE\s*=\s*\w+[^;]*/i', '', $sql);
+    $sql = preg_replace('/\bON DUPLICATE KEY UPDATE[^;]*/i', '', $sql);
+    $sql = preg_replace('/DEFAULT\s+CURRENT_TIMESTAMP\s+ON\s+UPDATE\s+CURRENT_TIMESTAMP/i', 'DEFAULT CURRENT_TIMESTAMP', $sql);
+    return trim($sql);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step == '2') {
     $dbtype = $_POST['dbtype'] ?? 'mysql';
     $host = $_POST['host'] ?? 'localhost';
@@ -27,15 +41,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step == '2') {
 
     // 执行建表
     try {
-        $dsn = ($dbtype === 'mysql')
-            ? "mysql:host=$host;dbname=$dbname;charset=utf8"
-            : "sqlsrv:Server=$host;Database=$dbname";
-        $pdo = new PDO($dsn, $user, $pass);
+        if ($dbtype === 'sqlite') {
+            $dbFile = KL_ROOT . '/data/' . preg_replace('/[^a-zA-Z0-9_]/', '', $dbname) . '.db';
+            if (!is_dir(dirname($dbFile))) @mkdir(dirname($dbFile), 0755, true);
+            $pdo = new PDO('sqlite:' . $dbFile);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } else {
+            $dsn = ($dbtype === 'mysql')
+                ? "mysql:host=$host;dbname=$dbname;charset=utf8mb4"
+                : "sqlsrv:Server=$host;Database=$dbname";
+            $pdo = new PDO($dsn, $user, $pass);
+        }
         $sql = file_get_contents(KL_ROOT . '/install/schema.sql');
         // 按分号拆分执行 (简化处理)
         $statements = array_filter(array_map('trim', explode(";\n", $sql)));
         foreach ($statements as $stmt) {
-            if ($stmt !== '') $pdo->exec($stmt);
+            if ($stmt === '') continue;
+            if ($dbtype === 'sqlite') {
+                if (stripos($stmt, 'ADD INDEX') !== false) continue; // SQLite 不支持
+                $stmt = mysqlToSqlite($stmt);
+            }
+            $pdo->exec($stmt);
         }
         $msg = '<div class="success">数据库安装成功！默认管理员账号: admin / admin123</div>';
         $step = '3';
@@ -67,10 +93,10 @@ button{background:#1890ff;color:#fff;border:none;padding:10px 30px;border-radius
 <?php elseif ($step == '2'): ?>
 <form method="post" action="?step=2">
 <div class="form-group"><label>数据库类型</label>
-<select name="dbtype"><option value="mysql">MySQL</option><option value="mssql">SQL Server</option></select></div>
-<div class="form-group"><label>数据库主机</label><input type="text" name="host" value="localhost" required/></div>
+<select name="dbtype"><option value="mysql">MySQL</option><option value="mssql">SQL Server</option><option value="sqlite">SQLite (免装数据库)</option></select></div>
+<div class="form-group"><label>数据库主机</label><input type="text" name="host" value="localhost"/></div>
 <div class="form-group"><label>数据库名</label><input type="text" name="dbname" required/></div>
-<div class="form-group"><label>用户名</label><input type="text" name="user" value="root" required/></div>
+<div class="form-group"><label>用户名</label><input type="text" name="user" value="root"/></div>
 <div class="form-group"><label>密码</label><input type="password" name="pass"/></div>
 <button type="submit">安装</button>
 </form>
