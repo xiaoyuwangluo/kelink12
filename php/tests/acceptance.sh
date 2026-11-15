@@ -71,6 +71,16 @@ done
 check "oauth" "$BASE/oauth/index.php?siteid=1"
 check "templates" "$BASE/templates/list.php?siteid=1"
 
+# v4 每模块管理页 (modify/del/change)
+cd /workspace/php
+for m in bbs shop novel video picture download ring link guessbook gongqiu paimai yuehui wabao guangbo adlink airplane album hotel rizhi xinzhang; do
+  for p in admin_WAPmodify admin_WAPdel admin_WAPchange; do
+    if [ -f "$m/$p.php" ]; then
+      check_admin "$m/$p" "$BASE/$m/$p.php?siteid=1&id=1"
+    fi
+  done
+done
+
 # v2 新增页面
 check_admin "admin:upload" "$BASE/admin/upload.php"
 check_admin "admin:caiji" "$BASE/admin/caiji.php"

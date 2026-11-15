@@ -22,7 +22,9 @@ class VideoListPage extends WapPage {
             echo '<li>';
             if (!empty($v['picurl'])) echo '<img src="' . $this->ToHtm($v['picurl']) . '" alt=""/>';
             echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $v['id'] . '">' . $this->ToHtm($v['title']) . '</a>';
-            echo ' <span class="hits">(' . (int)$v['hits'] . ')</span></li>';
+            echo ' <span class="hits">(' . (int)$v['hits'] . ')</span>';
+            echo $this->adminLinks((int)$v['id']);
+            echo '</li>';
         }
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {
@@ -33,6 +35,15 @@ class VideoListPage extends WapPage {
             echo '</div>';
         }
         $this->showDown();
+    }
+
+    /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
+    private function adminLinks($id) {
+        if (!$this->userSession->isAdminLogin()) return '';
+        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
     }
 }
 $page = new VideoListPage();

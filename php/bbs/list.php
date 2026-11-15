@@ -27,7 +27,9 @@ class BbsListPage extends WapPage {
         );
         echo '<div class="toplist">';
         foreach ($tops as $t) {
-            echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $classid . '&id=' . $t['id'] . '">[顶]' . $this->ToHtm($t['title']) . '</a></div>';
+            echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $classid . '&id=' . $t['id'] . '">[顶]' . $this->ToHtm($t['title']) . '</a>';
+            echo $this->adminLinks((int)$t['id']);
+            echo '</div>';
         }
         echo '</div>';
 
@@ -46,6 +48,7 @@ class BbsListPage extends WapPage {
             echo $this->ToHtm($t['title']) . '</a>';
             echo ' <span class="info">回' . (int)$t['replynum'] . '/阅' . (int)$t['hits'] . '</span>';
             echo ' <span class="time">' . date('m-d', strtotime($t['addtime'])) . '</span>';
+            echo $this->adminLinks((int)$t['id']);
             echo '</li>';
         }
         echo '</ul></div>';
@@ -60,6 +63,15 @@ class BbsListPage extends WapPage {
         }
 
         $this->showDown();
+    }
+
+    /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
+    private function adminLinks($id) {
+        if (!$this->userSession->isAdminLogin()) return '';
+        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
     }
 }
 

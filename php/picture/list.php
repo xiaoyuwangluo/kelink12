@@ -18,7 +18,9 @@ class PictureListPage extends WapPage {
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
             echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">';
-            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span></li>';
+            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
+            echo $this->adminLinks((int)$row['id']);
+            echo '</li>';
         }
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {
@@ -29,6 +31,15 @@ class PictureListPage extends WapPage {
             echo '</div>';
         }
         $this->showDown();
+    }
+
+    /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
+    private function adminLinks($id) {
+        if (!$this->userSession->isAdminLogin()) return '';
+        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
     }
 }
 $page = new PictureListPage();

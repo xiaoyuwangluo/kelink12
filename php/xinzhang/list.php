@@ -15,10 +15,17 @@ class XinzhangListPage extends WapPage {
         $result = $db->getPage('WapXinzhang', 'id,title,addtime,hits',
             "siteid=? AND classid=? AND isshow=1", 'id DESC', $page, 20,
             [$this->siteid, $this->classid]);
+        $isAdmin = $this->userSession->isAdminLogin();
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
             echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">';
-            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span></li>';
+            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
+            if ($isAdmin) {
+                echo ' <a href="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">修改</a>';
+                echo ' <a href="admin_WAPdel.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">删除</a>';
+                echo ' <a href="admin_WAPchange.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">显隐</a>';
+            }
+            echo '</li>';
         }
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {

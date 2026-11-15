@@ -16,9 +16,18 @@ class AdlinkListPage extends WapPage {
             "siteid=? AND classid=? AND isshow=1", 'id DESC', $page, 20,
             [$this->siteid, $this->classid]);
         echo '<div class="content"><ul class="list">';
+        $isAdmin = $this->userSession->isAdminLogin();
         foreach ($result['list'] as $row) {
             echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">';
-            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span></li>';
+            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
+            // 后台管理员(kl_adminid)显示操作链接
+            if ($isAdmin) {
+                $qs = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'];
+                echo ' <a href="admin_WAPmodify.php?' . $qs . '">修改</a>';
+                echo ' <a href="admin_WAPdel.php?' . $qs . '">删除</a>';
+                echo ' <a href="admin_WAPchange.php?' . $qs . '">显隐</a>';
+            }
+            echo '</li>';
         }
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {

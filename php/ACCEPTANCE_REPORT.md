@@ -1,7 +1,15 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-15　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证
-验收结论：**通过（SQLite PASS 163/163，MySQL PASS 163/163）**
+验收结论：**通过（SQLite PASS 223/223，MySQL PASS 163/163）**
+
+## 〇、v4 页面级终审与模块管理页
+
+| 项 | 结果 |
+|---|---|
+| 原版 aspx 文件名频次终审 | 逐类核查：admin_wapadd/modify/del/change/advertise、book_list/view/search/re、userlist、guestlist、systemmodel、orderlist、picdiy、share 等高频页面类型全部有 PHP 对应实现 |
+| 补齐模块管理页 | 20 模块 × admin_WAPmodify/admin_WAPdel/admin_WAPchange 共 60 页（仿 article 模板，GET确认/POST删除、显隐切换、列表管理员操作链接），4 路并行实测 130+ 断言全过 |
+| 全量回归 | 验收矩阵扩至 223 项，SQLite 模式 **223/223 PASS**，php -l 241 文件零错误 |
 
 ## 〇〇、v3 交付验证（MySQL 引擎 + 安装向导 + 目录终审）
 

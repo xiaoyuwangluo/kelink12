@@ -23,7 +23,9 @@ class NovelListPage extends WapPage {
         foreach ($result['list'] as $n) {
             echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $n['id'] . '">';
             echo $this->ToHtm($n['title']) . '</a> - ' . $this->ToHtm($n['author'] ?? '佚名');
-            echo ' <span class="hits">(' . (int)$n['hits'] . ')</span></li>';
+            echo ' <span class="hits">(' . (int)$n['hits'] . ')</span>';
+            echo $this->adminLinks((int)$n['id']);
+            echo '</li>';
         }
         echo '</ul></div>';
 
@@ -35,6 +37,15 @@ class NovelListPage extends WapPage {
             echo '</div>';
         }
         $this->showDown();
+    }
+
+    /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
+    private function adminLinks($id) {
+        if (!$this->userSession->isAdminLogin()) return '';
+        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
     }
 }
 

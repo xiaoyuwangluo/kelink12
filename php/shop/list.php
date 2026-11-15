@@ -32,6 +32,7 @@ class ShopListPage extends WapPage {
             echo '<input type="hidden" name="num" value="1"/>';
             echo '<input type="submit" value="加入购物车"/></form> ';
             echo '<a href="checkout.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&shopid=' . (int)$p['id'] . '&num=1">立即购买</a>';
+            echo $this->adminLinks((int)$p['id']);
             echo '</li>';
         }
         echo '</ul></div>';
@@ -44,6 +45,15 @@ class ShopListPage extends WapPage {
             echo '</div>';
         }
         $this->showDown();
+    }
+
+    /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
+    private function adminLinks($id) {
+        if (!$this->userSession->isAdminLogin()) return '';
+        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
     }
 }
 

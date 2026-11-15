@@ -18,7 +18,14 @@ class GuessbookListPage extends WapPage {
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
             echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">';
-            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span></li>';
+            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
+            // 管理员登录(session kl_adminid)时追加后台管理操作
+            if ($this->userSession->isAdminLogin()) {
+                echo ' [<a href="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">修改</a>'
+                   . ' <a href="admin_WAPdel.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">删除</a>'
+                   . ' <a href="admin_WAPchange.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">显隐</a>]';
+            }
+            echo '</li>';
         }
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {
