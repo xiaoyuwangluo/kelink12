@@ -4,6 +4,7 @@
  * 论坛模块 - 回复帖子 (对应原 bbs/Book_Re.aspx)
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class BbsReplyPage extends WapPage {
     public function run() {
@@ -12,7 +13,7 @@ class BbsReplyPage extends WapPage {
         if ($id <= 0) $this->showError('参数错误');
 
         $db = $this->db;
-        $thread = $db->getOne("SELECT id,title,islock FROM WapBbs WHERE id=?", [$id]);
+        $thread = $db->getOne("SELECT id,title,islock,userid FROM WapBbs WHERE id=?", [$id]);
         if (!$thread) $this->showError('帖子不存在');
         if ($thread['islock']) $this->showError('帖子已锁定，不能回复');
 
@@ -41,6 +42,9 @@ class BbsReplyPage extends WapPage {
 
     private function doReply($id) {
         $db = $this->db;
+        // 取楼主 uid 用于回复通知
+        $thread = $db->getOne("SELECT id,userid FROM WapBbs WHERE id=?", [$id]);
+        if (!$thread) $thread = ['id' => $id, 'userid' => 0];
         $isLogin = $this->userSession->isLogin();
         if (!$isLogin && KL_BBSRE_Anonymous_Open == 0) {
             echo '<div class="error">游客不能回复，请登录</div>';
@@ -63,12 +67,36 @@ class BbsReplyPage extends WapPage {
             return;
         }
 
-        $db->insert(
-            "INSERT INTO WapBbsReply (bbsid,siteid,classid,userid,nickname,content,addtime,isshow) VALUES (?,?,?,?,?,?,NOW(),1)",
-            [$id, $this->siteid, $this->classid, $uid, $nickname, $content]
+        // 敏感词检测：命中则回复进入待审核（isshow=0）并写审核记录
+        $isSensitive = kl_has_sensitive($content, $this->db, $this->siteid);
+        $isshow = $isSensitive ? 0 : 1;
+
+        $replyid = $db->insert(
+            "INSERT INTO WapBbsReply (bbsid,siteid,classid,userid,nickname,content,addtime,isshow) VALUES (?,?,?,?,?,?,NOW(),?)",
+            [$id, $this->siteid, $this->classid, $uid, $nickname, $content, $isshow]
         );
+        if ($isSensitive) {
+            kl_audit_add($db, $this->siteid, $uid, 'bbs_re', $replyid, '', $content);
+        }
         $db->execute("UPDATE WapBbs SET replynum=replynum+1 WHERE id=?", [$id]);
-        echo '<div class="success">回复成功</div>';
+
+        // 通知楼主 (楼主=回复者则自动跳过)
+        kl_notice_add($db, $this->siteid, (int)$thread['userid'], $uid, 'reply', 'bbs', $id, '回复了你的帖子');
+
+        // 解析 @昵称，最多 5 个，命中且非本人则写 mention 通知
+        if (preg_match_all('/@([\p{Han}A-Za-z0-9_]{1,20})/u', $content, $m)) {
+            $names = array_slice(array_unique($m[1]), 0, 5);
+            foreach ($names as $name) {
+                $target = $db->getOne("SELECT id FROM WapUser WHERE nickname=? OR username=? LIMIT 1",
+                    [$name, $name]);
+                if ($target && (int)$target['id'] !== (int)$uid) {
+                    kl_notice_add($db, $this->siteid, (int)$target['id'], $uid, 'mention', 'bbs', $id, '在回复中提到了你');
+                }
+            }
+        }
+
+        kl_cache_clear_site($this->siteid);
+        echo '<div class="success">回复成功' . ($isSensitive ? '，内容含敏感词，待管理员审核' : '') . '</div>';
     }
 }
 

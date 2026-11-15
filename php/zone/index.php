@@ -5,6 +5,7 @@
  * ?uid= 查看用户信息、其文章/帖子、空间留言列表
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Level.php';
 
 class ZoneIndexPage extends WapPage {
     public function run() {
@@ -33,12 +34,50 @@ class ZoneIndexPage extends WapPage {
         echo '<div class="subtitle">' . $this->ToHtm($zone['zonename']) . '</div>';
 
         // 会员信息
+        $followingCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE siteid=? AND userid=?",
+            [$this->siteid, $uid]);
+        $fansCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE siteid=? AND followuid=?",
+            [$this->siteid, $uid]);
+        $likeReceived = (int)$db->getScalar(
+            "SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbs b ON b.id=l.contentid
+             WHERE l.siteid=? AND l.module='bbs' AND l.replyid=0 AND b.userid=?",
+            [$this->siteid, $uid]
+        ) + (int)$db->getScalar(
+            "SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbsReply r ON r.id=l.replyid
+             WHERE l.siteid=? AND l.module='bbs' AND l.replyid>0 AND r.userid=?",
+            [$this->siteid, $uid]
+        );
+
+        $isLogin = $this->userSession->isLogin();
+        $me = $isLogin ? (int)$this->userSession->getUserId() : 0;
+        $isSelf = ($me > 0 && $me === $uid);
+
         echo '<div class="content">';
         echo '用户名:' . $this->ToHtm($user['username']) . '<br/>';
         echo '昵称:' . $this->ToHtm($user['nickname']) . '<br/>';
-        echo '积分:' . (int)$user['point'] . ' 余额:' . (int)$user['money'] . '<br/>';
+        echo '积分:' . (int)$user['point'] . ' ' . kl_level_tag_html((int)$user['point'])
+            . ' 余额:' . (int)$user['money'] . '<br/>';
+        echo '关注:' . $followingCount . ' 粉丝:' . $fansCount . ' 获赞:' . $likeReceived . '<br/>';
         echo '注册时间:' . $this->ToHtm($user['regtime']) . '<br/>';
         if (!empty($zone['intro'])) echo '简介:' . $this->ToHtm($zone['intro']) . '<br/>';
+        echo '</div>';
+
+        // 关注按钮 (不能关注自己)
+        if (!$isSelf) {
+            $followed = $me > 0 ? (bool)$db->getOne(
+                "SELECT id FROM WapFollow WHERE siteid=? AND userid=? AND followuid=?",
+                [$this->siteid, $me, $uid]
+            ) : false;
+            echo '<div class="actionbar"><a href="follow.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+                . ($followed ? '已关注' : '关注') . '</a></div>';
+        }
+
+        // 关注/粉丝入口
+        echo '<div class="menu">';
+        echo '<a href="following.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+            . ($isSelf ? '我关注的人' : 'TA关注的人') . '(' . $followingCount . ')</a> | ';
+        echo '<a href="fans.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+            . ($isSelf ? '我的粉丝' : 'TA的粉丝') . '(' . $fansCount . ')</a>';
         echo '</div>';
 
         // TA的文章

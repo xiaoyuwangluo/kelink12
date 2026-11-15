@@ -5,6 +5,7 @@
  * 点卡校验逻辑与 shop/pay.php 充值卡支付一致：cardno + md5(cardpwd) + isused=0
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Level.php';
 
 class MyAccountPage extends WapPage {
     public function run() {
@@ -24,7 +25,8 @@ class MyAccountPage extends WapPage {
         if (isset($_GET['recharged'])) echo '<div class="success">充值成功，已到账￥' . (int)$_GET['recharged'] . '</div>';
         echo '<div class="subtitle">我的钱包</div><div class="content">';
         echo '账户余额:￥' . (int)$user['money'] . '<br/>';
-        echo '积分:' . (int)$user['point'] . '<br/>';
+        echo '积分:' . (int)$user['point'] . ' ' . kl_level_tag_html((int)$user['point'])
+            . ' <a href="../shop/point_orders.php?siteid=' . $this->siteid . '">积分兑换记录</a><br/>';
 
         // 充值表单
         echo '<hr/><form method="post" action="index.php?siteid=' . $this->siteid . '">';

@@ -4,6 +4,8 @@
  * 论坛模块 - 帖子查看 (对应原 bbs/view.aspx)
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Community.php';
+require_once KL_ROOT . '/includes/Level.php';
 
 class BbsViewPage extends WapPage {
     public function run() {
@@ -24,10 +26,45 @@ class BbsViewPage extends WapPage {
         $this->showTop($this->strTitle);
 
         // 楼主
+        $threadUid = (int)$thread['userid'];
+        $authorName = trim((string)($thread['nickname'] ?? ''));
+        $authorPoint = 0;
+        if ($threadUid > 0) {
+            $author = $db->getOne("SELECT username,nickname,point FROM WapUser WHERE id=?", [$threadUid]);
+            if ($author) {
+                $authorPoint = (int)$author['point'];
+                if ($authorName === '') {
+                    $authorName = $author['nickname'] !== '' ? $author['nickname'] : $author['username'];
+                }
+            }
+        }
+        if ($authorName === '') $authorName = '楼主';
+
         echo '<div class="subtitle">' . $this->ToHtm($thread['title']) . '</div>';
         echo '<div class="post">';
-        echo '<div class="poster">' . $this->ToHtm($thread['nickname'] ?? '楼主') . ' ' . date('Y-m-d H:i', strtotime($thread['addtime'])) . '</div>';
+        echo '<div class="poster">';
+        if ($threadUid > 0) {
+            echo '<a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . $threadUid . '">'
+                . $this->ToHtm($authorName) . '</a>';
+        } else {
+            echo $this->ToHtm($authorName);
+        }
+        echo ' ' . kl_level_tag_html($authorPoint);
+        echo ' ' . date('Y-m-d H:i', strtotime($thread['addtime'])) . '</div>';
         echo '<div class="content">' . $this->wapTool->ToWML($thread['content'], $this->wmlVo) . '</div>';
+        echo '</div>';
+
+        // 主帖点赞
+        $likeCount = kl_like_count($db, $this->siteid, 'bbs', $id, 0);
+        $isLogin = $this->userSession->isLogin();
+        $meLiked = $isLogin ? kl_like_exists($db, $this->siteid, 'bbs', $id, 0, (int)$this->userSession->getUserId()) : false;
+        echo '<div class="postlike">赞(' . $likeCount . ') ';
+        if ($isLogin) {
+            echo '<a href="like.php?siteid=' . $this->siteid . '&id=' . $id . '&replyid=0&act='
+                . ($meLiked ? 'unlike' : 'like') . '">' . ($meLiked ? '取消赞' : '赞') . '</a>';
+        } else {
+            echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后点赞</a>';
+        }
         echo '</div>';
 
         // 帖子图片附件 (WapBbsFile)
@@ -54,12 +91,67 @@ class BbsViewPage extends WapPage {
         $total = $db->getScalar("SELECT COUNT(*) FROM WapBbsReply WHERE bbsid=? AND isshow=1", [$id]);
         $pageCount = ceil($total / $pageSize);
 
+        // 批量取回复作者信息 (避免 N+1)
+        $replyUids = [];
+        foreach ($replys as $r) {
+            $ru = (int)$r['userid'];
+            if ($ru > 0) $replyUids[$ru] = 1;
+        }
+        $replyUserMap = [];
+        if ($replyUids) {
+            $in = implode(',', array_keys($replyUids));
+            foreach ($db->getAll("SELECT id,username,nickname,point FROM WapUser WHERE id IN ($in)") as $u) {
+                $replyUserMap[(int)$u['id']] = $u;
+            }
+        }
+
+        // 批量取各回复点赞数与本用户点赞状态
+        $replyLikeCounts = [];
+        foreach ($db->getAll("SELECT replyid, COUNT(*) AS c FROM WapLike WHERE siteid=? AND module='bbs' AND contentid=? GROUP BY replyid",
+            [$this->siteid, $id]) as $lc) {
+            $replyLikeCounts[(int)$lc['replyid']] = (int)$lc['c'];
+        }
+        $myReplyLikes = [];
+        if ($isLogin) {
+            foreach ($db->getAll("SELECT replyid FROM WapLike WHERE siteid=? AND module='bbs' AND contentid=? AND userid=? AND replyid>0",
+                [$this->siteid, $id, (int)$this->userSession->getUserId()]) as $ml) {
+                $myReplyLikes[(int)$ml['replyid']] = 1;
+            }
+        }
+
         echo '<div class="replylist">';
         $floor = ($page - 1) * $pageSize + 1;
         foreach ($replys as $r) {
+            $rUid = (int)$r['userid'];
+            $rUser = $replyUserMap[$rUid] ?? null;
+            $rName = trim((string)($r['nickname'] ?? ''));
+            if ($rName === '' && $rUser) {
+                $rName = $rUser['nickname'] !== '' ? $rUser['nickname'] : $rUser['username'];
+            }
+            if ($rName === '') $rName = '游客';
+            $rPoint = $rUser ? (int)$rUser['point'] : 0;
+
             echo '<div class="reply">';
-            echo '<div class="poster">#' . $floor . ' ' . $this->ToHtm($r['nickname'] ?? '游客') . ' ' . date('m-d H:i', strtotime($r['addtime'])) . '</div>';
+            echo '<div class="poster">#' . $floor . ' ';
+            if ($rUid > 0) {
+                echo '<a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . $rUid . '">'
+                    . $this->ToHtm($rName) . '</a>';
+            } else {
+                echo $this->ToHtm($rName);
+            }
+            echo ' ' . kl_level_tag_html($rPoint) . ' ' . date('m-d H:i', strtotime($r['addtime'])) . '</div>';
             echo '<div class="content">' . $this->wapTool->ToWML($r['content'], $this->wmlVo) . '</div>';
+            $rid = (int)$r['id'];
+            $rcount = $replyLikeCounts[$rid] ?? 0;
+            echo '<div class="replylike">赞(' . $rcount . ') ';
+            if ($isLogin) {
+                $rLiked = isset($myReplyLikes[$rid]);
+                echo '<a href="like.php?siteid=' . $this->siteid . '&id=' . $id . '&replyid=' . $rid . '&act='
+                    . ($rLiked ? 'unlike' : 'like') . '">' . ($rLiked ? '取消赞' : '赞') . '</a>';
+            } else {
+                echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后点赞</a>';
+            }
+            echo '</div>';
             echo '</div>';
             $floor++;
         }

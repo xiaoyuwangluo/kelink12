@@ -108,6 +108,20 @@ if echo "$wml" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$((
 wml2=$(curl -s "$BASE/article/list.php?siteid=1&classid=1&ver=1")
 if echo "$wml2" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL wml:article_list"; fi
 
+# v6 积分商城 / 敏感词后台（只读检查）
+check "shop:point" "$BASE/shop/point.php?siteid=1"
+check_admin "admin:pointgoods" "$BASE/admin/pointgoods.php?siteid=1"
+check_admin "admin:pointorder" "$BASE/admin/pointorder.php?siteid=1"
+check_admin "admin:filter" "$BASE/admin/filter.php?siteid=1"
+
+# v7 社区基础能力（只读检查，不写数据）
+check "zone:following" "$BASE/zone/following.php?siteid=1"
+check "zone:fans" "$BASE/zone/fans.php?siteid=1&uid=1"
+check "message:notice" "$BASE/message/notice.php?siteid=1"
+check "bbs:active" "$BASE/bbs/active.php?siteid=1"
+check "bbs:like guard" "$BASE/bbs/like.php?siteid=1&id=999999"
+check "zone:follow guard" "$BASE/zone/follow.php?siteid=1&uid=2"
+
 echo "=============================="
 echo "PASS=$PASS FAIL=$FAIL"
 [ -n "$FAILED_LIST" ] && echo -e "失败明细:$FAILED_LIST"

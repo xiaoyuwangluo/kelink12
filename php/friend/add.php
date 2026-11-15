@@ -5,6 +5,7 @@
  * 申请即好友(status=1)，双向建立好友关系
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class FriendAddPage extends WapPage {
     public function run() {
@@ -42,6 +43,9 @@ class FriendAddPage extends WapPage {
             $db->insert("INSERT INTO WapFriend (siteid,userid,friendid,status,addtime) VALUES (?,?,?,1,NOW())",
                 [$this->siteid, $tid, $uid]);
         }
+
+        kl_notice_add($db, $this->siteid, $tid, $uid, 'friend', 'friend', $uid, '加你为好友');
+        kl_cache_clear_site($this->siteid);
 
         $this->showSuccess('添加 ' . $target['username'] . ' 为好友成功', 'index.php?siteid=' . $this->siteid);
     }

@@ -5,6 +5,7 @@
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once KL_ROOT . '/includes/Upload.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class BbsAddPage extends WapPage {
     public function run() {
@@ -47,10 +48,17 @@ class BbsAddPage extends WapPage {
             return;
         }
 
+        // 敏感词检测：命中则帖子仅自己/后台可见（isshow=0）并写审核记录
+        $isSensitive = kl_has_sensitive($title . ' ' . $content, $this->db, $this->siteid);
+        $isshow = $isSensitive ? 0 : 1;
+
         $id = $db->insert(
-            "INSERT INTO WapBbs (siteid,classid,userid,nickname,title,content,istop,isgood,islock,isshow,addtime,hits,replynum) VALUES (?,?,?,?,?,?,0,0,0,1,NOW(),0,0)",
-            [$this->siteid, $this->classid, $uid, $nick, $title, $content]
+            "INSERT INTO WapBbs (siteid,classid,userid,nickname,title,content,istop,isgood,islock,isshow,addtime,hits,replynum) VALUES (?,?,?,?,?,?,0,0,0,?,NOW(),0,0)",
+            [$this->siteid, $this->classid, $uid, $nick, $title, $content, $isshow]
         );
+        if ($isSensitive) {
+            kl_audit_add($db, $this->siteid, $uid, 'bbs', $id, $title, $content);
+        }
 
         // 图片附件上传 (存文件 + 写 WapBbsFile)
         $fileCount = 0;
@@ -67,6 +75,7 @@ class BbsAddPage extends WapPage {
         }
 
         echo '<div class="success">发表成功' . ($fileCount > 0 ? '，已上传附件 ' . $fileCount . ' 个' : '') . $this->ToHtm($fileMsg)
+            . ($isSensitive ? '，内容含敏感词，待管理员审核' : '')
             . ' <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }

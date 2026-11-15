@@ -13,6 +13,12 @@ $siteCount = $db->getScalar("SELECT COUNT(*) FROM WapSite");
 $userCount = $db->getScalar("SELECT COUNT(*) FROM WapUser");
 $articleCount = $db->getScalar("SELECT COUNT(*) FROM WapArticle");
 $bbsCount = $db->getScalar("SELECT COUNT(*) FROM WapBbs");
+$pointPending = 0;
+try {
+    $pointPending = (int)$db->getScalar("SELECT COUNT(*) FROM WapPointOrder WHERE status=0");
+} catch (Exception $e) {
+    $pointPending = 0;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -57,6 +63,9 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <a href="online.php?siteid=1">在线用户</a>
 <a href="sysmsg.php?siteid=1">系统公告</a>
 <a href="card.php?siteid=1">充值卡</a>
+<a href="pointgoods.php?siteid=1">积分商品</a>
+<a href="pointorder.php?siteid=1">兑换订单（待发放 <?php echo $pointPending; ?>）</a>
+<a href="filter.php?siteid=1">敏感词库</a>
 <a href="upload.php?siteid=1">文件管理</a>
 <a href="setting.php?siteid=1">系统设置</a>
 </div>

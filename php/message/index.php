@@ -15,6 +15,8 @@ class MessageIndexPage extends WapPage {
 
         // 未读数
         $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapMessage WHERE toid=? AND isread=0", [$uid]);
+        $noticeUnread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE siteid=? AND uid=? AND isread=0",
+            [$this->siteid, $uid]);
 
         $this->strTitle = $box === 'in' ? '收件箱' : '发件箱';
         $this->showTop($this->strTitle);
@@ -22,6 +24,7 @@ class MessageIndexPage extends WapPage {
         echo '<div class="menu">';
         echo '<a href="index.php?siteid=' . $this->siteid . '&box=in">收件箱' . ($unread > 0 ? '(' . $unread . '未读)' : '') . '</a> | ';
         echo '<a href="index.php?siteid=' . $this->siteid . '&box=out">发件箱</a> | ';
+        echo '<a href="notice.php?siteid=' . $this->siteid . '">通知中心' . ($noticeUnread > 0 ? '(未读' . $noticeUnread . ')' : '') . '</a> | ';
         echo '<a href="send.php?siteid=' . $this->siteid . '">发送短信</a>';
         echo '</div>';
 
