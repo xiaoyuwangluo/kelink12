@@ -1,0 +1,153 @@
+<?php
+/**
+ * 小宇网络 WAP建站系统 PHP版
+ * 商城模块 - 订单支付 (对应原版 chinabank 支付网关页)
+ * 途径a: 余额支付 —— 校验 WapUser.money >= 订单额，扣款+写AccountLog(out)+订单置1+扣库存
+ * 途径b: 充值卡支付 —— 校验 WapCard(cardno+md5(cardpwd),isused=0)，卡置已用、加余额、写AccountLog(in)，再以余额完成支付
+ * 全程参数化SQL + 事务
+ */
+require_once __DIR__ . '/../includes/bootstrap.php';
+
+class ShopPayPage extends WapPage {
+    public function run() {
+        $this->checkLogin();
+        $db = $this->db;
+        $uid = $this->userSession->getUserId();
+        $orderid = (int)($_GET['orderid'] ?? $_POST['orderid'] ?? 0);
+        if ($orderid <= 0) $this->showError('参数错误', 'myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+
+        $order = $db->getOne("SELECT * FROM WapShopOrder WHERE id=? AND userid=? AND siteid=?", [$orderid, $uid, $this->siteid]);
+        if (!$order) $this->showError('订单不存在');
+        if ((int)$order['status'] != 0) $this->showError('该订单当前状态不可支付', 'myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+
+        $total = (int)round($order['totalprice']); // 金额按整数元处理
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $act = $_POST['act'] ?? '';
+            if ($act === 'balance') {
+                $this->payByBalance($uid, $order, $total);
+            } elseif ($act === 'card') {
+                $this->payByCard($uid, $order, $total);
+            }
+            return;
+        }
+
+        // 支付页
+        $user = $this->userVo;
+        $this->strTitle = '订单支付';
+        $this->showTop($this->strTitle);
+        echo '<div class="subtitle">订单支付 #' . $orderid . '</div><div class="content">';
+        echo '应付金额:<span class="price">￥' . $total . '</span><br/>';
+        echo '账户余额:￥' . (int)$user['money'] . '<br/>';
+        echo '<hr/>';
+        echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+        echo '<input type="hidden" name="act" value="balance"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
+        echo '<input type="submit" value="使用余额支付"/></form>';
+        echo '<hr/>';
+        echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+        echo '<input type="hidden" name="act" value="card"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
+        echo '充值卡卡号:<input type="text" name="cardno" maxlength="32"/><br/>';
+        echo '充值卡密码:<input type="password" name="cardpwd" maxlength="32"/><br/>';
+        echo '<input type="submit" value="充值卡支付(先充值后扣款)"/></form>';
+        echo '</div>';
+        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a></div>';
+        $this->showDown();
+    }
+
+    /** 途径a：余额支付（事务：扣款+流水+订单置1+扣库存） */
+    private function payByBalance($uid, $order, $total) {
+        $db = $this->db;
+        try {
+            $db->beginTransaction();
+            if (!$this->doPayCore($uid, $order, $total)) {
+                $db->rollBack();
+                return; // doPayCore 内部已报错输出
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            if ($db->getPdo()->inTransaction()) $db->rollBack();
+            $this->showError('支付失败，请重试');
+            return;
+        }
+        $this->paySuccess($order['id'], $total);
+    }
+
+    /** 途径b：充值卡支付（事务：卡校验→置已用→加余额→流水in→余额扣款支付） */
+    private function payByCard($uid, $order, $total) {
+        $db = $this->db;
+        $cardno = trim($_POST['cardno'] ?? '');
+        $cardpwd = trim($_POST['cardpwd'] ?? '');
+        if ($cardno === '' || $cardpwd === '') $this->showError('请填写卡号和密码');
+        if (!preg_match('/^[A-Za-z0-9_\-]{4,32}$/', $cardno)) $this->showError('卡号格式不正确');
+
+        // 参数化校验充值卡：卡号+密码md5+未使用
+        $card = $db->getOne("SELECT * FROM WapCard WHERE cardno=? AND cardpwd=? AND isused=0",
+            [$cardno, md5($cardpwd)]);
+        if (!$card) $this->showError('充值卡无效或已被使用');
+
+        $cardMoney = (int)$card['money'];
+        try {
+            $db->beginTransaction();
+            // 卡置已用（并发保护：仅未使用卡可置位）
+            $n = $db->execute("UPDATE WapCard SET isused=1, userid=?, usetime=NOW() WHERE id=? AND isused=0", [$uid, $card['id']]);
+            if ($n != 1) { $db->rollBack(); $this->showError('充值卡已被使用'); return; }
+            // 加余额 + 写充值流水(in)
+            $db->execute("UPDATE WapUser SET money=money+? WHERE id=?", [$cardMoney, $uid]);
+            $balance = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$uid]);
+            $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
+                [$this->siteid, $uid, 'in', $cardMoney, $balance, '充值卡充值 ' . $cardno]);
+            // 以余额完成订单支付
+            if (!$this->doPayCore($uid, $order, $total)) {
+                $db->rollBack();
+                return;
+            }
+            $db->commit();
+        } catch (Exception $e) {
+            if ($db->getPdo()->inTransaction()) $db->rollBack();
+            $this->showError('充值支付失败，请重试');
+            return;
+        }
+        $this->paySuccess($order['id'], $total, '已使用充值卡充值￥' . $cardMoney . '，');
+    }
+
+    /**
+     * 支付核心（须在事务内调用）：
+     * 校验余额→扣款→流水out→订单0→1(重复支付被拒)→扣库存
+     * @return bool 成功返回true；失败时已输出错误页(内部exit)或返回false由调用方回滚
+     */
+    private function doPayCore($uid, $order, $total) {
+        $db = $this->db;
+        $money = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$uid]);
+        if ($money < $total) {
+            $db->rollBack();
+            $this->showError('余额不足（当前￥' . $money . '，应付￥' . $total . '），请先充值');
+            return false;
+        }
+        // 扣款（条件更新防并发扣负）
+        $n = $db->execute("UPDATE WapUser SET money=money-? WHERE id=? AND money>=?", [$total, $uid, $total]);
+        if ($n != 1) { $db->rollBack(); $this->showError('余额不足，支付失败'); return false; }
+        $balance = $money - $total;
+        // 支出流水(out)
+        $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
+            [$this->siteid, $uid, 'out', $total, $balance, '支付订单 #' . $order['id']]);
+        // 订单置已付：仅状态0可置1，重复支付在此被拒
+        $n = $db->execute("UPDATE WapShopOrder SET status=1 WHERE id=? AND status=0", [$order['id']]);
+        if ($n != 1) { $db->rollBack(); $this->showError('订单已支付或已取消，不可重复支付'); return false; }
+        // 扣库存（库存不足则回滚）
+        $n = $db->execute("UPDATE WapShop SET stock=stock-? WHERE id=? AND stock>=?", [$order['num'], $order['shopid'], $order['num']]);
+        if ($n != 1) { $db->rollBack(); $this->showError('商品库存不足，支付失败'); return false; }
+        return true;
+    }
+
+    /** 支付成功提示页 */
+    private function paySuccess($orderid, $total, $prefix = '') {
+        $this->strTitle = '支付成功';
+        $this->showTop($this->strTitle);
+        echo '<div class="success">' . $prefix . '支付成功！订单 #' . $orderid . ' 金额￥' . $total . '</div>';
+        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a> ';
+        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">继续购物</a></div>';
+        $this->showDown();
+    }
+}
+$page = new ShopPayPage();
+$page->run();

@@ -19,6 +19,22 @@ class PaimaiViewPage extends WapPage {
         echo '<div class="info">时间:' . date('Y-m-d H:i', strtotime($row['addtime'])) . ' 点击:' . (int)$row['hits'] . '</div>';
         if (!empty($row['picurl'])) echo '<div class="pic"><img src="' . $this->ToHtm($row['picurl']) . '"/></div>';
         echo '<div class="content">' . $this->wapTool->ToWML($row['content'], $this->wmlVo) . '</div>';
+
+        // 拍卖出价区：当前最高价、出价次数、最近出价、出价入口
+        $top = $db->getOne("SELECT MAX(price) AS top, COUNT(*) AS cnt FROM WapPaimaiBid WHERE paimaiid=?", [$id]);
+        $curTop = (int)($top['top'] ?? 0);
+        $bidCount = (int)($top['cnt'] ?? 0);
+        echo '<div class="bidbar">当前最高价:￥' . $curTop . ' 出价次数:' . $bidCount . ' ';
+        echo '<a href="bid.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&paimaiid=' . $id . '">我要出价</a></div>';
+        if ($bidCount > 0) {
+            $bids = $db->getAll("SELECT nickname,price,addtime FROM WapPaimaiBid WHERE paimaiid=? ORDER BY price DESC,id DESC LIMIT 5", [$id]);
+            echo '<div class="bidlist">最近出价:<br/>';
+            foreach ($bids as $b) {
+                echo $this->ToHtm($b['nickname']) . ' ￥' . (int)$b['price'] . ' ' . date('m-d H:i', strtotime($b['addtime'])) . '<br/>';
+            }
+            echo '</div>';
+        }
+
         if (!empty($row['downurl'])) echo '<div class="download"><a href="' . $this->http_start . 'down.php?id=' . $id . '">下载</a></div>';
         echo '<div class="replybar"><a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
         echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';

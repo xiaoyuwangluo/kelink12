@@ -1,0 +1,22 @@
+/* 小宇网络 WAP建站系统 - 触屏模板样式 (移动深色) */
+body{font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;color:#ddd;background:#1c1f26;margin:0;padding:0;font-size:15px;-webkit-text-size-adjust:100%}
+a{color:#4dc3ff;text-decoration:none}
+a:hover{color:#8ad8ff}
+h1,h2,h3{font-size:17px;padding:12px 14px;margin:0;background:#262b35;border-left:4px solid #4dc3ff;color:#fff}
+.list{list-style:none;padding:0 14px;margin:0}
+.list li{padding:11px 0;border-bottom:1px solid #313743}
+.content{padding:14px;line-height:1.8}
+.copyright{text-align:center;color:#778;padding:18px 0;border-top:1px solid #313743;margin-top:24px;font-size:12px}
+.error{color:#ff8a8a;padding:14px;background:#3a2626;border:1px solid #6e3d3d;margin:12px;border-radius:6px}
+.success{color:#8ae38a;padding:14px;background:#263a26;border:1px solid #3d6e3d;margin:12px;border-radius:6px}
+.versionswitch{padding:10px 14px;background:#262b35;font-size:13px}
+.versionswitch .curver{font-weight:bold;color:#4dc3ff}
+.callmodule{padding:12px 14px;background:#262b35;border-radius:6px;margin:10px 14px}
+.subtitle{font-weight:bold;padding:10px 14px;background:#262b35;color:#fff;margin:12px 0 6px}
+table{border-collapse:collapse;width:100%}
+td,th{border:1px solid #3a4150;padding:7px 9px;font-size:13px}
+blockquote{border-left:3px solid #4dc3ff;background:#262b35;padding:10px;margin:10px 0;color:#bbb}
+pre{background:#14161b;padding:12px;overflow:auto;border:1px solid #313743;color:#9fd}
+img{max-width:100%}
+.pagenav{padding:12px 14px;text-align:center;font-size:13px}
+input,textarea,select{background:#262b35;border:1px solid #3a4150;color:#ddd;padding:9px;border-radius:5px;width:100%;box-sizing:border-box;margin:4px 0}

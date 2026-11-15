@@ -1,7 +1,7 @@
 <?php
 /**
  * 小宇网络 WAP建站系统 PHP版
- * WapPage 基类 (对应原 KeLin.WebSite 中各页面继承的基类)
+ * WapPage 基类 (对应原 ASP.NET 版各页面继承的基类)
  * 所有模块页面继承此类，提供站点初始化、版本识别、公共属性方法
  */
 if (!defined('KL_ROOT')) exit;
@@ -50,6 +50,54 @@ class WapPage {
         $this->wapTool->siteVo = $this->siteVo;
         $this->wapTool->classVo = $this->classVo;
         $this->wapTool->wmlVo = $this->wmlVo;
+
+        // 在线人数与流量统计
+        $this->trackOnline();
+    }
+
+    /**
+     * 在线人数统计 + 流量统计 (对应原 WapOnline / visiteCount)
+     * 受 KL_VisiteCount_Close 开关控制流量记录
+     */
+    protected function trackOnline() {
+        try {
+            $uid = isset($_SESSION['kl_userid']) ? (int)$_SESSION['kl_userid'] : 0;
+            $uname = isset($_SESSION['kl_username']) ? $_SESSION['kl_username'] : '游客';
+            $ip = UserSession::getClientIp();
+            $page = basename($_SERVER['SCRIPT_NAME'] ?? '');
+            $now = date('Y-m-d H:i:s');
+            $row = $this->db->getOne("SELECT id FROM WapOnline WHERE ip=? AND userid=?", [$ip, $uid]);
+            if ($row) {
+                $this->db->execute("UPDATE WapOnline SET lasttime=?, page=? WHERE id=?", [$now, $page, $row['id']]);
+            } else {
+                $this->db->insert("INSERT INTO WapOnline (siteid,userid,username,ip,page,lasttime) VALUES (?,?,?,?,?,?)",
+                    [$this->siteid, $uid, $uname, $ip, $page, $now]);
+            }
+            // 清理超时在线 (KL_DelOnlineTime 分钟)
+            $limit = date('Y-m-d H:i:s', time() - KL_DelOnlineTime * 60);
+            $this->db->execute("DELETE FROM WapOnline WHERE lasttime < ?", [$limit]);
+
+            // 流量统计 (KL_VisiteCount_Close: 0开 1关)
+            if (KL_VisiteCount_Close == 0 && $this->siteid > 0) {
+                $today = date('Y-m-d');
+                $vis = $this->db->getOne("SELECT id FROM WapVisite WHERE siteid=? AND visitdate=?", [$this->siteid, $today]);
+                $isNewIp = !$this->db->getScalar("SELECT COUNT(*) FROM WapVisiteLog WHERE siteid=? AND ip=? AND date(addtime)=?",
+                    [$this->siteid, $ip, $today]);
+                if ($vis) {
+                    $sql = "UPDATE WapVisite SET pv=pv+1" . ($isNewIp ? ",uv=uv+1" : "") . " WHERE id=?";
+                    $this->db->execute($sql, [$vis['id']]);
+                } else {
+                    $this->db->insert("INSERT INTO WapVisite (siteid,visitdate,pv,uv) VALUES (?,?,1,1)", [$this->siteid, $today]);
+                }
+                if ($isNewIp) {
+                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+                    $this->db->insert("INSERT INTO WapVisiteLog (siteid,ip,url,ua,addtime) VALUES (?,?,?,?,?)",
+                        [$this->siteid, $ip, $page, substr($ua, 0, 200), $now]);
+                }
+            }
+        } catch (Exception $e) {
+            // 统计失败不影响页面
+        }
     }
 
     /** 初始化请求参数 */

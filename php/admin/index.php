@@ -37,7 +37,7 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <body>
 <div class="header">
 <h1>小宇网络 WAP建站系统 管理后台</h1>
-<div class="nav"><a href="login.php?action=logout">退出</a></div>
+<div class="nav"><a href="logout.php">退出</a></div>
 </div>
 <div class="container">
 <div class="stats">
@@ -47,11 +47,15 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <div class="stat-card"><div class="num"><?php echo $bbsCount; ?></div><div class="label">帖子数</div></div>
 </div>
 <div class="menu">
-<a href="../wapindex.php">站点首页</a>
-<a href="sitelist.php">站点管理</a>
-<a href="userlist.php">会员管理</a>
-<a href="classlist.php">栏目管理</a>
-<a href="sysconfig.php">系统设置</a>
+<a href="../wapindex.php?siteid=1">站点首页</a>
+<a href="site.php?siteid=1">站点管理</a>
+<a href="class.php?siteid=1">栏目管理</a>
+<a href="user.php?siteid=1">会员管理</a>
+<a href="content.php?siteid=1&module=article">内容管理</a>
+<a href="reply.php?siteid=1">评论审核</a>
+<a href="online.php?siteid=1">在线用户</a>
+<a href="sysmsg.php?siteid=1">系统公告</a>
+<a href="card.php?siteid=1">充值卡</a>
 </div>
 </div>
 </body>

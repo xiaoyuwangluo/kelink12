@@ -1,0 +1,9 @@
+# 小宇网络 WAP建站系统 PHP版
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /install/
+Disallow: /data/
+Disallow: /cache/
+Sitemap: /sitemap.xml

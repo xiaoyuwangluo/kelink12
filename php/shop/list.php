@@ -26,6 +26,12 @@ class ShopListPage extends WapPage {
             echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $p['id'] . '">';
             echo $this->ToHtm($p['title']) . '</a>';
             echo ' <span class="price">￥' . number_format($p['price'], 2) . '</span>';
+            // 加入购物车 / 立即购买 快捷链接
+            echo '<form method="post" action="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" style="display:inline">';
+            echo '<input type="hidden" name="act" value="add"/><input type="hidden" name="shopid" value="' . (int)$p['id'] . '"/>';
+            echo '<input type="hidden" name="num" value="1"/>';
+            echo '<input type="submit" value="加入购物车"/></form> ';
+            echo '<a href="checkout.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&shopid=' . (int)$p['id'] . '&num=1">立即购买</a>';
             echo '</li>';
         }
         echo '</ul></div>';

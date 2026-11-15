@@ -26,12 +26,23 @@ class ShopViewPage extends WapPage {
         echo '<div class="price">价格:￥' . number_format($product['price'], 2) . '</div>';
         echo '<div class="content">' . $this->wapTool->ToWML($product['content'], $this->wmlVo) . '</div>';
 
-        // 购买按钮
+        // 购买按钮：加入购物车 / 立即购买
         echo '<div class="buybar">';
-        echo '<form method="post" action="order.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<form method="post" action="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<input type="hidden" name="act" value="add"/><input type="hidden" name="shopid" value="' . $id . '"/>';
         echo '数量:<input type="number" name="num" value="1" min="1"/>';
+        echo '<input type="submit" value="加入购物车"/>';
+        echo '</form>';
+        echo '<form method="get" action="checkout.php">';
+        echo '<input type="hidden" name="siteid" value="' . $this->siteid . '"/>';
+        echo '<input type="hidden" name="classid" value="' . $this->classid . '"/>';
+        echo '<input type="hidden" name="shopid" value="' . $id . '"/>';
+        echo '<input type="hidden" name="num" value="1"/>';
         echo '<input type="submit" value="立即购买"/>';
-        echo '</form></div>';
+        echo '</form>';
+        echo '</div>';
+        echo '<div class="shopnav"><a href="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">购物车</a> ';
+        echo '<a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a></div>';
 
         echo '<div><a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();

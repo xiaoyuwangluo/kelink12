@@ -1,20 +1,24 @@
 # 小宇网络 WAP建站系统 PHP版 - 开发指南
 
-> 由 ASP.NET (柯林建站系统) 移植而来，100% 复原原版功能架构，版权所有：小宇网络
+> 由原版 ASP.NET WAP建站系统移植而来，完整复原原版功能架构，版权所有：小宇网络
 
 ## 一、项目概述
 
-本系统是原 ASP.NET 版柯林WAP建站系统的 PHP 完整移植版，采用 PHP + PDO 架构，支持 MySQL / SQL Server / SQLite 三种数据库。
+本系统是原版 ASP.NET WAP建站系统的 PHP 完整移植版，采用 PHP + PDO 架构，支持 MySQL / SQL Server / SQLite 三种数据库。
 
 ### 核心特性
-- ✅ 21 个功能模块完整移植（文章、论坛、商城、小说、视频、图片、下载、铃声、链接、留言、供求、拍卖、约会、挖宝、广播、广告、飞机、相册、酒店、日志、新站）
-- ✅ UBB 万能调用解析（[b][i][u][url][img][color][size][font][align][quote][code][list] 等）
+- ✅ 27 个功能模块（文章、论坛、商城、小说、视频、图片、下载、铃声、链接、留言、供求、拍卖、约会、挖宝、广播、广告、飞机、相册、酒店、日志、新站、聊天室、家族、游戏、问答、农场、表单）
+- ✅ UBB 万能调用解析（[b][i][u][url][img][color][size][font][align][quote][code][list] 等）+ `[功能模块=N_M_X_Y]` 跨模块内容调用
 - ✅ 多版本浏览（WAP1.0 / WAP2.0 / 触屏版 / 电脑版）自动识别 UA
-- ✅ 会员系统（注册、登录、用户中心、权限）
-- ✅ 管理后台（站点管理、会员管理、栏目管理、系统设置）
-- ✅ 伪静态 URL 重写（.htaccess）
+- ✅ 会员系统（注册、登录、用户中心、签到、站内短信、好友、收藏、会员空间、账户流水）
+- ✅ 管理后台（站点/栏目/会员/内容审核/评论/在线用户/公告/点卡管理）
+- ✅ 商城交易全链路（购物车、下单、余额支付、点卡充值、订单管理、拍卖出价）
+- ✅ 模板系统（templates/default 与 templates/touch 两套样式，站点 template 字段切换）
+- ✅ 在线人数统计、流量统计（WapOnline / WapVisite）、文件缓存（kl_cache_get/put）
+- ✅ 伪静态 URL 重写（.htaccess 全模块）、sitemap.php、robots.txt
+- ✅ 微信回调（weixin.php）、短信接口（sms.php）、QQ登录（oauth/）、短链跳转（t.php）
 - ✅ 防盗链下载、限速下载
-- ✅ 防 SQL 注入、防刷新提交、每日发贴/回帖限制
+- ✅ 防 SQL 注入、防刷新提交、每日发贴/回帖/短信/空间留言限制
 - ✅ 安装向导（install/）
 
 ## 二、目录结构
@@ -61,10 +65,30 @@
 ├── hotel/                      # 酒店
 ├── rizhi/                      # 日志
 ├── xinzhang/                   # 新站
+├── chat/                       # 聊天室
+├── clan/                       # 家族
+├── games/                      # 游戏
+├── zhdao/                      # 问答
+├── nongchang/                  # 农场
+├── form/                       # 表单
+├── signin/                     # 每日签到
+├── message/                    # 站内短信
+├── friend/                     # 好友
+├── zone/                       # 会员空间
+├── myaccount/                  # 账户流水/点卡充值
+├── oauth/                      # QQ登录
+├── templates/                  # 模板系统(default/touch两套样式+list.php)
+├── page.php                    # 自定义页面(支持万能调用)
+├── sitemap.php / robots.txt    # SEO
+├── default.php wapregsite.php wapgetpw.php      # 默认入口/建站注册/找回密码
+├── webhelp.php webnews.php webrank.php          # 帮助/动态/站点排行
+├── ajax_ubb.php cache.php weixin.php sms.php t.php  # UBB预览/清缓存/微信/短信/短链
 │
 ├── admin/                      # 管理后台
-│   ├── login.php               # 管理员登录
-│   └── index.php               # 后台首页
+│   ├── login.php / logout.php / index.php       # 登录/退出/首页
+│   ├── site.php class.php user.php              # 站点/栏目/会员管理
+│   ├── content.php reply.php                    # 内容审核/评论管理
+│   └── online.php sysmsg.php card.php           # 在线/公告/点卡
 │
 ├── install/                    # 安装向导
 │   ├── index.php               # 安装页面
@@ -212,28 +236,26 @@ $page->run();
 
 ### 已完成（核心功能）
 - [x] 核心框架（配置/数据库/Session/基类/UBB解析）
-- [x] 21 个模块的 list/view/book_re/admin_WAPadd 页面
-- [x] 会员注册登录、用户中心
-- [x] 全站搜索
-- [x] 防盗链下载
-- [x] 管理后台登录与首页
-- [x] 安装向导
-- [x] 伪静态规则
-- [x] SQLite 支持（轻量部署）
+- [x] 21 个内容模块的 list/view/book_re/admin_WAPadd 页面
+- [x] 6 个新模块：聊天室/家族/游戏/问答/农场/表单
+- [x] 会员注册登录、用户中心、签到、站内短信、好友、收藏、会员空间、账户流水
+- [x] 商城交易链路：购物车/下单/余额支付/点卡充值/订单/拍卖出价
+- [x] 管理后台 9 个页面（站点/栏目/会员/内容审核/评论/在线/公告/点卡）
+- [x] 全站搜索、防盗链下载、安装向导、SQLite 支持（开箱即用）
+- [x] UBB 万能调用 `[功能模块=N_M_X_Y]`
+- [x] 在线人数统计（WapOnline）+ 流量统计（WapVisite，KL_VisiteCount_Close 开关）
+- [x] 模板系统（templates/default、templates/touch）
+- [x] 缓存系统（kl_cache_get/kl_cache_put，KL_OpenCache 开关）
+- [x] SEO：sitemap.php、robots.txt、全模块伪静态
+- [x] 顶层页面：建站注册/找回密码/帮助/动态/排行/ajax_ubb/清缓存/微信/短信/QQ登录/短链/自定义页
 
 ### 待完善（按优先级）
-1. **管理后台完整页面**：站点管理、会员管理、栏目管理、系统设置、各模块内容审核
-2. **UBB 万能调用**：`[功能模块=N_M_X_Y]` 动态调用其他模块内容
-3. **在线人数统计**：WapOnline 表维护
-4. **模板系统**：多套 WAP 模板切换
-5. **支付集成**：支付宝/微信支付（shop 模块）
-6. **微信公众平台对接**
-7. **QQ 第三方登录**
-8. **文件上传管理**（uploadfiles 目录管理）
-9. **缓存系统**（KL_OpenCache）
-10. **SEO 优化**：sitemap、伪静态完善
-11. **WAP1.0 WML 渲染完善**
-12. **权限系统**：栏目级投稿/管理权限
+1. **真实支付网关**：支付宝/微信正式对接（当前为余额+点卡+模拟网关）
+2. **微信公众平台正式对接**（当前 weixin.php 为回调框架+本地应答）
+3. **文件上传管理**（uploadfiles 目录可视化上传管理页）
+4. **WAP1.0 WML 渲染完善**（复杂页面的 WML 适配）
+5. **栏目级权限系统**（版主/分组投稿权限细化）
+6. **QQ 登录正式对接**（当前 oauth/ 为模拟回调流程）
 
 ### 新增模块方法
 参考第四章"模块开发规范"，每个模块只需 4 个标准页面 + 1 张数据表，框架已提供所有基础设施。

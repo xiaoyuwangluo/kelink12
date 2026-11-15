@@ -63,8 +63,44 @@ class BbsViewPage extends WapPage {
         if (!$thread['islock']) {
             echo '<a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">回复</a> ';
         }
+        echo '<a href="fav.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a> ';
+        // 作者或管理员显示管理入口
+        $isOwner = $this->userSession->isLogin() && (int)$thread['userid'] === (int)$this->userSession->getUserId();
+        $isAdmin = !empty($_SESSION['kl_adminid']);
+        if ($isOwner || $isAdmin) {
+            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=edit&id=' . $id . '">编辑</a> ';
+            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=top&id=' . $id . '">置顶</a> ';
+            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=good&id=' . $id . '">加精</a> ';
+            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=lock&id=' . $id . '">锁帖</a> ';
+            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=del&id=' . $id . '">删除</a> ';
+        }
         echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
+
+        // 帖子关联投票 (读 WapVote / WapVoteOption)
+        $vote = $db->getOne("SELECT * FROM WapVote WHERE bbsid=? AND siteid=?", [$id, $this->siteid]);
+        if ($vote) {
+            $options = $db->getAll("SELECT * FROM WapVoteOption WHERE voteid=? ORDER BY id", [$vote['id']]);
+            $vtotal = max(1, (int)$vote['total']);
+            echo '<div class="vote">';
+            echo '<div class="subtitle">' . $this->ToHtm($vote['question']) . '</div>';
+            $canVote = $this->userSession->isLogin();
+            echo '<form method="post" action="vote.php?siteid=' . $this->siteid . '&voteid=' . (int)$vote['id'] . '">';
+            foreach ($options as $o) {
+                $pct = round((int)$o['votes'] * 100 / $vtotal);
+                echo '<label>';
+                if ($canVote) echo '<input type="radio" name="optionid" value="' . (int)$o['id'] . '"/> ';
+                echo $this->ToHtm($o['optionname']) . ' (' . (int)$o['votes'] . '票 ' . $pct . '%)';
+                echo '</label><br/>';
+            }
+            echo '总票数:' . (int)$vote['total'];
+            if ($canVote) {
+                echo ' <input type="submit" value="投票"/>';
+            } else {
+                echo ' <a href="../waplogin.php?siteid=' . $this->siteid . '">登录后投票</a>';
+            }
+            echo '</form></div>';
+        }
 
         $this->showDown();
     }

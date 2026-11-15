@@ -1,7 +1,7 @@
 <?php
 /**
  * 小宇网络 WAP建站系统 PHP版
- * WapTool 工具类 (对应原 KeLin.ClassManager.Tool.WapTool)
+ * WapTool 工具类 (对应原 ASP.NET 版 WapTool 工具类)
  * 负责 UBB 解析、WML/HTML 转换、头部底部输出、版本切换等
  */
 if (!defined('KL_ROOT')) exit;
@@ -41,6 +41,13 @@ class WapTool {
             $html .= '<html><head>' . "\n";
             $html .= '<meta http-equiv="Content-Type" content="text/html; charset=' . $charset . '" />' . "\n";
             $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' . "\n";
+            // 模板样式 (templates/{dir}/style.css，站点 template 字段选择)
+            $tplDir = preg_replace('/[^a-z0-9_\-]/i', '', (string)($this->siteVo->template ?? 'default'));
+            if ($tplDir === '') $tplDir = 'default';
+            $cssFile = KL_ROOT . '/templates/' . $tplDir . '/style.css';
+            if (is_file($cssFile)) {
+                $html .= '<link rel="stylesheet" href="' . $wmlVo->http_start . 'templates/' . $tplDir . '/style.css" />' . "\n";
+            }
             $html .= '<title>' . $this->ToHtm($title ?: $siteName) . '</title>' . "\n";
             // 全局顶部广告
             $topAd = $this->getGlobalAd('top');
@@ -133,13 +140,80 @@ class WapTool {
     }
 
     /**
+     * 万能调用模块映射 (对应原版 [功能模块=N_M_X_Y] 中的 M)
+     * N=调用条数 M=模块ID X=站点ID Y=栏目ID(0为不限)
+     */
+    public static $MODULE_MAP = [
+        1=>'article', 2=>'bbs', 3=>'shop', 4=>'novel', 5=>'video',
+        6=>'picture', 7=>'download', 8=>'ring', 9=>'link', 10=>'guessbook',
+        11=>'gongqiu', 12=>'paimai', 13=>'yuehui', 14=>'wabao', 15=>'guangbo',
+        16=>'adlink', 17=>'airplane', 18=>'album', 19=>'hotel', 20=>'rizhi', 21=>'xinzhang',
+    ];
+    public static $MODULE_TABLE = [
+        'article'=>'WapArticle', 'bbs'=>'WapBbs', 'shop'=>'WapShop', 'novel'=>'WapNovel',
+        'video'=>'WapVideo', 'picture'=>'WapPicture', 'download'=>'WapDownload', 'ring'=>'WapRing',
+        'link'=>'WapLink', 'guessbook'=>'WapGuestbook', 'gongqiu'=>'WapGongqiu', 'paimai'=>'WapPaimai',
+        'yuehui'=>'WapYuehui', 'wabao'=>'WapWabao', 'guangbo'=>'WapGuangbo', 'adlink'=>'WapAdlink',
+        'airplane'=>'WapAirplane', 'album'=>'WapAlbum', 'hotel'=>'WapHotel', 'rizhi'=>'WapRizhi',
+        'xinzhang'=>'WapXinzhang',
+    ];
+
+    /**
+     * 万能调用 [功能模块=N_M_X_Y]
+     * 动态调用指定站点/栏目下某模块最新N条内容
+     */
+    public function callModule($n, $moduleId, $siteid, $classid, $wmlVo = null) {
+        $wmlVo = $wmlVo ?: $this->wmlVo;
+        $module = self::$MODULE_MAP[$moduleId] ?? '';
+        $table = self::$MODULE_TABLE[$module] ?? '';
+        if ($module === '' || $n < 1) return '';
+        $n = min(50, $n);
+        try {
+            $db = Database::getInstance();
+            $where = 'siteid=? AND isshow=1';
+            $params = [$siteid];
+            if ($classid > 0) { $where .= ' AND classid=?'; $params[] = $classid; }
+            $order = 'id DESC';
+            $result = $db->getPage($table, 'id,title', $where, $order, 1, $n, $params);
+        } catch (Exception $e) {
+            return '';
+        }
+        if (empty($result['list'])) return '';
+        $http = $wmlVo->http_start ?? '/';
+        $html = '<div class="callmodule">';
+        foreach ($result['list'] as $row) {
+            $url = $http . $module . '/view.php?siteid=' . $siteid . '&classid=' . $classid . '&id=' . $row['id'];
+            $html .= '<a href="' . $url . '">' . $this->ToHtm($row['title']) . '</a><br/>';
+        }
+        $html .= '</div>';
+        return $html;
+    }
+
+    /** 当前在线人数 */
+    public function onlineCount($siteid = 0) {
+        try {
+            $db = Database::getInstance();
+            $limit = date('Y-m-d H:i:s', time() - KL_DelOnlineTime * 60);
+            if ($siteid > 0) {
+                return (int)$db->getScalar("SELECT COUNT(*) FROM WapOnline WHERE siteid=? AND lasttime>?", [$siteid, $limit]);
+            }
+            return (int)$db->getScalar("SELECT COUNT(*) FROM WapOnline WHERE lasttime>?", [$limit]);
+        } catch (Exception $e) { return 0; }
+    }
+
+    /**
      * UBB 标签解析
      * 支持 [b][i][u][url][img][color][size][font] 等
-     * 以及万能调用 [功能模块标识=N_M_X_Y] (此处仅解析基础UBB，万能调用由业务层处理)
+     * 以及万能调用 [功能模块=N_M_X_Y]
      */
     private function parseUBB($str, $wmlVo) {
         $ver = $wmlVo->ver ?? '2';
         $isWML = ($ver == '1');
+
+        // 万能调用 [功能模块=N_M_X_Y]
+        $str = preg_replace_callback('/\[功能模块=(\d+)_(\d+)_(\d+)_(\d+)\]/', function($m) use ($wmlVo) {
+            return $this->callModule((int)$m[1], (int)$m[2], (int)$m[3], (int)$m[4], $wmlVo);
+        }, $str);
 
         // [b]粗体[/b]
         $str = preg_replace('/\[b\](.*?)\[\/b\]/is', $isWML ? '<b>$1</b>' : '<strong>$1</strong>', $str);

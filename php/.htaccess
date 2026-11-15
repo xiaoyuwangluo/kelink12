@@ -44,6 +44,18 @@ RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|g
 RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|guangbo|adlink|airplane|album|hotel|rizhi|xinzhang)list-([0-9]+).html$ $1/list.php?classid=$2 [L,QSA]
 RewriteRule ^(picture|download|ring|link|guessbook|gongqiu|paimai|yuehui|wabao|guangbo|adlink|airplane|album|hotel|rizhi|xinzhang)list-([0-9]+)-([0-9]+).html$ $1/list.php?classid=$2&page=$3 [L,QSA]
 
+# 新增模块 (chat/clan/games/zhdao/nongchang/signin/form)
+RewriteRule ^(chat|clan|games|zhdao|nongchang|signin|form)-([0-9]+).html$ $1/view.php?id=$2 [L,QSA]
+RewriteRule ^(chat|clan|games|zhdao|nongchang|signin|form)list-([0-9]+).html$ $1/index.php?classid=$2 [L,QSA]
+RewriteRule ^(chat|clan|games|zhdao|nongchang|signin|form)list-([0-9]+)-([0-9]+).html$ $1/index.php?classid=$2&page=$3 [L,QSA]
+
+# 自定义页面与站点地图
+RewriteRule ^page-([0-9]+).html$ page.php?id=$1 [L,QSA]
+RewriteRule ^sitemap.xml$ sitemap.php [L,QSA]
+
+# 顶层功能页伪静态
+RewriteRule ^(wapregsite|wapgetpw|webhelp|webnews|webrank)-([0-9]+).html$ $1.php?siteid=$2 [L,QSA]
+
 </IfModule>
 
 # 安全: 禁止访问敏感文件
