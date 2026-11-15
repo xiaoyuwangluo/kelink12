@@ -1,6 +1,6 @@
 #!/bin/bash
 # 小宇网络 WAP建站系统 PHP版 全量验收测试
-BASE=http://127.0.0.1:8110
+BASE=${BASE:-http://127.0.0.1:8110}
 JAR=/tmp/acc_cookie.txt
 CJ=/tmp/acc_admin.txt
 PASS=0; FAIL=0; FAILED_LIST=""
@@ -72,7 +72,7 @@ check "oauth" "$BASE/oauth/index.php?siteid=1"
 check "templates" "$BASE/templates/list.php?siteid=1"
 
 # v4 每模块管理页 (modify/del/change)
-cd /workspace/php
+cd "${PHP_ROOT:-/workspace/php}"
 for m in bbs shop novel video picture download ring link guessbook gongqiu paimai yuehui wabao guangbo adlink airplane album hotel rizhi xinzhang; do
   for p in admin_WAPmodify admin_WAPdel admin_WAPchange; do
     if [ -f "$m/$p.php" ]; then

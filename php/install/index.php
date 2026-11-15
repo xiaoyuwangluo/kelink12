@@ -16,6 +16,7 @@ function mysqlToSqlite($sql) {
     $sql = preg_replace('/,\s*PRIMARY KEY\s*\(\s*`?id`?\s*\)/i', '', $sql);
     $sql = preg_replace('/,\s*(?:UNIQUE\s+)?KEY\s+`?\w+`?\s*\([^)]*\)/i', '', $sql);
     $sql = preg_replace('/\b(tiny|small|medium|big)?int\(\d+\)/i', 'INTEGER', $sql);
+    $sql = preg_replace("/\s*COMMENT\s+'[^']*'/i", '', $sql);
     $sql = preg_replace('/\bENGINE\s*=\s*\w+[^;]*/i', '', $sql);
     $sql = preg_replace('/\bON DUPLICATE KEY UPDATE[^;]*/i', '', $sql);
     $sql = preg_replace('/DEFAULT\s+CURRENT_TIMESTAMP\s+ON\s+UPDATE\s+CURRENT_TIMESTAMP/i', 'DEFAULT CURRENT_TIMESTAMP', $sql);
