@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 276/276；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 279/279；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,17 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **276/276 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存与数据导出用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **279/279 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存与数据导出用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v20 商品后台完整增删改
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 新增 / 编辑表单 | [goods.php](file:///workspace/php/admin/goods.php)：`act=add` 新增、`act=edit&id=N` 编辑；字段含标题、栏目（仅商城模块下拉）、价格、库存、图片地址、简介、上架开关；校验标题非空且≤255 字、价格非负最多两位小数、库存非负整数、所选栏目必须存在且为商城栏目；新增记录 `userid=0` 入库、编辑执行 UPDATE，保存后清站点缓存并回跳列表 `&ok=` | 新增商品落库 `price=12.34 / stock=7` 字段正确；编辑 #1 改为 `88.50 / 77` 生效；`price=-1` 与 `classid=999` 均被 302 带回表单错误提示，数据不变 |
+| 删除商品 | `act=del&id=N` 显示二次确认页；存在 `status IN (0,1,2)` 在途订单时确认页直接提示拦截；POST `act=deldone` 再次校验状态，无在途订单才 DELETE 并清缓存 | 商品 #1 存在待付款/已发货订单，确认页与提交均被拒绝且数据保留；无订单商品 #4 确认后 `count=0` |
+| 列表入口 | 列表每行新增“编辑 / 删除”链接，顶部新增“新增商品”入口，均携带当前 `status/low/q` 筛选 | 列表链接参数与当前筛选一致，各入口页面均 200 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **279 项**（新增 `act=add`、`act=edit&id=1`、`act=del&id=1` 三条用例） | **279/279 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v19 运营数据导出（订单 / 商品 CSV）
 
