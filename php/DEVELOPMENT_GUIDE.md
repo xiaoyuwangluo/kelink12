@@ -85,7 +85,7 @@
 ├── ajax_ubb.php cache.php weixin.php sms.php t.php  # UBB预览/清缓存/微信/短信/短链
 │
 ├── admin/                      # 管理后台
-│   ├── login.php / logout.php / index.php       # 登录/退出/首页
+│   ├── login.php / logout.php / index.php       # 登录/退出/首页（今日数据/待办汇总/最近订单与会员）
 │   ├── class.php user.php                       # 栏目管理（模块筛选/搜索/父栏目校验/删除确认）/ 会员管理（筛选/搜索/流水/删除确认）
 │   ├── content.php reply.php                    # 内容管理（搜索/栏目与状态筛选/删除确认）/ 评论审核（搜索/状态筛选/批量删除/删除确认）
 │   ├── shoporder.php                           # 商城订单（发货/完成/取消/退款）
