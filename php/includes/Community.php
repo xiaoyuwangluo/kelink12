@@ -119,12 +119,13 @@ if (!function_exists('kl_notice_label')) {
 }
 
 /**
- * 通知类型标签 (扩展版：在原有标签基础上补充审核类型)
+ * 通知类型标签 (扩展版：在原有标签基础上补充审核/订单类型)
  * 包装原 kl_notice_label，不改变原有行为
  */
 if (!function_exists('kl_notice_label_ext')) {
     function kl_notice_label_ext($ntype) {
         if ((string)$ntype === 'audit') return '审核';
+        if ((string)$ntype === 'order') return '订单';
         return kl_notice_label($ntype);
     }
 }

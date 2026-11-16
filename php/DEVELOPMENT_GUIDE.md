@@ -11,7 +11,7 @@
 - ✅ UBB 万能调用解析（[b][i][u][url][img][color][size][font][align][quote][code][list] 等）+ `[功能模块=N_M_X_Y]` 跨模块内容调用
 - ✅ 多版本浏览（WAP1.0 / WAP2.0 / 触屏版 / 电脑版）自动识别 UA
 - ✅ 会员系统（注册、登录、用户中心、签到、站内短信、好友、收藏、会员空间、账户流水）
-- ✅ 管理后台（站点/栏目/会员/内容审核/评论/在线用户/公告/点卡管理）
+- ✅ 管理后台（栏目/会员/内容审核/评论/在线用户/公告/点卡/商城订单管理）
 - ✅ 商城交易全链路（购物车、下单、余额支付、点卡充值、订单管理、拍卖出价）
 - ✅ 模板系统（templates/default 与 templates/touch 两套样式，站点 template 字段切换）
 - ✅ 在线人数统计、流量统计（WapOnline / WapVisite）、文件缓存（kl_cache_get/put）
@@ -88,6 +88,7 @@
 │   ├── login.php / logout.php / index.php       # 登录/退出/首页
 │   ├── class.php user.php                       # 栏目/会员管理
 │   ├── content.php reply.php                    # 内容审核/评论管理
+│   ├── shoporder.php                           # 商城订单（发货/完成/取消/退款）
 │   └── online.php sysmsg.php card.php           # 在线/公告/点卡
 │
 ├── install/                    # 安装向导

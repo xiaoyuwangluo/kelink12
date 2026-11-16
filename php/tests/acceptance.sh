@@ -58,7 +58,7 @@ for p in "bbs/mod.php?id=1" "bbs/vote.php?id=1" "bbs/fav.php?module=bbs&contenti
 done
 
 # 商城/支付/账户
-for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "paimai/bid.php?id=1" "myaccount/index.php"; do
+for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?orderid=1" "paimai/bid.php?id=1" "myaccount/index.php"; do
   check "shop:$p" "$BASE/$p"
 done
 
@@ -66,6 +66,13 @@ done
 for p in "admin/index.php" "admin/class.php" "admin/user.php" "admin/content.php?module=article" "admin/content.php?module=bbs" "admin/reply.php" "admin/online.php" "admin/sysmsg.php" "admin/card.php" "admin/logout.php"; do
   check_admin "admin:$p" "$BASE/$p"
 done
+# 商城订单后台
+check_admin "admin:shoporder" "$BASE/admin/shoporder.php"
+check_admin "admin:shoporder status=0" "$BASE/admin/shoporder.php?status=0"
+check_admin "admin:shoporder status=1" "$BASE/admin/shoporder.php?status=1"
+check_admin "admin:shoporder status=2" "$BASE/admin/shoporder.php?status=2"
+check_admin "admin:shoporder status=-2" "$BASE/admin/shoporder.php?status=-2"
+check_admin "admin:shoporder search" "$BASE/admin/shoporder.php?q=13800001111"
 
 # OAuth / 模板
 check "oauth" "$BASE/oauth/index.php"
@@ -132,6 +139,7 @@ check "message:notice unread" "$BASE/message/notice.php?only=unread"
 check "message:notice type reply" "$BASE/message/notice.php?type=reply"
 check "message:notice type audit" "$BASE/message/notice.php?type=audit"
 check "message:notice type guard" "$BASE/message/notice.php?type=bad%20type"
+check "message:notice type order" "$BASE/message/notice.php?type=order"
 check "message:sessions" "$BASE/message/sessions.php"
 check "message:chat" "$BASE/message/chat.php?uid=1"
 check "bbs:active" "$BASE/bbs/active.php"

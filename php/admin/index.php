@@ -24,6 +24,12 @@ try {
 } catch (Exception $e) {
     $auditPending = 0;
 }
+$shopPending = 0;
+try {
+    $shopPending = (int)$db->getScalar("SELECT COUNT(*) FROM WapShopOrder WHERE status=1");
+} catch (Exception $e) {
+    $shopPending = 0;
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -55,12 +61,14 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <div class="stat-card"><div class="num"><?php echo $userCount; ?></div><div class="label">会员数</div></div>
 <div class="stat-card"><div class="num"><?php echo $articleCount; ?></div><div class="label">文章数</div></div>
 <div class="stat-card"><div class="num"><?php echo $bbsCount; ?></div><div class="label">帖子数</div></div>
+<div class="stat-card"><div class="num"><?php echo $shopPending; ?></div><div class="label">待发货订单</div></div>
 </div>
 <div class="menu">
 <a href="../wapindex.php">站点首页</a>
 <a href="class.php">栏目管理</a>
 <a href="user.php">会员管理</a>
 <a href="content.php?module=article">内容管理</a>
+<a href="shoporder.php">商城订单（待发货 <?php echo $shopPending; ?>）</a>
 <a href="reply.php">评论审核</a>
 <a href="audit.php">内容审核（待审 <?php echo $auditPending; ?>）</a>
 <a href="report.php">举报管理</a>

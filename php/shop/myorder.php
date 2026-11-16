@@ -1,13 +1,16 @@
 <?php
 /**
  * 小宇网络 WAP建站系统 PHP版
- * 商城模块 - 我的订单 (列表/详情/取消)
- * 订单状态: 0待付款 1已付款 2完成 -1取消
+ * 商城模块 - 我的订单 (列表/详情/取消/确认收货)
+ * 订单状态: 0待付款 1已付款(待发货) 2已发货 3已完成 -1已取消 -2已退款
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class ShopMyOrderPage extends WapPage {
-    const STATUS_MAP = [0 => '待付款', 1 => '已付款', 2 => '已完成', -1 => '已取消'];
+    const STATUS_MAP = [
+        0 => '待付款', 1 => '已付款(待发货)', 2 => '已发货', 3 => '已完成', -1 => '已取消', -2 => '已退款',
+    ];
 
     public function run() {
         $this->checkLogin();
@@ -19,6 +22,13 @@ class ShopMyOrderPage extends WapPage {
             $oid = (int)($_POST['orderid'] ?? 0);
             $n = $db->execute("UPDATE WapShopOrder SET status=-1 WHERE id=? AND userid=? AND status=0",[$oid,$uid]);
             header('Location: myorder.php?classid=' . $this->classid . ($n == 1 ? '&done=1' : '&err=1'));
+            exit;
+        }
+        // 确认收货（仅已发货可确认）
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['act'] ?? '') === 'confirm') {
+            $oid = (int)($_POST['orderid'] ?? 0);
+            $n = $db->execute("UPDATE WapShopOrder SET status=3 WHERE id=? AND userid=? AND status=2",[$oid,$uid]);
+            header('Location: myorder.php?classid=' . $this->classid . ($n == 1 ? '&confirmed=1' : '&err=1'));
             exit;
         }
 
@@ -36,7 +46,8 @@ class ShopMyOrderPage extends WapPage {
         $this->strTitle = '我的订单';
         $this->showTop($this->strTitle);
         if (($_GET['done'] ?? '') === '1') echo '<div class="success">订单已取消</div>';
-        if (($_GET['err'] ?? '') === '1') echo '<div class="error">取消失败：订单不存在或状态不允许取消</div>';
+        if (($_GET['confirmed'] ?? '') === '1') echo '<div class="success">已确认收货，交易完成</div>';
+        if (($_GET['err'] ?? '') === '1') echo '<div class="error">操作失败：订单不存在或状态不允许该操作</div>';
         echo '<div class="subtitle">我的订单</div><div class="content">';
         if (!$result['list']) {
             echo '暂无订单。<a href="list.php?classid=' . $this->classid . '">去购物</a>';
@@ -91,6 +102,14 @@ class ShopMyOrderPage extends WapPage {
             echo '<input type="hidden" name="act" value="cancel"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="取消订单"/></form>';
             echo '<a href="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">去支付</a><br/>';
+        } elseif ($st === 2) {
+            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '">';
+            echo '<input type="hidden" name="act" value="confirm"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
+            echo '<input type="submit" value="确认收货"/></form>';
+        } elseif ($st === 1) {
+            echo '<div class="time">商家正在备货，请耐心等待发货</div>';
+        } elseif ($st === -2) {
+            echo '<div class="success">退款已退回账户余额</div>';
         }
         echo '</div>';
         echo '<div><a href="myorder.php?classid=' . $this->classid . '">返回订单列表</a></div>';

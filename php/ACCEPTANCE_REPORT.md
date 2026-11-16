@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 259/259；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 267/267；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,19 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **259/259 PASS**（移除 4 个已删除页面用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **267/267 PASS**（移除 4 个已删除页面用例，新增商城订单用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v17 商城订单闭环（后台管理 + 用户收货 + 订单通知）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 后台订单管理 | [shoporder.php](file:///workspace/php/admin/shoporder.php)：全部/待付款/待发货/已发货/已完成/已取消/已退款七态筛选与各态计数、订单号/手机号/用户名搜索、分页；发货(1→2)、完成(2→3)、取消待付款(0→-1)、退款(1或2→-2) | 后台登录后列表与各筛选均 200；发货后订单状态 2 且产生订单通知 |
+| 退款闭环 | 事务内订单置 -2 + 余额退回 + `WapAccountLog` 入账流水 + 库存回补 + 站内通知 | 实测订单 ￥10 退款后余额 +10、库存回补 2、流水 1 条、通知 1 条；状态不符时拒绝操作 |
+| 用户侧订单状态 | [myorder.php](file:///workspace/php/shop/myorder.php) 状态扩展为 0待付款/1待发货/2已发货/3已完成/-1已取消/-2已退款；已发货订单可“确认收货”(2→3) | 确认收货后订单状态 3，越权/状态不符不生效 |
+| 订单通知 | 通知中心新增“订单”类型筛选与标签，订单类通知可跳转对应订单详情 | `type=order` 筛选 200；发货/退款通知标签显示“订单”并回跳订单 |
+| 后台首页 | 新增“待发货订单”统计卡片与“商城订单”入口 | 卡片数值与状态 1 订单数一致 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **267 项** | **267/267 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v16 二次开发增量（积分商城 / 敏感词库 / 社区运营）
 

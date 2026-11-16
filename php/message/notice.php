@@ -2,14 +2,14 @@
 /**
  * 小宇网络 WAP建站系统 PHP版
  * 站内消息 - 通知中心
- * 支持 only=unread；type=回复/提及/点赞/关注/好友/审核 筛选；act=read&id=X 标记已读并跳转来源；act=readall 全部已读
+ * 支持 only=unread；type=回复/提及/点赞/关注/好友/审核/订单 筛选；act=read&id=X 标记已读并跳转来源；act=readall 全部已读
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once KL_ROOT . '/includes/Community.php';
 
 class MessageNoticePage extends WapPage {
     /** 支持的筛选类型 */
-    private $types = ['', 'reply', 'mention', 'like', 'follow', 'friend', 'audit'];
+    private $types = ['', 'reply', 'mention', 'like', 'follow', 'friend', 'audit', 'order'];
 
     public function run() {
         $db = $this->db;
@@ -73,7 +73,7 @@ class MessageNoticePage extends WapPage {
         // 类型筛选
         echo '<div class="menu">筛选: ';
         $labels = ['' => '全部', 'reply' => '回复', 'mention' => '@提及', 'like' => '点赞',
-            'follow' => '关注', 'friend' => '好友', 'audit' => '审核'];
+            'follow' => '关注', 'friend' => '好友', 'audit' => '审核', 'order' => '订单'];
         $links = [];
         foreach ($labels as $k => $label) {
             $url = 'notice.php'
@@ -149,6 +149,9 @@ class MessageNoticePage extends WapPage {
         }
         if ($cid > 0 && $module === 'article') {
             return '../article/view.php?id=' . $cid;
+        }
+        if ($cid > 0 && $module === 'shop') {
+            return '../shop/myorder.php?orderid=' . $cid;
         }
         if (($ntype === 'follow' || $ntype === 'friend') && $fid > 0) {
             return '../zone/index.php?uid=' . $fid;
