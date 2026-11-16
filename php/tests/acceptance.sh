@@ -151,6 +151,9 @@ if [ "$code" = "200" ] && [ "$ctype" -ge 1 ]; then PASS=$((PASS+1)); else FAIL=$
 
 # v2 新增页面
 check_admin "admin:upload" "$BASE/admin/upload.php"
+check_admin "admin:upload image" "$BASE/admin/upload.php?type=image"
+check_admin "admin:upload search" "$BASE/admin/upload.php?q=test_b"
+check_admin "admin:upload del confirm" "$BASE/admin/upload.php?act=del&file=test_c.zip"
 check_admin "admin:caiji" "$BASE/admin/caiji.php"
 check "utility" "$BASE/utility/index.php"
 for n in notify_ali notify_wx; do

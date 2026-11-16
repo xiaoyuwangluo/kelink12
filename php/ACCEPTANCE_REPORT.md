@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 307/307；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 310/310；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **307/307 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **310/310 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v31 文件管理器增强（搜索 / 类型筛选 / 排序 / 删除确认）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 类型筛选 | [upload.php](file:///workspace/php/admin/upload.php)：按扩展名归类为全部/图片/文档/压缩包/其他，显示各类数量 | 4 个测试文件显示 全部(4)/图片(1)/文档(1)/压缩包(1)/其他(1) |
+| 搜索 | 文件名不区分大小写模糊匹配，支持清除搜索，筛选与排序条件在链接中保留 | `q=test_b` 由 4 个收窄为 1 个（test_b.txt） |
+| 排序 | 最新（修改时间倒序）/大小（大→小）/名称（升序）三态切换 | `sort=size` 依次输出 test_d.xyz(7B)、test_c.zip(6B)、test_b.txt(5B)、test_a.png(1B) |
+| 删除确认 | 删除改为 `act=del&file=...` 二次确认页，展示文件名、大小与风险提示；仍经 `Upload::absPath` 防路径穿越，POST 删除保留 | 确认页显示 test_c.zip / 6 B；提交后文件实际删除，非法路径返回错误提示 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **310 项**（新增图片筛选、搜索、删除确认三条用例） | **310/310 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v30 会员导出增强（按筛选导出 / 字段补全 / 防公式注入）
 

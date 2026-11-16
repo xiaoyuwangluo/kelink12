@@ -26,10 +26,58 @@ class AdminUploadPage extends WapPage {
         return $list;
     }
 
+    /** 按扩展名归类 */
+    private function fileType($rel) {
+        $ext = strtolower(pathinfo($rel, PATHINFO_EXTENSION));
+        $map = [
+            'image' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico'],
+            'doc' => ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'txt', 'md', 'csv'],
+            'archive' => ['zip', 'rar', '7z', 'gz', 'tar', 'bz2'],
+        ];
+        foreach ($map as $type => $exts) {
+            if (in_array($ext, $exts, true)) return $type;
+        }
+        return 'other';
+    }
+
+    /** 删除二次确认页 */
+    private function showDeleteConfirm($rel, $back) {
+        $abs = Upload::absPath($rel);
+        if ($abs === null || !is_file($abs)) $this->showError('文件不存在或路径非法', $back);
+        $size = @filesize($abs);
+        $sizeTxt = $size !== false ? Upload::formatSize($size) : '未知';
+
+        $this->strTitle = '删除文件确认';
+        $this->showTop($this->strTitle);
+        echo '<div class="subtitle">删除文件确认</div>';
+        echo '<div><a href="' . $back . '">返回文件列表</a></div>';
+        echo '<div class="content">文件：' . $this->ToHtm($rel) . '<br/>大小：' . $sizeTxt . '<br/>'
+            . '删除后引用该文件的页面将无法显示，请谨慎操作。';
+        echo '<div class="error">确认删除该文件？</div>';
+        echo '<form method="post" action="upload.php">'
+            . '<input type="hidden" name="action" value="delete"/>'
+            . '<input type="hidden" name="file" value="' . $this->ToHtm($rel) . '"/>'
+            . '<input type="submit" value="确认删除"/></form></div>';
+        $this->showDown();
+        exit;
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $msg = '';
         $back = 'upload.php';
+
+        $q = trim($_GET['q'] ?? '');
+        $type = $_GET['type'] ?? 'all';
+        if (!in_array($type, ['all', 'image', 'doc', 'archive', 'other'], true)) $type = 'all';
+        $sort = $_GET['sort'] ?? 'new';
+        if (!in_array($sort, ['new', 'size', 'name'], true)) $sort = 'new';
+
+        // 删除二次确认页
+        if (($_GET['act'] ?? '') === 'del') {
+            $this->showDeleteConfirm((string)($_GET['file'] ?? ''), $back);
+            return;
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';
@@ -70,22 +118,66 @@ class AdminUploadPage extends WapPage {
             . '<div class="time">限制: 单文件最大 ' . Upload::formatSize(KL_UpMaxSize * 1024) . '，允许扩展: ' . $this->ToHtm(KL_UpAllowExt) . '</div>'
             . '</form></div>';
 
-        // 文件列表
+        // 文件列表：分类计数 + 搜索 + 排序
         $files = $this->scanFiles();
+        $counts = ['all' => count($files), 'image' => 0, 'doc' => 0, 'archive' => 0, 'other' => 0];
+        foreach ($files as $f) {
+            $counts[$this->fileType($f['relpath'])]++;
+        }
+        $filtered = [];
+        foreach ($files as $f) {
+            if ($type !== 'all' && $this->fileType($f['relpath']) !== $type) continue;
+            if ($q !== '' && stripos($f['relpath'], $q) === false) continue;
+            $filtered[] = $f;
+        }
+        if ($sort === 'size') {
+            usort($filtered, function ($a, $b) { return $b['size'] <=> $a['size']; });
+        } elseif ($sort === 'name') {
+            usort($filtered, function ($a, $b) { return strcasecmp($a['relpath'], $b['relpath']); });
+        } else {
+            usort($filtered, function ($a, $b) { return $b['mtime'] <=> $a['mtime']; });
+        }
+        $backUrl = 'upload.php?type=' . urlencode($type) . '&sort=' . urlencode($sort)
+            . ($q !== '' ? '&q=' . urlencode($q) : '');
+
+        // 筛选与排序
+        echo '<div class="content">筛选：';
+        $typeLabels = ['all' => '全部', 'image' => '图片', 'doc' => '文档', 'archive' => '压缩包', 'other' => '其他'];
+        foreach ($typeLabels as $k => $label) {
+            $txt = $label . '(' . $counts[$k] . ')';
+            echo ($type === $k)
+                ? '<strong>[' . $txt . ']</strong> '
+                : '<a href="upload.php?type=' . $k . '&sort=' . urlencode($sort) . ($q !== '' ? '&q=' . urlencode($q) : '') . '">' . $txt . '</a> ';
+        }
+        echo '<br/>排序：';
+        $sortLabels = ['new' => '最新', 'size' => '大小', 'name' => '名称'];
+        foreach ($sortLabels as $k => $label) {
+            echo ($sort === $k)
+                ? '<strong>[' . $label . ']</strong> '
+                : '<a href="upload.php?type=' . urlencode($type) . '&sort=' . $k . ($q !== '' ? '&q=' . urlencode($q) : '') . '">' . $label . '</a> ';
+        }
+        echo '</div>';
+
+        // 搜索
+        echo '<div class="content"><form method="get" action="upload.php">'
+            . '搜索：<input type="text" name="q" value="' . $this->ToHtm($q) . '" placeholder="文件名"/>'
+            . '<input type="hidden" name="type" value="' . $this->ToHtm($type) . '"/>'
+            . '<input type="hidden" name="sort" value="' . $this->ToHtm($sort) . '"/>'
+            . '<input type="submit" value="查询"/></form>';
+        if ($q !== '') echo ' <a href="upload.php?type=' . urlencode($type) . '&sort=' . urlencode($sort) . '">清除搜索</a>';
+        echo '</div>';
+
         $totalSize = 0;
         echo '<div class="content"><ul class="list">';
-        foreach ($files as $f) {
+        foreach ($filtered as $f) {
             $totalSize += $f['size'];
             $url = '../' . Upload::url($f['relpath']);
             echo '<li><a href="' . $url . '" target="_blank">' . $this->ToHtm($f['relpath']) . '</a>'
                 . ' [' . Upload::formatSize($f['size']) . '] ' . date('Y-m-d H:i', $f['mtime']) . '<br/>'
-                . '<form method="post" action="' . $back . '" style="display:inline" onsubmit="return confirm(\'确认删除该文件?\')">'
-                . '<input type="hidden" name="action" value="delete"/>'
-                . '<input type="hidden" name="file" value="' . $this->ToHtm($f['relpath']) . '"/>'
-                . '<input type="submit" value="删除"/></form></li>';
+                . '<a href="' . $backUrl . '&act=del&file=' . urlencode($f['relpath']) . '">删除</a></li>';
         }
-        if (empty($files)) echo '<li>uploadfiles 目录暂无文件</li>';
-        echo '</ul><div class="time">共 ' . count($files) . ' 个文件，合计 ' . Upload::formatSize($totalSize) . '</div></div>';
+        if (empty($filtered)) echo '<li>没有符合条件的文件</li>';
+        echo '</ul><div class="time">当前显示 ' . count($filtered) . ' / ' . count($files) . ' 个文件，合计 ' . Upload::formatSize($totalSize) . '</div></div>';
 
         $this->showDown();
     }

@@ -253,7 +253,7 @@ $page->run();
 - [x] 顶层页面：建站注册/找回密码/帮助/动态/排行/ajax_ubb/清缓存/微信/短信/QQ登录/短链/自定义页
 
 ### v2 已完成
-- [x] 文件上传管理（includes/Upload.php、admin/upload.php 文件管理器、文章附件/论坛图帖）
+- [x] 文件上传管理（includes/Upload.php、admin/upload.php 文件管理器：类型筛选/搜索/排序/删除确认）
 - [x] 栏目级权限（WapUser.usergroup + WapClass.postgroup/managegroup，基类自动守卫投稿/评论页）
 - [x] 支付宝(RSA2)/微信(APIv3) 支付正式接口（includes/PayGateway.php + notify 幂等回调，凭据填入 config.php 即启用）
 - [x] 微信公众平台对接（access_token 缓存/菜单/关注自动注册会员，WapWeixin 填凭据即启用）
