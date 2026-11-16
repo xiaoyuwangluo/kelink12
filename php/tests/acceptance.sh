@@ -86,6 +86,10 @@ check_admin "admin:goods del confirm" "$BASE/admin/goods.php?act=del&id=1"
 check_admin "admin:user search" "$BASE/admin/user.php?q=user2"
 check_admin "admin:user locked" "$BASE/admin/user.php?status=locked"
 check_admin "admin:user del confirm" "$BASE/admin/user.php?act=del&id=1"
+# 栏目管理增强
+check_admin "admin:class module filter" "$BASE/admin/class.php?module=shop"
+check_admin "admin:class search" "$BASE/admin/class.php?q=%E6%96%87%E7%AB%A0"
+check_admin "admin:class del confirm" "$BASE/admin/class.php?act=del&id=2"
 # 运营数据导出 CSV
 check_admin "admin:export orders" "$BASE/admin/export.php?type=order"
 check_admin "admin:export orders status" "$BASE/admin/export.php?type=order&status=1"
