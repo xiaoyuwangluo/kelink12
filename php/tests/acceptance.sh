@@ -82,6 +82,10 @@ check_admin "admin:goods page" "$BASE/admin/goods.php?page=2"
 check_admin "admin:goods add form" "$BASE/admin/goods.php?act=add"
 check_admin "admin:goods edit form" "$BASE/admin/goods.php?act=edit&id=1"
 check_admin "admin:goods del confirm" "$BASE/admin/goods.php?act=del&id=1"
+# 会员管理增强
+check_admin "admin:user search" "$BASE/admin/user.php?q=user2"
+check_admin "admin:user locked" "$BASE/admin/user.php?status=locked"
+check_admin "admin:user del confirm" "$BASE/admin/user.php?act=del&id=1"
 # 运营数据导出 CSV
 check_admin "admin:export orders" "$BASE/admin/export.php?type=order"
 check_admin "admin:export orders status" "$BASE/admin/export.php?type=order&status=1"

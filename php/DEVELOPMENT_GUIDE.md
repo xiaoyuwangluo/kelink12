@@ -86,7 +86,7 @@
 │
 ├── admin/                      # 管理后台
 │   ├── login.php / logout.php / index.php       # 登录/退出/首页
-│   ├── class.php user.php                       # 栏目/会员管理
+│   ├── class.php user.php                       # 栏目/会员管理（状态筛选/搜索/余额积分调整流水/删除确认）
 │   ├── content.php reply.php                    # 内容审核/评论管理
 │   ├── shoporder.php                           # 商城订单（发货/完成/取消/退款）
 │   ├── goods.php                               # 商品管理（新增/编辑/删除/预警/改价改库存/上下架）

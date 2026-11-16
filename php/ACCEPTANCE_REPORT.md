@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 279/279；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 282/282；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,17 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **279/279 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存与数据导出用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **282/282 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出与会员管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v21 会员后台增强（筛选 / 搜索 / 调整流水 / 删除确认）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 状态筛选与搜索 | [user.php](file:///workspace/php/admin/user.php)：全部/正常/已锁定三态筛选并显示各态计数；关键词 `q` 支持会员 ID 精确与用户名/邮箱/昵称模糊匹配；分页与筛选、搜索条件联动保留 | `status=locked` 仅显示已锁定会员且计数为 1；`q=user2` 仅命中 ID:2 |
+| 余额/积分调整 | 非负整数校验（`^\d+$`）；调整后写入 `WapAccountLog` 余额流水（`type` 按增减为 `in/out`、`num=差额绝对值`、`balance=新余额`）与 `WapPointLog` 积分流水（`num` 带符号），并清站点缓存 | user2 余额 500→650、积分 100→120 落库正确；新增余额流水 1 条 `in/150/650`、积分流水 1 条 `+20/120`；`money=-5` 被拒绝且数据不变 |
+| 删除二次确认 | 列表“删除”改为 `act=del&id=N` 确认页，展示会员名、余额、积分与风险提示；存在 `status IN (0,1,2)` 在途订单时直接提示拦截且不显示提交按钮；POST `deldone` 再次校验后删除并清缓存 | user2 有 2 笔在途订单，确认页与提交均被拦截且会员保留；无在途订单的 user3 确认后删除成功 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **282 项**（新增 `q=user2`、`status=locked`、`act=del&id=1` 三条用例）；原有锁定/解锁、重置密码、分组与 CSV 导出保留 | **282/282 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v20 商品后台完整增删改
 
