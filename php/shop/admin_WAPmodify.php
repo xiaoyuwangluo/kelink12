@@ -29,7 +29,7 @@ class ShopModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改商品</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '价格:<input type="text" name="price" value="' . $this->ToHtm($a['price']) . '"/><br/>';
         echo '库存:<input type="text" name="stock" value="' . $this->ToHtm($a['stock']) . '"/><br/>';
@@ -54,7 +54,7 @@ class ShopModifyPage extends WapPage {
             "UPDATE WapShop SET title=?,content=?,picurl=?,price=?,stock=? WHERE id=?",
             [$title, $content, $picurl, $price, $stock, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

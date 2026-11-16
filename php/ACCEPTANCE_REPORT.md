@@ -1,8 +1,19 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（SQLite 263/263；交付包独立环境 263/263；首次安装全流程通过）**
+验收结论：**通过（独立建站版 SQLite 259/259；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
+
+## 独立建站版改造（当前交付）
+
+| 项 | 结果 |
+|---|---|
+| 站群功能移除 | 删除 `admin/site.php`（站点管理）、`wapregsite.php`（建站申请）、`webreg.php`（注册站长）、`webrank.php`（站点PV排行）及相关导航/统计入口 |
+| 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
+| URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
+| 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **259/259 PASS**（移除 4 个已删除页面用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
 
 ## 〇〇〇〇〇〇〇、v16 二次开发增量（积分商城 / 敏感词库 / 社区运营）
 
@@ -31,7 +42,7 @@
 | 缺陷修复 | 安装向导 MySQL→SQLite 转换器未剥离**列级 COMMENT '...'**（v5 新增表引入）导致建表失败 → install/index.php 增加转换规则，复测通过 |
 | 回归确认 | 修复后工作区 SQLite 复跑 **231/231 PASS** |
 
-## 〇〇〇〇〇、v7 多站点端到端与浏览器视觉验收
+## 〇〇〇〇〇、v7 多站点端到端与浏览器视觉验收（历史版本，多站点已移除）
 
 | 项 | 结果 |
 |---|---|
@@ -150,6 +161,6 @@
 
 - 开箱即用：`php -S 0.0.0.0:8080`（config.php KL_DB_TYPE=sqlite，数据在 data/sql444001.db）
 - MySQL 交付：KL_DB_TYPE 改 'mysql'，执行 install/schema.sql（68 表全量）或访问 install/ 向导
-- 账号：站点管理员 admin/admin123；测试会员 testuser、user2(123456)
+- 账号：站点管理员 admin/admin123（交付库为全新空库，不含测试会员）
 
 Copyright (C) 小宇网络 All Rights Reserved.

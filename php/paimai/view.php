@@ -10,7 +10,7 @@ class PaimaiViewPage extends WapPage {
         $db = $this->db;
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
-        $row = $db->getOne("SELECT * FROM WapPaimai WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $row = $db->getOne("SELECT * FROM WapPaimai WHERE id=?",[$id]);
         if (!$row) $this->showError('内容不存在');
         $db->execute("UPDATE WapPaimai SET hits=hits+1 WHERE id=?", [$id]);
         $this->strTitle = $row['title'];
@@ -25,7 +25,7 @@ class PaimaiViewPage extends WapPage {
         $curTop = (int)($top['top'] ?? 0);
         $bidCount = (int)($top['cnt'] ?? 0);
         echo '<div class="bidbar">当前最高价:￥' . $curTop . ' 出价次数:' . $bidCount . ' ';
-        echo '<a href="bid.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&paimaiid=' . $id . '">我要出价</a></div>';
+        echo '<a href="bid.php?classid=' . $this->classid . '&paimaiid=' . $id . '">我要出价</a></div>';
         if ($bidCount > 0) {
             $bids = $db->getAll("SELECT nickname,price,addtime FROM WapPaimaiBid WHERE paimaiid=? ORDER BY price DESC,id DESC LIMIT 5", [$id]);
             echo '<div class="bidlist">最近出价:<br/>';
@@ -36,8 +36,8 @@ class PaimaiViewPage extends WapPage {
         }
 
         if (!empty($row['downurl'])) echo '<div class="download"><a href="' . $this->http_start . 'down.php?id=' . $id . '">下载</a></div>';
-        echo '<div class="replybar"><a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="replybar"><a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

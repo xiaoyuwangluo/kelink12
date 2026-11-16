@@ -13,14 +13,14 @@ class ShopPointBuyPage extends WapPage {
         $uid = $this->userSession->getUserId();
 
         $id = (int)($_GET['id'] ?? $_POST['goodsid'] ?? 0);
-        if ($id <= 0) $this->showError('参数错误', 'point.php?siteid=' . $this->siteid);
+        if ($id <= 0) $this->showError('参数错误', 'point.php');
 
-        $goods = $db->getOne("SELECT * FROM WapPointGoods WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $goods = $db->getOne("SELECT * FROM WapPointGoods WHERE id=?",[$id]);
         if (!$goods || (int)$goods['isshow'] !== 1) {
-            $this->showError('商品不存在或已下架', 'point.php?siteid=' . $this->siteid);
+            $this->showError('商品不存在或已下架', 'point.php');
         }
         if ((int)$goods['stock'] <= 0) {
-            $this->showError('库存不足', 'point.php?siteid=' . $this->siteid);
+            $this->showError('库存不足', 'point.php');
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,12 +36,12 @@ class ShopPointBuyPage extends WapPage {
         echo '所需积分：' . (int)$goods['points'] . '<br/>';
         echo '我的积分：' . (int)($user['point'] ?? 0) . '<br/>';
         echo '剩余库存：' . (int)$goods['stock'] . '<br/>';
-        echo '<form method="post" action="point_buy.php?siteid=' . $this->siteid . '&id=' . (int)$goods['id'] . '">';
+        echo '<form method="post" action="point_buy.php?id=' . (int)$goods['id'] . '">';
         echo '<input type="hidden" name="goodsid" value="' . (int)$goods['id'] . '"/>';
         echo '<input type="submit" value="确认兑换"/></form>';
         echo '</div>';
-        echo '<div><a href="point.php?siteid=' . $this->siteid . '">返回积分商城</a> ';
-        echo '<a href="point_orders.php?siteid=' . $this->siteid . '">我的兑换记录</a></div>';
+        echo '<div><a href="point.php">返回积分商城</a> ';
+        echo '<a href="point_orders.php">我的兑换记录</a></div>';
         $this->showDown();
     }
 
@@ -52,7 +52,7 @@ class ShopPointBuyPage extends WapPage {
         $db = $this->db;
         $points = (int)$goods['points'];
         $gid = (int)$goods['id'];
-        if ($points <= 0) $this->showError('商品积分配置错误', 'point.php?siteid=' . $this->siteid);
+        if ($points <= 0) $this->showError('商品积分配置错误', 'point.php');
 
         // 降低 SQLite 并发写锁冲突概率
         if ($db->getDbType() === 'sqlite') {
@@ -66,35 +66,29 @@ class ShopPointBuyPage extends WapPage {
             $n = $db->execute("UPDATE WapUser SET point=point-? WHERE id=? AND point>=?", [$points, $uid, $points]);
             if ($n != 1) {
                 $db->rollBack();
-                $this->showError('积分不足', 'point.php?siteid=' . $this->siteid);
+                $this->showError('积分不足', 'point.php');
             }
 
             // 2) 扣库存：仅当仍上架且有库存才生效
             $n = $db->execute("UPDATE WapPointGoods SET stock=stock-1 WHERE id=? AND stock>0 AND isshow=1", [$gid]);
             if ($n != 1) {
                 $db->rollBack();
-                $this->showError('库存不足', 'point.php?siteid=' . $this->siteid);
+                $this->showError('库存不足', 'point.php');
             }
 
             // 3) 读最新积分余额并写订单/积分流水
             $balance = (int)$db->getScalar("SELECT point FROM WapUser WHERE id=?", [$uid]);
-            $db->insert(
-                "INSERT INTO WapPointOrder (siteid,userid,goodsid,goodsname,points,num,status,note,addtime) VALUES (?,?,?,?,?,1,0,'',NOW())",
-                [$this->siteid, $uid, $gid, $goods['name'], $points]
-            );
-            $db->insert(
-                "INSERT INTO WapPointLog (siteid,userid,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, -$points, $balance, '兑换：' . $goods['name']]
-            );
+            $db->insert("INSERT INTO WapPointOrder (userid,goodsid,goodsname,points,num,status,note,addtime) VALUES (?,?,?,?,1,0,'',NOW())",[$uid,$gid,$goods['name'],$points]);
+            $db->insert("INSERT INTO WapPointLog (userid,num,balance,remark,addtime) VALUES (?,?,?,?,NOW())",[$uid,-$points,$balance,'兑换：' . $goods['name']]);
 
             $db->commit();
         } catch (Exception $e) {
             if ($db->getPdo()->inTransaction()) $db->rollBack();
-            $this->showError('兑换失败，请重试', 'point.php?siteid=' . $this->siteid);
+            $this->showError('兑换失败，请重试', 'point.php');
         }
 
-        kl_cache_clear_site($this->siteid);
-        $this->showSuccess('兑换成功，等待管理员发放', 'point_orders.php?siteid=' . $this->siteid);
+        kl_cache_clear_site();
+        $this->showSuccess('兑换成功，等待管理员发放', 'point_orders.php');
     }
 }
 

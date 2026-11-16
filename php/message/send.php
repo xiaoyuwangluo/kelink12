@@ -30,7 +30,7 @@ class MessageSendPage extends WapPage {
 
     private function showForm() {
         $to = $_GET['to'] ?? '';
-        $action = 'send.php?siteid=' . $this->siteid
+        $action = 'send.php'
             . ($this->backChat > 0 ? '&back=chat&backuid=' . $this->backChat : '');
         echo '<div class="subtitle">发送站内短信</div>';
         echo '<div class="content"><form method="post" action="' . $action . '">';
@@ -38,7 +38,7 @@ class MessageSendPage extends WapPage {
         echo '标题:<input type="text" name="title"/><br/>';
         echo '内容:<textarea name="content" rows="6" required></textarea><br/>';
         echo '<input type="submit" value="发送"/></form></div>';
-        echo '<div><a href="index.php?siteid=' . $this->siteid . '">返回收件箱</a></div>';
+        echo '<div><a href="index.php">返回收件箱</a></div>';
     }
 
     private function doSend() {
@@ -63,18 +63,15 @@ class MessageSendPage extends WapPage {
         $touser = $db->getOne("SELECT id,username FROM WapUser WHERE username=?", [$to]);
         if (!$touser) { $this->showForm(); echo '<div class="error">收件人不存在</div>'; return; }
         if ((int)$touser['id'] === $uid) { $this->showForm(); echo '<div class="error">不能发给自己</div>'; return; }
-        if (kl_is_blocked($db, $this->siteid, $uid, (int)$touser['id'])) {
+        if (kl_is_blocked($db, $uid, (int)$touser['id'])) {
             $this->showForm(); echo '<div class="error">你与对方存在拉黑关系，无法发送</div>'; return;
         }
 
-        $db->insert(
-            "INSERT INTO WapMessage (siteid,fromid,fromname,toid,toname,title,content,isread,addtime) VALUES (?,?,?,?,?,?,?,0,NOW())",
-            [$this->siteid, $uid, $uname, (int)$touser['id'], $touser['username'], $title, $content]
-        );
+        $db->insert("INSERT INTO WapMessage (fromid,fromname,toid,toname,title,content,isread,addtime) VALUES (?,?,?,?,?,?,0,NOW())",[$uid,$uname,(int)$touser['id'],$touser['username'],$title,$content]);
         $this->showSuccess('发送成功',
             $this->backChat > 0
-                ? 'chat.php?siteid=' . $this->siteid . '&uid=' . $this->backChat
-                : 'index.php?siteid=' . $this->siteid . '&box=out');
+                ? 'chat.php?uid=' . $this->backChat
+                : 'index.php?box=out');
     }
 }
 

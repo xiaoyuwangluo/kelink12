@@ -24,25 +24,22 @@ class ArticleListPage extends WapPage {
         echo '<div class="content">';
 
         // 栏目置顶/公告
-        $tops = $db->getAll(
-            "SELECT * FROM $table WHERE siteid=? AND classid=? AND istop=1 AND isshow=1 ORDER BY id DESC LIMIT 10",
-            [$this->siteid, $classid]
-        );
+        $tops = $db->getAll("SELECT * FROM $table WHERE classid=? AND istop=1 AND isshow=1 ORDER BY id DESC LIMIT 10",[$classid]);
         foreach ($tops as $row) {
             echo '<div class="topitem">';
-            echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $classid . '&id=' . $row['id'] . '">';
+            echo '<a href="view.php?classid=' . $classid . '&id=' . $row['id'] . '">';
             echo '[顶]' . $this->ToHtm($row['title']);
             echo '</a></div>';
         }
 
         // 正常列表
-        $where = "siteid=? AND classid=? AND istop=0 AND isshow=1";
-        $result = $db->getPage($table, 'id,title,addtime,hits', $where, 'id DESC', $page, $pageSize, [$this->siteid, $classid]);
+        $where = "classid=? AND istop=0 AND isshow=1";
+        $result = $db->getPage($table, 'id,title,addtime,hits', $where, 'id DESC', $page, $pageSize, [$classid]);
 
         echo '<ul class="list">';
         foreach ($result['list'] as $row) {
             echo '<li>';
-            echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $classid . '&id=' . $row['id'] . '">';
+            echo '<a href="view.php?classid=' . $classid . '&id=' . $row['id'] . '">';
             echo $this->ToHtm($row['title']);
             echo '</a>';
             echo ' <span class="time">' . date('m-d', strtotime($row['addtime'])) . '</span>';
@@ -62,11 +59,11 @@ class ArticleListPage extends WapPage {
         if ($pageCount <= 1) return;
         echo '<div class="pager">';
         if ($curPage > 1) {
-            echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($curPage - 1) . '">上一页</a> ';
+            echo '<a href="?classid=' . $this->classid . '&page=' . ($curPage - 1) . '">上一页</a> ';
         }
         echo '第' . $curPage . '/' . $pageCount . '页 ';
         if ($curPage < $pageCount) {
-            echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($curPage + 1) . '">下一页</a>';
+            echo '<a href="?classid=' . $this->classid . '&page=' . ($curPage + 1) . '">下一页</a>';
         }
         echo '</div>';
     }

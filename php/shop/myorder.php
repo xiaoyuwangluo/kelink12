@@ -17,9 +17,8 @@ class ShopMyOrderPage extends WapPage {
         // 取消订单（仅待付款可取消）
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['act'] ?? '') === 'cancel') {
             $oid = (int)($_POST['orderid'] ?? 0);
-            $n = $db->execute("UPDATE WapShopOrder SET status=-1 WHERE id=? AND userid=? AND siteid=? AND status=0",
-                [$oid, $uid, $this->siteid]);
-            header('Location: myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . ($n == 1 ? '&done=1' : '&err=1'));
+            $n = $db->execute("UPDATE WapShopOrder SET status=-1 WHERE id=? AND userid=? AND status=0",[$oid,$uid]);
+            header('Location: myorder.php?classid=' . $this->classid . ($n == 1 ? '&done=1' : '&err=1'));
             exit;
         }
 
@@ -32,8 +31,7 @@ class ShopMyOrderPage extends WapPage {
         // 订单列表
         $page = max(1, (int)($_GET['page'] ?? 1));
         $result = $db->getPage('WapShopOrder',
-            'WapShopOrder.*, (SELECT title FROM WapShop WHERE WapShop.id=WapShopOrder.shopid) AS shoptitle',
-            'userid=? AND siteid=?', 'id DESC', $page, 20, [$uid, $this->siteid]);
+            'WapShopOrder.*, (SELECT title FROM WapShop WHERE WapShop.id=WapShopOrder.shopid) AS shoptitle','userid=?', 'id DESC', $page, 20,[$uid]);
 
         $this->strTitle = '我的订单';
         $this->showTop($this->strTitle);
@@ -41,16 +39,16 @@ class ShopMyOrderPage extends WapPage {
         if (($_GET['err'] ?? '') === '1') echo '<div class="error">取消失败：订单不存在或状态不允许取消</div>';
         echo '<div class="subtitle">我的订单</div><div class="content">';
         if (!$result['list']) {
-            echo '暂无订单。<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">去购物</a>';
+            echo '暂无订单。<a href="list.php?classid=' . $this->classid . '">去购物</a>';
         } else {
             echo '<ul class="orderlist">';
             foreach ($result['list'] as $o) {
                 $st = (int)$o['status'];
                 $stName = self::STATUS_MAP[$st] ?? '未知';
                 echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['shoptitle'] ?? '') . ' ￥' . (int)round($o['totalprice']) . ' [' . $stName . ']';
-                echo ' <a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">详情</a>';
+                echo ' <a href="myorder.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">详情</a>';
                 if ($st === 0) {
-                    echo ' <a href="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">支付</a>';
+                    echo ' <a href="pay.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">支付</a>';
                 }
                 echo '</li>';
             }
@@ -59,21 +57,21 @@ class ShopMyOrderPage extends WapPage {
         echo '</div>';
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
-        echo '<div><a href="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">购物车</a> ';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">商城</a></div>';
+        echo '<div><a href="cart.php?classid=' . $this->classid . '">购物车</a> ';
+        echo '<a href="list.php?classid=' . $this->classid . '">商城</a></div>';
         $this->showDown();
     }
 
     /** 订单详情 */
     private function showDetail($uid, $orderid) {
         $db = $this->db;
-        $o = $db->getOne("SELECT * FROM WapShopOrder WHERE id=? AND userid=? AND siteid=?", [$orderid, $uid, $this->siteid]);
-        if (!$o) $this->showError('订单不存在', 'myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+        $o = $db->getOne("SELECT * FROM WapShopOrder WHERE id=? AND userid=?",[$orderid,$uid]);
+        if (!$o) $this->showError('订单不存在', 'myorder.php?classid=' . $this->classid);
         $shop = $db->getOne("SELECT title FROM WapShop WHERE id=?", [$o['shopid']]);
         $st = (int)$o['status'];
         $stName = self::STATUS_MAP[$st] ?? '未知';
@@ -89,13 +87,13 @@ class ShopMyOrderPage extends WapPage {
         echo '电话:' . $this->ToHtm($o['mobile']) . '<br/>';
         echo '下单时间:' . $this->ToHtm($o['addtime']) . '<br/>';
         if ($st === 0) {
-            echo '<form method="post" action="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '">';
             echo '<input type="hidden" name="act" value="cancel"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="取消订单"/></form>';
-            echo '<a href="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">去支付</a><br/>';
+            echo '<a href="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">去支付</a><br/>';
         }
         echo '</div>';
-        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回订单列表</a></div>';
+        echo '<div><a href="myorder.php?classid=' . $this->classid . '">返回订单列表</a></div>';
         $this->showDown();
     }
 }

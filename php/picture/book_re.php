@@ -16,7 +16,7 @@ class PictureReplyPage extends WapPage {
         $this->strTitle = '评论:' . $item['title'];
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">评论:' . $this->ToHtm($item['title']) . '</div>';
-        echo '<div class="re_form"><form method="post" action="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<div class="re_form"><form method="post" action="book_re.php?classid=' . $this->classid . '&id=' . $id . '">';
         if ($this->userSession->isLogin()) echo '昵称:' . $this->ToHtm($this->userSession->getUserName()) . '<br/>';
         else echo '昵称:<input type="text" name="nickname"/><br/>';
         echo '内容:<textarea name="content" rows="3" required></textarea><br/>';
@@ -31,12 +31,12 @@ class PictureReplyPage extends WapPage {
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">返回</a></div>';
+        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $id . '">返回</a></div>';
         $this->showDown();
     }
     private function addReply($id) {
@@ -48,8 +48,7 @@ class PictureReplyPage extends WapPage {
         if (WapTool::checkSqlInject($content)) { echo '<div class="error">含非法字符</div>'; return; }
         if (!$this->userSession->checkSubmitLimit()) { echo '<div class="error">操作过于频繁</div>'; return; }
         $uid = $this->userSession->getUserId();
-        $db->insert("INSERT INTO WapReply (module,contentid,siteid,classid,userid,nickname,content,addtime,isshow) VALUES ('picture',?,?,?,?,?,?,NOW(),1)",
-            [$id, $this->siteid, $this->classid, $uid, $nickname, $content]);
+        $db->insert("INSERT INTO WapReply (module,contentid,classid,userid,nickname,content,addtime,isshow) VALUES ('picture',?,?,?,?,?,NOW(),1)",[$id,$this->classid,$uid,$nickname,$content]);
         echo '<div class="success">评论成功</div>';
     }
 }

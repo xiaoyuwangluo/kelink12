@@ -12,12 +12,12 @@ class ClanChatPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $clan = $db->getOne("SELECT * FROM WapClan WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $clan = $db->getOne("SELECT * FROM WapClan WHERE id=?",[$id]);
         if (!$clan) $this->showError('家族不存在');
 
         $uid = (int)$this->userSession->getUserId();
         if (!$db->getScalar("SELECT COUNT(*) FROM WapClanMember WHERE clanid=? AND userid=?", [$id, $uid])) {
-            $this->showError('只有家族成员才能进入家族聊天', 'view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id);
+            $this->showError('只有家族成员才能进入家族聊天', 'view.php?classid=' . $this->classid . '&id=' . $id);
         }
 
         // 处理发言 (头部输出前完成，成功则跳转)
@@ -37,7 +37,7 @@ class ClanChatPage extends WapPage {
                     "INSERT INTO WapClanChat (clanid,userid,nickname,content,addtime) VALUES (?,?,?,?,NOW())",
                     [$id, $uid, $nick, $content]
                 );
-                header('Location: chat.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id);
+                header('Location: chat.php?classid=' . $this->classid . '&id=' . $id);
                 exit;
             }
         }
@@ -61,11 +61,11 @@ class ClanChatPage extends WapPage {
         }
         echo '</ul></div>';
 
-        echo '<div class="content"><form method="post" action="chat.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<div class="content"><form method="post" action="chat.php?classid=' . $this->classid . '&id=' . $id . '">';
         echo '<input type="text" name="content" maxlength="200" required/>';
         echo '<input type="submit" value="发言"/></form></div>';
 
-        echo '<div class="actionbar"><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">返回家族</a></div>';
+        echo '<div class="actionbar"><a href="view.php?classid=' . $this->classid . '&id=' . $id . '">返回家族</a></div>';
         $this->showDown();
     }
 }

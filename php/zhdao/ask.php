@@ -20,12 +20,12 @@ class ZhdaoAskPage extends WapPage {
 
     private function showForm() {
         echo '<div class="subtitle">我要提问</div>';
-        echo '<div class="content"><form method="post" action="ask.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<div class="content"><form method="post" action="ask.php?classid=' . $this->classid . '">';
         echo '问题标题:<input type="text" name="title" maxlength="100" required/><br/>';
         echo '问题描述:<textarea name="content" rows="6" required></textarea><br/>';
         echo '<input type="submit" value="提交提问"/>';
         echo '</form></div>';
-        echo '<div class="actionbar"><a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="actionbar"><a href="index.php?classid=' . $this->classid . '">返回列表</a></div>';
     }
 
     private function doAsk() {
@@ -55,11 +55,8 @@ class ZhdaoAskPage extends WapPage {
         $nick = $this->userVo['nickname'] ?? '';
         if ($nick === '' || $nick === null) $nick = $this->userVo['username'] ?? '会员';
 
-        $id = $db->insert(
-            "INSERT INTO WapZhiDao (siteid,classid,userid,nickname,title,content,status,hits,addtime) VALUES (?,?,?,?,?,?,0,0,NOW())",
-            [$this->siteid, $this->classid, $uid, $nick, $title, $content]
-        );
-        header('Location: view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id);
+        $id = $db->insert("INSERT INTO WapZhiDao (classid,userid,nickname,title,content,status,hits,addtime) VALUES (?,?,?,?,?,0,0,NOW())",[$this->classid,$uid,$nick,$title,$content]);
+        header('Location: view.php?classid=' . $this->classid . '&id=' . $id);
         exit;
     }
 }

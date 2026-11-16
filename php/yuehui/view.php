@@ -10,7 +10,7 @@ class YuehuiViewPage extends WapPage {
         $db = $this->db;
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
-        $row = $db->getOne("SELECT * FROM WapYuehui WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $row = $db->getOne("SELECT * FROM WapYuehui WHERE id=?",[$id]);
         if (!$row) $this->showError('内容不存在');
         $db->execute("UPDATE WapYuehui SET hits=hits+1 WHERE id=?", [$id]);
         $this->strTitle = $row['title'];
@@ -20,8 +20,8 @@ class YuehuiViewPage extends WapPage {
         if (!empty($row['picurl'])) echo '<div class="pic"><img src="' . $this->ToHtm($row['picurl']) . '"/></div>';
         echo '<div class="content">' . $this->wapTool->ToWML($row['content'], $this->wmlVo) . '</div>';
         if (!empty($row['downurl'])) echo '<div class="download"><a href="' . $this->http_start . 'down.php?id=' . $id . '">下载</a></div>';
-        echo '<div class="replybar"><a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="replybar"><a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

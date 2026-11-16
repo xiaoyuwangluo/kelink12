@@ -15,13 +15,11 @@ class NovelListPage extends WapPage {
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">' . $this->ToHtm($this->classVo->classname ?? '小说') . '</div>';
 
-        $result = $db->getPage('WapNovel', 'id,title,author,addtime,hits,size',
-            "siteid=? AND classid=? AND isshow=1", 'id DESC', $page, $pageSize,
-            [$this->siteid, $this->classid]);
+        $result = $db->getPage('WapNovel', 'id,title,author,addtime,hits,size',"classid=? AND isshow=1", 'id DESC', $page, $pageSize,[$this->classid]);
 
         echo '<div class="content"><ul class="novellist">';
         foreach ($result['list'] as $n) {
-            echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $n['id'] . '">';
+            echo '<li><a href="view.php?classid=' . $this->classid . '&id=' . $n['id'] . '">';
             echo $this->ToHtm($n['title']) . '</a> - ' . $this->ToHtm($n['author'] ?? '佚名');
             echo ' <span class="hits">(' . (int)$n['hits'] . ')</span>';
             echo $this->adminLinks((int)$n['id']);
@@ -31,9 +29,9 @@ class NovelListPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
         $this->showDown();
@@ -42,10 +40,10 @@ class NovelListPage extends WapPage {
     /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
     private function adminLinks($id) {
         if (!$this->userSession->isAdminLogin()) return '';
-        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
-        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
-             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
-             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
+        $base = '?classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php' . $base . '">显隐</a>';
     }
 }
 

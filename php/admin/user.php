@@ -39,7 +39,7 @@ class AdminUserPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'user.php?siteid=' . $this->siteid;
+        $back = 'user.php';
 
         // CSV 导出 (GET，需在输出前处理)
         if (($_GET['action'] ?? '') === 'export') {
@@ -95,7 +95,6 @@ class AdminUserPage extends WapPage {
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">会员管理</div><div><a href="index.php">返回后台首页</a></div>';
         echo '<form method="get" action="user.php" style="display:inline">'
-            . '<input type="hidden" name="siteid" value="' . (int)$this->siteid . '"/>'
             . '<input type="hidden" name="action" value="export"/>'
             . '<input type="submit" value="导出CSV"/></form>';
 

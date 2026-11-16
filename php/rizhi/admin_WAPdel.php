@@ -20,12 +20,12 @@ class RizhiDelPage extends WapPage {
             $db->execute("DELETE FROM WapRizhi WHERE id=?", [$id]);
             $db->execute("DELETE FROM WapReply WHERE module='rizhi' AND contentid=?", [$id]);
             echo '<div class="success">删除成功</div>';
-            echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+            echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
         } else {
             echo '<div class="subtitle">确认删除「' . $this->ToHtm($row['title']) . '」吗？</div>';
-            echo '<form method="post" action="admin_WAPdel.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+            echo '<form method="post" action="admin_WAPdel.php?classid=' . $this->classid . '&id=' . $id . '">';
             echo '<input type="submit" value="确认删除"/></form>';
-            echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">取消返回</a>';
+            echo '<a href="list.php?classid=' . $this->classid . '">取消返回</a>';
         }
         $this->showDown();
     }

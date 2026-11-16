@@ -26,7 +26,7 @@ class GuessbookModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改留言</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '留言主题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '留言内容:<textarea name="content" rows="10">' . $this->ToHtm($a['content'] ?? '') . '</textarea><br/>';
         echo '置顶:<input type="checkbox" name="istop" value="1" ' . ((int)($a['istop'] ?? 0) ? 'checked' : '') . '/><br/>';
@@ -47,7 +47,7 @@ class GuessbookModifyPage extends WapPage {
             "UPDATE WapGuestbook SET title=?,content=?,istop=? WHERE id=?",
             [$title, $content, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

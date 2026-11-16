@@ -19,7 +19,7 @@ class OauthPage extends WapPage {
 
     /** 真实模式回调地址 */
     private function redirect_uri() {
-        return $this->http_start . 'oauth/index.php?siteid=' . $this->siteid . '&act=cb';
+        return $this->http_start . 'oauth/index.php?act=cb';
     }
 
     public function run() {
@@ -42,12 +42,12 @@ class OauthPage extends WapPage {
         echo '<div class="subtitle">' . $this->GetLang('QQ授权登录(模拟)|QQ授权登录(模拟)|QQ授权登录(模拟)') . '</div>';
         echo '<div class="content">';
         // 模拟 QQ 授权：点击后以固定 openid 回调本页
-        echo '<a href="index.php?siteid=' . $this->siteid . '&act=cb&openid=100000001">QQ授权登录</a><br/>';
-        echo '<a href="index.php?siteid=' . $this->siteid . '&act=cb&openid=' . mt_rand(100000002, 999999999) . '">新用户QQ登录(模拟)</a>';
+        echo '<a href="index.php?act=cb&openid=100000001">QQ授权登录</a><br/>';
+        echo '<a href="index.php?act=cb&openid=' . mt_rand(100000002, 999999999) . '">新用户QQ登录(模拟)</a>';
         echo '</div>';
-        echo '<div class="content"><a href="../waplogin.php?siteid=' . $this->siteid . '">普通登录</a> | ';
-        echo '<a href="../wapreg.php?siteid=' . $this->siteid . '">注册</a> | ';
-        echo '<a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div>';
+        echo '<div class="content"><a href="../waplogin.php">普通登录</a> | ';
+        echo '<a href="../wapreg.php">注册</a> | ';
+        echo '<a href="../wapindex.php">返回首页</a></div>';
         $this->showDown();
     }
 
@@ -69,8 +69,8 @@ class OauthPage extends WapPage {
     /** 绑定入口：需登录 */
     private function doBind() {
         if (!$this->userSession->isLogin()) {
-            $backurl = urlencode('oauth/index.php?siteid=' . $this->siteid . '&act=bind');
-            header('Location: ' . $this->http_start . 'waplogin.php?siteid=' . $this->siteid . '&backurl=' . $backurl);
+            $backurl = urlencode('oauth/index.php?act=bind');
+            header('Location: ' . $this->http_start . 'waplogin.php?backurl=' . $backurl);
             exit;
         }
         if ($this->realMode()) {
@@ -79,9 +79,9 @@ class OauthPage extends WapPage {
         }
         // 模拟绑定：点击后以随机 openid 回调并写入当前用户 qq_openid
         $this->showTop('绑定QQ');
-        echo '<div class="content"><a href="index.php?siteid=' . $this->siteid
+        echo '<div class="content"><a href="index.php'
             . '&act=cb&openid=' . mt_rand(100000002, 999999999) . '&bind=1">模拟QQ授权并绑定</a></div>';
-        echo '<div class="content"><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div class="content"><a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 
@@ -100,11 +100,11 @@ class OauthPage extends WapPage {
     private function saveBind($uid, $openid) {
         $other = $this->db->getOne("SELECT id FROM WapUser WHERE qq_openid=? AND id<>?", [$openid, $uid]);
         if ($other) {
-            $this->showError('该QQ号已绑定其他账号', 'index.php?siteid=' . $this->siteid);
+            $this->showError('该QQ号已绑定其他账号', 'index.php');
             return;
         }
         $this->db->execute("UPDATE WapUser SET qq_openid=? WHERE id=?", [$openid, $uid]);
-        $this->showSuccess('QQ绑定成功', '../myfile.php?siteid=' . $this->siteid);
+        $this->showSuccess('QQ绑定成功', '../myfile.php');
     }
 
     /** 回调分发 */
@@ -120,13 +120,13 @@ class OauthPage extends WapPage {
     private function doMockCallback() {
         $openid = trim($_GET['openid'] ?? '');
         if ($openid === '' || !preg_match('/^\d{1,20}$/', $openid)) {
-            $this->showError('无效的QQ授权参数', 'index.php?siteid=' . $this->siteid);
+            $this->showError('无效的QQ授权参数', 'index.php');
             return;
         }
         // 模拟绑定模式：写入当前登录用户 qq_openid，不改变登录身份
         if (isset($_GET['bind']) && (int)$_GET['bind'] === 1) {
             if (!$this->userSession->isLogin()) {
-                $this->showError('请先登录后再绑定QQ', '../waplogin.php?siteid=' . $this->siteid);
+                $this->showError('请先登录后再绑定QQ', '../waplogin.php');
                 return;
             }
             $this->saveBind((int)$this->userSession->getUserId(), $openid);
@@ -147,7 +147,7 @@ class OauthPage extends WapPage {
         // 写入会话完成登录
         $_SESSION['kl_userid'] = $uid;
         $_SESSION['kl_username'] = $username;
-        header('Location: ../wapindex.php?siteid=' . $this->siteid);
+        header('Location: ../wapindex.php');
         exit;
     }
 
@@ -157,11 +157,11 @@ class OauthPage extends WapPage {
         $state = trim($_GET['state'] ?? '');
         $mode = (($_SESSION['kl_qq_mode'] ?? '') === 'bind') ? 'bind' : 'login';
         if ($code === '') {
-            $this->showError('未获取到QQ授权码', 'index.php?siteid=' . $this->siteid);
+            $this->showError('未获取到QQ授权码', 'index.php');
             return;
         }
         if ($state === '' || !isset($_SESSION['kl_qq_state']) || $state !== $_SESSION['kl_qq_state']) {
-            $this->showError('QQ授权state校验失败，请重试', 'index.php?siteid=' . $this->siteid);
+            $this->showError('QQ授权state校验失败，请重试', 'index.php');
             return;
         }
         unset($_SESSION['kl_qq_state'], $_SESSION['kl_qq_mode']);
@@ -174,7 +174,7 @@ class OauthPage extends WapPage {
                    . '&redirect_uri=' . urlencode($this->redirect_uri());
         $resp = @file_get_contents($token_url, false, stream_context_create(['http' => ['timeout' => 5]]));
         if ($resp === false) {
-            $this->showError('无法连接QQ互联服务器', 'index.php?siteid=' . $this->siteid);
+            $this->showError('无法连接QQ互联服务器', 'index.php');
             return;
         }
         $access_token = '';
@@ -187,7 +187,7 @@ class OauthPage extends WapPage {
             $access_token = (string)($form['access_token'] ?? '');
         }
         if ($access_token === '') {
-            $this->showError('QQ授权token获取失败', 'index.php?siteid=' . $this->siteid);
+            $this->showError('QQ授权token获取失败', 'index.php');
             return;
         }
 
@@ -199,7 +199,7 @@ class OauthPage extends WapPage {
             $openid = $m[1];
         }
         if ($openid === '' || !preg_match('/^[A-Za-z0-9_\-]{8,64}$/', $openid)) {
-            $this->showError('QQ openid获取失败', 'index.php?siteid=' . $this->siteid);
+            $this->showError('QQ openid获取失败', 'index.php');
             return;
         }
 
@@ -219,7 +219,7 @@ class OauthPage extends WapPage {
         if ($mode === 'bind') {
             $uid = (int)$this->userSession->getUserId();
             if ($uid <= 0) {
-                $this->showError('登录状态已失效，请重新登录后再绑定', '../waplogin.php?siteid=' . $this->siteid);
+                $this->showError('登录状态已失效，请重新登录后再绑定', '../waplogin.php');
                 return;
             }
             $this->saveBind($uid, $openid);
@@ -241,7 +241,7 @@ class OauthPage extends WapPage {
         }
         $_SESSION['kl_userid'] = $uid;
         $_SESSION['kl_username'] = $username;
-        header('Location: ../wapindex.php?siteid=' . $this->siteid);
+        header('Location: ../wapindex.php');
         exit;
     }
 }

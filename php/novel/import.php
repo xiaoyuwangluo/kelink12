@@ -36,20 +36,19 @@ class NovelImportPage extends WapPage {
         $novelid = (int)($_GET['novelid'] ?? 0);
         // 管理员可选全站小说，会员仅可选自己名下的
         if ($this->userSession->isAdminLogin()) {
-            $novels = $db->getAll("SELECT id,title FROM WapNovel WHERE siteid=? ORDER BY id DESC", [$this->siteid]);
+            $novels = $db->getAll("SELECT id,title FROM WapNovel ORDER BY id DESC",[]);
         } else {
             $name = $this->userSession->getUserName();
             $nick = (string)($_SESSION['kl_nickname'] ?? '');
             if ($nick !== '') {
-                $novels = $db->getAll("SELECT id,title FROM WapNovel WHERE siteid=? AND (author=? OR author=?) ORDER BY id DESC",
-                    [$this->siteid, $name, $nick]);
+                $novels = $db->getAll("SELECT id,title FROM WapNovel WHERE (author=? OR author=?) ORDER BY id DESC",[$name,$nick]);
             } else {
-                $novels = $db->getAll("SELECT id,title FROM WapNovel WHERE siteid=? AND author=? ORDER BY id DESC", [$this->siteid, $name]);
+                $novels = $db->getAll("SELECT id,title FROM WapNovel WHERE author=? ORDER BY id DESC",[$name]);
             }
         }
         echo '<div class="subtitle">TXT 批量导入章节</div>';
         echo '<div class="content">正文需以"第X章 / 第X节"等标题单独成行分章，编码支持 UTF-8 / GBK。</div>';
-        echo '<form method="post" enctype="multipart/form-data" action="import.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<form method="post" enctype="multipart/form-data" action="import.php?classid=' . $this->classid . '">';
         echo '选择小说:<select name="novelid">';
         if (empty($novels)) echo '<option value="0">-- 无可导入的小说 --</option>';
         foreach ($novels as $n) {
@@ -69,7 +68,7 @@ class NovelImportPage extends WapPage {
         if (!$novel) { echo '<div class="error">小说不存在</div>'; return; }
         if (!$this->canManage($novel)) {
             $this->showError('无权限：仅管理员或小说作者可导入该小说',
-                'view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . $novelid);
+                'view.php?classid=' . (int)$novel['classid'] . '&id=' . $novelid);
         }
         if (!$this->userSession->checkSubmitLimit()) { echo '<div class="error">操作过于频繁</div>'; return; }
 
@@ -104,7 +103,7 @@ class NovelImportPage extends WapPage {
             $db->insert("INSERT INTO WapNovelChapter (novelid,title,content,orderindex,addtime) VALUES (?,?,?,?,NOW())",
                 [$novelid, $c['title'], $c['content'], $base + $count]);
         }
-        echo '<div class="success">成功导入 ' . $count . ' 章 <a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . $novelid . '">查看目录</a></div>';
+        echo '<div class="success">成功导入 ' . $count . ' 章 <a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . $novelid . '">查看目录</a></div>';
     }
 
     /** 按"第X章/第X节/回/篇/卷"标题行拆分章节 */

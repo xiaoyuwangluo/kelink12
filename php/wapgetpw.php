@@ -20,7 +20,7 @@ class WapGetPwPage extends WapPage {
     /** 找回表单 */
     private function showForm() {
         echo '<div class="subtitle">' . $this->GetLang('找回密码|找回密码|找回密码') . '</div>';
-        echo '<div class="content"><form method="post" action="wapgetpw.php?siteid=' . $this->siteid . '">';
+        echo '<div class="content"><form method="post" action="wapgetpw.php">';
         echo '用户名:<input type="text" name="username" required/><br/>';
         echo '注册邮箱:<input type="text" name="email" required/><br/>';
         echo '<input type="submit" value="确认找回"/></form></div>';
@@ -51,8 +51,8 @@ class WapGetPwPage extends WapPage {
         // 重置密码为 123456
         $db->execute("UPDATE WapUser SET password=? WHERE id=?", [md5('123456'), $row['id']]);
         echo '<div class="success">验证成功！您的密码已重置为：<b>123456</b><br/>请立即登录并修改密码。</div>';
-        echo '<div class="content"><a href="waplogin.php?siteid=' . $this->siteid . '">前往登录</a> | ';
-        echo '<a href="wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div>';
+        echo '<div class="content"><a href="waplogin.php">前往登录</a> | ';
+        echo '<a href="wapindex.php">返回首页</a></div>';
     }
 }
 

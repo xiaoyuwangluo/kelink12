@@ -10,7 +10,7 @@ class AdminPointGoodsPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'pointgoods.php?siteid=' . $this->siteid;
+        $back = 'pointgoods.php';
 
         // 保存（新增/编辑）
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['act'] ?? '') === 'save') {
@@ -19,8 +19,8 @@ class AdminPointGoodsPage extends WapPage {
         // 删除确认页提交
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['act'] ?? '') === 'deldone') {
             $id = (int)($_POST['id'] ?? 0);
-            $db->execute("DELETE FROM WapPointGoods WHERE id=? AND siteid=?", [$id, $this->siteid]);
-            kl_cache_clear_site($this->siteid);
+            $db->execute("DELETE FROM WapPointGoods WHERE id=?",[$id]);
+            kl_cache_clear_site();
             $this->showSuccess('商品已删除', $back);
         }
 
@@ -29,7 +29,7 @@ class AdminPointGoodsPage extends WapPage {
 
         // 删除二次确认页
         if ($act === 'del' && $id > 0) {
-            $goods = $db->getOne("SELECT * FROM WapPointGoods WHERE id=? AND siteid=?", [$id, $this->siteid]);
+            $goods = $db->getOne("SELECT * FROM WapPointGoods WHERE id=?",[$id]);
             if (!$goods) $this->showError('商品不存在', $back);
             $this->strTitle = '删除积分商品';
             $this->showTop($this->strTitle);
@@ -46,8 +46,8 @@ class AdminPointGoodsPage extends WapPage {
 
         // 上下架切换
         if ($act === 'toggle' && $id > 0) {
-            $db->execute("UPDATE WapPointGoods SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$id, $this->siteid]);
-            kl_cache_clear_site($this->siteid);
+            $db->execute("UPDATE WapPointGoods SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=?",[$id]);
+            kl_cache_clear_site();
             $this->showSuccess('上下架状态已切换', $back);
         }
 
@@ -55,7 +55,7 @@ class AdminPointGoodsPage extends WapPage {
         if ($act === 'add' || ($act === 'edit' && $id > 0)) {
             $goods = ['id' => 0, 'name' => '', 'intro' => '', 'points' => 0, 'stock' => 0, 'image' => '', 'isshow' => 1, 'sortnum' => 0];
             if ($act === 'edit') {
-                $row = $db->getOne("SELECT * FROM WapPointGoods WHERE id=? AND siteid=?", [$id, $this->siteid]);
+                $row = $db->getOne("SELECT * FROM WapPointGoods WHERE id=?",[$id]);
                 if (!$row) $this->showError('商品不存在', $back);
                 $goods = $row;
             }
@@ -65,7 +65,7 @@ class AdminPointGoodsPage extends WapPage {
 
         // 列表
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapPointGoods', '*', 'siteid=?', 'sortnum DESC, id DESC', $page, 20, [$this->siteid]);
+        $result = $db->getPage('WapPointGoods', '*','', 'sortnum DESC, id DESC', $page, 20,[]);
 
         $this->strTitle = '积分商品管理';
         $this->showTop($this->strTitle);
@@ -154,20 +154,14 @@ class AdminPointGoodsPage extends WapPage {
         $sortnum = (int)$sortnum;
 
         if ($id > 0) {
-            $n = $db->execute(
-                "UPDATE WapPointGoods SET name=?,intro=?,points=?,stock=?,sortnum=?,isshow=?,image=? WHERE id=? AND siteid=?",
-                [$name, $intro, $points, $stock, $sortnum, $isshow, $image, $id, $this->siteid]
-            );
+            $n = $db->execute("UPDATE WapPointGoods SET name=?,intro=?,points=?,stock=?,sortnum=?,isshow=?,image=? WHERE id=?",[$name,$intro,$points,$stock,$sortnum,$isshow,$image,$id]);
             if ($n < 0) $this->showError('保存失败', $back);
             $msg = '商品已更新';
         } else {
-            $db->insert(
-                "INSERT INTO WapPointGoods (siteid,name,intro,points,stock,image,isshow,sortnum,addtime) VALUES (?,?,?,?,?,?,?,?,NOW())",
-                [$this->siteid, $name, $intro, $points, $stock, $image, $isshow, $sortnum]
-            );
+            $db->insert("INSERT INTO WapPointGoods (name,intro,points,stock,image,isshow,sortnum,addtime) VALUES (?,?,?,?,?,?,?,NOW())",[$name,$intro,$points,$stock,$image,$isshow,$sortnum]);
             $msg = '商品已新增';
         }
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->showSuccess($msg, $back);
     }
 }

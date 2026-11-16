@@ -10,11 +10,11 @@ class ChatSendPage extends WapPage {
         $this->checkLogin();
 
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            header('Location: index.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+            header('Location: index.php?classid=' . $this->classid);
             exit;
         }
 
-        $back = 'index.php?siteid=' . $this->siteid . '&classid=' . $this->classid;
+        $back = 'index.php?classid=' . $this->classid;
         $content = trim($_POST['content'] ?? '');
         if ($content === '') {
             $this->showError('发言内容不能为空', $back);
@@ -33,10 +33,7 @@ class ChatSendPage extends WapPage {
         $nick = $this->userVo['nickname'] ?? '';
         if ($nick === '' || $nick === null) $nick = $this->userVo['username'] ?? '会员';
 
-        $this->db->insert(
-            "INSERT INTO WapChatSpeak (siteid,userid,nickname,content,addtime) VALUES (?,?,?,?,NOW())",
-            [$this->siteid, $uid, $nick, $content]
-        );
+        $this->db->insert("INSERT INTO WapChatSpeak (userid,nickname,content,addtime) VALUES (?,?,?,NOW())",[$uid,$nick,$content]);
         header('Location: ' . $back);
         exit;
     }

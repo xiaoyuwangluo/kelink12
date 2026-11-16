@@ -22,7 +22,7 @@ class BbsAddPage extends WapPage {
 
     private function showForm() {
         echo '<div class="subtitle">发表帖子</div>';
-        echo '<div class="content"><form method="post" enctype="multipart/form-data" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<div class="content"><form method="post" enctype="multipart/form-data" action="admin_WAPadd.php?classid=' . $this->classid . '">';
         echo '标题:<input type="text" name="title" required/><br/>';
         echo '内容:<textarea name="content" rows="8" required></textarea><br/>';
         echo '标签:<input type="text" name="tags" size="30" maxlength="60"/>';
@@ -51,23 +51,19 @@ class BbsAddPage extends WapPage {
         }
 
         // 敏感词检测：命中则帖子仅自己/后台可见（isshow=0）并写审核记录
-        $isSensitive = kl_has_sensitive($title . ' ' . $content, $this->db, $this->siteid);
+        $isSensitive = kl_has_sensitive($title . ' ' . $content, $db);
         $isshow = $isSensitive ? 0 : 1;
 
-        $id = $db->insert(
-            "INSERT INTO WapBbs (siteid,classid,userid,nickname,title,content,istop,isgood,islock,isshow,addtime,hits,replynum) VALUES (?,?,?,?,?,?,0,0,0,?,NOW(),0,0)",
-            [$this->siteid, $this->classid, $uid, $nick, $title, $content, $isshow]
-        );
+        $id = $db->insert("INSERT INTO WapBbs (classid,userid,nickname,title,content,istop,isgood,islock,isshow,addtime,hits,replynum) VALUES (?,?,?,?,?,0,0,0,?,NOW(),0,0)",[$this->classid,$uid,$nick,$title,$content,$isshow]);
         if ($isSensitive) {
-            kl_audit_add($db, $this->siteid, $uid, 'bbs', $id, $title, $content);
+            kl_audit_add($db, $uid, 'bbs', $id, $title, $content);
         }
 
         // 帖子标签 (最多 3 个，白名单字符，去重)
         $tags = $this->parseTags($_POST['tags'] ?? '');
         foreach ($tags as $tag) {
             try {
-                $db->insert("INSERT INTO WapBbsTag (siteid,bbsid,tagname,addtime) VALUES (?,?,?,?)",
-                    [$this->siteid, $id, $tag, date('Y-m-d H:i:s')]);
+                $db->insert("INSERT INTO WapBbsTag (bbsid,tagname,addtime) VALUES (?,?,?)",[$id,$tag,date('Y-m-d H:i:s')]);
             } catch (Exception $e) {
                 // 标签表不可用或重复时跳过，不阻断发帖
             }
@@ -79,8 +75,7 @@ class BbsAddPage extends WapPage {
         if (isset($_FILES['attachfile']) && $_FILES['attachfile']['error'] !== UPLOAD_ERR_NO_FILE) {
             list($ok, $msg, $info) = Upload::save($_FILES['attachfile']);
             if ($ok) {
-                $db->insert("INSERT INTO WapBbsFile (siteid,bbsid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,NOW())",
-                    [$this->siteid, $id, $info['filename'], $info['relpath'], $info['size']]);
+                $db->insert("INSERT INTO WapBbsFile (bbsid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,NOW())",[$id,$info['filename'],$info['relpath'],$info['size']]);
                 $fileCount = 1;
             } else {
                 $fileMsg = '（图片上传失败: ' . $msg . '）';
@@ -90,7 +85,7 @@ class BbsAddPage extends WapPage {
         echo '<div class="success">发表成功' . ($fileCount > 0 ? '，已上传附件 ' . $fileCount . ' 个' : '') . $this->ToHtm($fileMsg)
             . ($tags ? '，标签 ' . count($tags) . ' 个' : '')
             . ($isSensitive ? '，内容含敏感词，待管理员审核' : '')
-            . ' <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+            . ' <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 
     /** 解析标签：逗号/空白/顿号分隔，去 #，白名单字符，去重，最多 3 个 */

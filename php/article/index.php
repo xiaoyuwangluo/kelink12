@@ -12,9 +12,9 @@ class ArticleIndexPage extends WapPage {
 
         echo '<div class="subtitle">文章管理</div>';
         echo '<div class="content">';
-        echo '<a href="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">添加文章</a><br/>';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">文章列表</a><br/>';
-        echo '<a href="systemindex.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">栏目管理</a>';
+        echo '<a href="admin_WAPadd.php?classid=' . $this->classid . '">添加文章</a><br/>';
+        echo '<a href="list.php?classid=' . $this->classid . '">文章列表</a><br/>';
+        echo '<a href="systemindex.php?classid=' . $this->classid . '">栏目管理</a>';
         echo '</div>';
         $this->showDown();
     }

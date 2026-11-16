@@ -26,10 +26,10 @@ class MyAccountPage extends WapPage {
         echo '<div class="subtitle">我的钱包</div><div class="content">';
         echo '账户余额:￥' . (int)$user['money'] . '<br/>';
         echo '积分:' . (int)$user['point'] . ' ' . kl_level_tag_html((int)$user['point'])
-            . ' <a href="../shop/point_orders.php?siteid=' . $this->siteid . '">积分兑换记录</a><br/>';
+            . ' <a href="../shop/point_orders.php">积分兑换记录</a><br/>';
 
         // 充值表单
-        echo '<hr/><form method="post" action="index.php?siteid=' . $this->siteid . '">';
+        echo '<hr/><form method="post" action="index.php">';
         echo '<input type="hidden" name="act" value="recharge"/>';
         echo '充值卡卡号:<input type="text" name="cardno" maxlength="32"/><br/>';
         echo '充值卡密码:<input type="password" name="cardpwd" maxlength="32"/><br/>';
@@ -38,7 +38,7 @@ class MyAccountPage extends WapPage {
 
         // 收支明细
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapAccountLog', '*', 'userid=? AND siteid=?', 'id DESC', $page, 20, [$uid, $this->siteid]);
+        $result = $db->getPage('WapAccountLog', '*','userid=?', 'id DESC', $page, 20,[$uid]);
         echo '<div class="subtitle">收支明细</div><div class="content">';
         if (!$result['list']) {
             echo '暂无收支记录。';
@@ -55,14 +55,14 @@ class MyAccountPage extends WapPage {
         echo '</div>';
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
-        echo '<div><a href="../shop/cart.php?siteid=' . $this->siteid . '&classid=3">购物车</a> ';
-        echo '<a href="../shop/myorder.php?siteid=' . $this->siteid . '&classid=3">我的订单</a> ';
-        echo '<a href="../myfile.php?siteid=' . $this->siteid . '">用户中心</a></div>';
+        echo '<div><a href="../shop/cart.php?classid=3">购物车</a> ';
+        echo '<a href="../shop/myorder.php?classid=3">我的订单</a> ';
+        echo '<a href="../myfile.php">用户中心</a></div>';
         $this->showDown();
     }
 
@@ -86,15 +86,14 @@ class MyAccountPage extends WapPage {
             $money = (int)$card['money'];
             $db->execute("UPDATE WapUser SET money=money+? WHERE id=?", [$money, $uid]);
             $balance = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$uid]);
-            $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, 'in', $money, $balance, '点卡充值 ' . $cardno]);
+            $db->insert("INSERT INTO WapAccountLog (userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",[$uid,'in',$money,$balance,'点卡充值 ' . $cardno]);
             $db->commit();
         } catch (Exception $e) {
             if ($db->getPdo()->inTransaction()) $db->rollBack();
             $this->showError('充值失败，请重试');
             return;
         }
-        header('Location: index.php?siteid=' . $this->siteid . '&recharged=' . $money);
+        header('Location: index.php?recharged=' . $money);
         exit;
     }
 }

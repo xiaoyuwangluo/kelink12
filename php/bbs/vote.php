@@ -39,7 +39,7 @@ class BbsVotePage extends WapPage {
         } elseif (!$this->userSession->isLogin()) {
             echo '<div class="error">请先登录后参与投票</div>';
         }
-        echo '<form method="post" action="vote.php?siteid=' . $this->siteid . '&voteid=' . $voteid . '">';
+        echo '<form method="post" action="vote.php?voteid=' . $voteid . '">';
         foreach ($options as $o) {
             $pct = round((int)$o['votes'] * 100 / $total);
             $checked = ($myChoice === (int)$o['id']) ? ' checked="checked"' : '';
@@ -58,7 +58,7 @@ class BbsVotePage extends WapPage {
         echo '总票数:' . (int)$vote['total'] . '</div>';
 
         if ($vote['bbsid'] > 0) {
-            echo '<div><a href="view.php?siteid=' . $this->siteid . '&id=' . (int)$vote['bbsid'] . '">返回帖子</a></div>';
+            echo '<div><a href="view.php?id=' . (int)$vote['bbsid'] . '">返回帖子</a></div>';
         }
         $this->showDown();
     }
@@ -82,7 +82,7 @@ class BbsVotePage extends WapPage {
         $db->execute("UPDATE WapVoteOption SET votes=votes+1 WHERE id=?", [$optionid]);
         $db->execute("UPDATE WapVote SET total=total+1 WHERE id=?", [$vote['id']]);
 
-        $this->showSuccess('投票成功', 'vote.php?siteid=' . $this->siteid . '&voteid=' . (int)$vote['id']);
+        $this->showSuccess('投票成功', 'vote.php?voteid=' . (int)$vote['id']);
     }
 }
 

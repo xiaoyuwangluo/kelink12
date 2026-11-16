@@ -9,7 +9,7 @@ class AdminPointOrderPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'pointorder.php?siteid=' . $this->siteid;
+        $back = 'pointorder.php';
 
         $status = $_GET['status'] ?? 'all';
         if (!in_array($status, ['0', '1', '2', 'all'], true)) $status = 'all';
@@ -19,7 +19,7 @@ class AdminPointOrderPage extends WapPage {
             $act = $_POST['act'] ?? '';
             $id = (int)($_POST['id'] ?? 0);
             if ($act === 'finish') {
-                $n = $db->execute("UPDATE WapPointOrder SET status=1 WHERE id=? AND siteid=? AND status=0", [$id, $this->siteid]);
+                $n = $db->execute("UPDATE WapPointOrder SET status=1 WHERE id=? AND status=0",[$id]);
                 if ($n != 1) $this->showError('订单不存在或状态已变更', $back . '&status=' . $status);
             } elseif ($act === 'cancel') {
                 $this->doCancel($id, $back . '&status=' . $status);
@@ -32,8 +32,8 @@ class AdminPointOrderPage extends WapPage {
 
         // 列表
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $where = 'siteid=?';
-        $params = [$this->siteid];
+        $where = '1=1';
+        $params = [];
         if ($status !== 'all') {
             $where .= ' AND status=?';
             $params[] = (int)$status;
@@ -89,26 +89,22 @@ class AdminPointOrderPage extends WapPage {
     /** 取消兑换：事务内订单置2 + 退积分 + 回补库存 + 积分流水 */
     private function doCancel($id, $back) {
         $db = $this->db;
-        $order = $db->getOne("SELECT * FROM WapPointOrder WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $order = $db->getOne("SELECT * FROM WapPointOrder WHERE id=?",[$id]);
         if (!$order) $this->showError('订单不存在', $back);
         if ((int)$order['status'] !== 0) $this->showError('仅待发放订单可取消', $back);
 
         $total = (int)$order['points'] * max(1, (int)$order['num']);
         try {
             $db->beginTransaction();
-            $n = $db->execute("UPDATE WapPointOrder SET status=2 WHERE id=? AND siteid=? AND status=0", [$id, $this->siteid]);
+            $n = $db->execute("UPDATE WapPointOrder SET status=2 WHERE id=? AND status=0",[$id]);
             if ($n != 1) {
                 $db->rollBack();
                 $this->showError('订单状态已变更', $back);
             }
             $db->execute("UPDATE WapUser SET point=point+? WHERE id=?", [$total, (int)$order['userid']]);
             $balance = (int)$db->getScalar("SELECT point FROM WapUser WHERE id=?", [(int)$order['userid']]);
-            $db->insert(
-                "INSERT INTO WapPointLog (siteid,userid,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, (int)$order['userid'], $total, $balance, '取消兑换退回：' . $order['goodsname']]
-            );
-            $db->execute("UPDATE WapPointGoods SET stock=stock+? WHERE id=? AND siteid=?",
-                [max(1, (int)$order['num']), (int)$order['goodsid'], $this->siteid]);
+            $db->insert("INSERT INTO WapPointLog (userid,num,balance,remark,addtime) VALUES (?,?,?,?,NOW())",[(int)$order['userid'],$total,$balance,'取消兑换退回：' . $order['goodsname']]);
+            $db->execute("UPDATE WapPointGoods SET stock=stock+? WHERE id=?",[max(1, (int)$order['num']),(int)$order['goodsid']]);
             $db->commit();
         } catch (Exception $e) {
             if ($db->getPdo()->inTransaction()) $db->rollBack();

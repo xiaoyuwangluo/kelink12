@@ -9,7 +9,6 @@ class AdminCommunityPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $sid = (int)$this->siteid;
 
         $days = (string)($_GET['days'] ?? '7');
         if (!in_array($days, ['7', '30', 'all'], true)) $days = '7';
@@ -17,37 +16,33 @@ class AdminCommunityPage extends WapPage {
 
         $overview = [
             'newuser'  => $this->cnt($db, "SELECT COUNT(*) FROM WapUser WHERE 1=1", "regtime", $start, []),
-            'bbs'      => $this->cnt($db, "SELECT COUNT(*) FROM WapBbs WHERE siteid=?", "addtime", $start, [$sid]),
-            'reply'    => $this->cnt($db, "SELECT COUNT(*) FROM WapBbsReply WHERE siteid=?", "addtime", $start, [$sid]),
-            'article'  => $this->cnt($db, "SELECT COUNT(*) FROM WapArticle WHERE siteid=?", "addtime", $start, [$sid]),
-            'follow'   => $this->cnt($db, "SELECT COUNT(*) FROM WapFollow WHERE siteid=?", "addtime", $start, [$sid]),
-            'like'     => $this->cnt($db, "SELECT COUNT(*) FROM WapLike WHERE siteid=?", "addtime", $start, [$sid]),
-            'message'  => $this->cnt($db, "SELECT COUNT(*) FROM WapMessage WHERE siteid=?", "addtime", $start, [$sid]),
+            'bbs'      => $this->cnt($db, "SELECT COUNT(*) FROM WapBbs", "addtime", $start, []),
+            'reply'    => $this->cnt($db, "SELECT COUNT(*) FROM WapBbsReply", "addtime", $start, []),
+            'article'  => $this->cnt($db, "SELECT COUNT(*) FROM WapArticle", "addtime", $start, []),
+            'follow'   => $this->cnt($db, "SELECT COUNT(*) FROM WapFollow", "addtime", $start, []),
+            'like'     => $this->cnt($db, "SELECT COUNT(*) FROM WapLike", "addtime", $start, []),
+            'message'  => $this->cnt($db, "SELECT COUNT(*) FROM WapMessage", "addtime", $start, []),
         ];
 
         $auditPending = 0;
         $blockCount = 0;
-        try { $auditPending = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE siteid=? AND status=0", [$sid]); } catch (Exception $e) {}
-        try { $blockCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBlock WHERE siteid=?", [$sid]); } catch (Exception $e) {}
+        try { $auditPending = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE status=0",[]); } catch (Exception $e) {}
+        try { $blockCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBlock",[]); } catch (Exception $e) {}
 
         // 趋势：最近 7/30 天（全部时取 30 天）
         $trendDays = $days === '30' ? 30 : 7;
         if ($days === 'all') $trendDays = 30;
         $series = ['bbs' => [], 'reply' => [], 'user' => []];
         $since = date('Y-m-d 00:00:00', strtotime('-' . ($trendDays - 1) . ' days'));
-        $this->fillSeries($series['bbs'], $db->getAll(
-            "SELECT DATE(addtime) AS d, COUNT(*) AS c FROM WapBbs WHERE siteid=? AND addtime>=? GROUP BY DATE(addtime)",
-            [$sid, $since]), 'd', 'c');
-        $this->fillSeries($series['reply'], $db->getAll(
-            "SELECT DATE(addtime) AS d, COUNT(*) AS c FROM WapBbsReply WHERE siteid=? AND addtime>=? GROUP BY DATE(addtime)",
-            [$sid, $since]), 'd', 'c');
+        $this->fillSeries($series['bbs'], $db->getAll("SELECT DATE(addtime) AS d, COUNT(*) AS c FROM WapBbs WHERE addtime>=? GROUP BY DATE(addtime)",[$since]), 'd', 'c');
+        $this->fillSeries($series['reply'], $db->getAll("SELECT DATE(addtime) AS d, COUNT(*) AS c FROM WapBbsReply WHERE addtime>=? GROUP BY DATE(addtime)",[$since]), 'd', 'c');
         $this->fillSeries($series['user'], $db->getAll(
             "SELECT DATE(regtime) AS d, COUNT(*) AS c FROM WapUser WHERE regtime>=? GROUP BY DATE(regtime)",
             [$since]), 'd', 'c');
 
         // 发帖 Top10
-        $postSql = "SELECT userid, COUNT(*) AS c FROM WapBbs WHERE siteid=?";
-        $postParams = [$sid];
+        $postSql = "SELECT userid, COUNT(*) AS c FROM WapBbs";
+        $postParams = [];
         if ($start) { $postSql .= " AND addtime>=?"; $postParams[] = $start; }
         $postSql .= " GROUP BY userid ORDER BY c DESC LIMIT 10";
         $topPosters = $db->getAll($postSql, $postParams);
@@ -66,19 +61,16 @@ class AdminCommunityPage extends WapPage {
         // 热门标签 Top10
         $topTags = [];
         try {
-            $topTags = $db->getAll(
-                "SELECT t.tagname, COUNT(*) AS c FROM WapBbsTag t
-                 JOIN WapBbs b ON b.id=t.bbsid AND b.siteid=t.siteid
-                 WHERE t.siteid=? AND b.isshow=1 GROUP BY t.tagname ORDER BY c DESC LIMIT 10",
-                [$sid]
-            );
+            $topTags = $db->getAll("SELECT t.tagname, COUNT(*) AS c FROM WapBbsTag t
+ JOIN WapBbs b ON b.id=t.bbsid
+ WHERE b.isshow=1 GROUP BY t.tagname ORDER BY c DESC LIMIT 10",[]);
         } catch (Exception $e) {}
 
         $this->strTitle = '社区报表';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">社区运营报表</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
-        $base = 'community.php?siteid=' . $sid;
+        $base = 'community.php';
         echo '<div class="content">';
         echo '<a href="' . $base . '&days=7">近7天</a> | ';
         echo '<a href="' . $base . '&days=30">近30天</a> | ';

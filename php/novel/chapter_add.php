@@ -37,17 +37,17 @@ class NovelChapterAddPage extends WapPage {
         $nick = (string)($_SESSION['kl_nickname'] ?? '');
         if ($author !== '' && ($author === $name || ($nick !== '' && $author === $nick))) return;
         $this->showError('无权限：仅管理员或小说作者可操作该小说',
-            'view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
+            'view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
     }
 
     private function showForm($novel) {
         echo '<div class="subtitle">添加章节：' . $this->ToHtm($novel['title']) . '</div>';
-        echo '<form method="post" action="chapter_add.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&novelid=' . (int)$novel['id'] . '">';
+        echo '<form method="post" action="chapter_add.php?classid=' . (int)$novel['classid'] . '&novelid=' . (int)$novel['id'] . '">';
         echo '章节标题:<input type="text" name="title" required/><br/>';
         echo '排序值:<input type="number" name="orderindex" value="0"/><br/>';
         echo '内容:<textarea name="content" rows="15"></textarea><br/>';
         echo '<input type="submit" value="提交章节"/></form>';
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
+        echo '<div><a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
     }
 
     private function doAdd($novel) {
@@ -62,8 +62,8 @@ class NovelChapterAddPage extends WapPage {
             "INSERT INTO WapNovelChapter (novelid,title,content,orderindex,addtime) VALUES (?,?,?,?,NOW())",
             [$novel['id'], $title, $content, $orderindex]
         );
-        echo '<div class="success">章节添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '&cid=' . $cid . '">查看本章</a> '
-            . '<a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
+        echo '<div class="success">章节添加成功 <a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '&cid=' . $cid . '">查看本章</a> '
+            . '<a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
     }
 }
 

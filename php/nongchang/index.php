@@ -15,14 +15,11 @@ class NongchangIndexPage extends WapPage {
         $uid = (int)$this->userSession->getUserId();
 
         // 读取或初始化农场数据
-        $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=? AND siteid=?", [$uid, $this->siteid]);
+        $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=?",[$uid]);
         if (!$farm) {
             $plots = $this->defaultPlots();
-            $db->insert(
-                "INSERT INTO WapNongChang (siteid,userid,level,exp,gold,plots,addtime) VALUES (?,?,1,0,100,?,NOW())",
-                [$this->siteid, $uid, json_encode($plots, JSON_UNESCAPED_UNICODE)]
-            );
-            $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=? AND siteid=?", [$uid, $this->siteid]);
+            $db->insert("INSERT INTO WapNongChang (userid,level,exp,gold,plots,addtime) VALUES (?,1,0,100,?,NOW())",[$uid,json_encode($plots, JSON_UNESCAPED_UNICODE)]);
+            $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=?",[$uid]);
         }
 
         $plots = json_decode($farm['plots'] ?? '[]', true);
@@ -67,7 +64,6 @@ class NongchangIndexPage extends WapPage {
             if ($status === 'empty') {
                 echo '空地 ';
                 echo '<form method="get" action="plant.php" style="display:inline">';
-                echo '<input type="hidden" name="siteid" value="' . $this->siteid . '"/>';
                 echo '<input type="hidden" name="classid" value="' . $this->classid . '"/>';
                 echo '<input type="hidden" name="id" value="' . $pid . '"/>';
                 echo '<select name="crop">';
@@ -80,7 +76,7 @@ class NongchangIndexPage extends WapPage {
                 echo $this->ToHtm($p['crop'] ?? '') . ' 种植中，还需 ' . (int)ceil($left / 60) . ' 分钟';
             } elseif ($status === 'ready') {
                 echo $this->ToHtm($p['crop'] ?? '') . ' 已成熟 ';
-                echo '<a href="harvest.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $pid . '">收获</a>';
+                echo '<a href="harvest.php?classid=' . $this->classid . '&id=' . $pid . '">收获</a>';
             } else {
                 echo '空地';
             }
@@ -88,7 +84,7 @@ class NongchangIndexPage extends WapPage {
         }
         echo '</ul></div>';
 
-        echo '<div class="actionbar"><a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div>';
+        echo '<div class="actionbar"><a href="../wapindex.php">返回首页</a></div>';
         $this->showDown();
     }
 

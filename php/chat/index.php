@@ -16,10 +16,7 @@ class ChatIndexPage extends WapPage {
         echo '<div class="subtitle">' . $this->ToHtm($this->strTitle) . '</div>';
 
         // 最近50条发言，按时间升序展示
-        $rows = $db->getAll(
-            "SELECT * FROM (SELECT id,userid,nickname,content,addtime FROM WapChatSpeak WHERE siteid=? ORDER BY id DESC LIMIT 50) t ORDER BY t.id ASC",
-            [$this->siteid]
-        );
+        $rows = $db->getAll("SELECT * FROM (SELECT id,userid,nickname,content,addtime FROM WapChatSpeak ORDER BY id DESC LIMIT 50) t ORDER BY t.id ASC",[]);
         echo '<div class="content"><ul class="list">';
         if (!$rows) {
             echo '<li>聊天室还没有发言</li>';
@@ -37,16 +34,16 @@ class ChatIndexPage extends WapPage {
             $nick = $_SESSION['kl_nickname'] ?? '';
             if ($nick === '' || $nick === null) $nick = $_SESSION['kl_username'] ?? '会员';
             echo '<div class="content">';
-            echo '<form method="post" action="send.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+            echo '<form method="post" action="send.php?classid=' . $this->classid . '">';
             echo '当前身份：' . $this->ToHtm($nick) . '<br/>';
             echo '<input type="text" name="content" maxlength="200" required/>';
             echo '<input type="submit" value="发送"/>';
             echo '</form></div>';
         } else {
-            echo '<div class="content"><a href="../waplogin.php?siteid=' . $this->siteid . '">登录后即可发言</a></div>';
+            echo '<div class="content"><a href="../waplogin.php">登录后即可发言</a></div>';
         }
 
-        echo '<div class="actionbar"><a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div>';
+        echo '<div class="actionbar"><a href="../wapindex.php">返回首页</a></div>';
         $this->showDown();
     }
 }

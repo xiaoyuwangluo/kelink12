@@ -25,7 +25,7 @@ class ArticleDelPage extends WapPage {
         $db->execute("DELETE FROM WapArticle WHERE id=?", [$id]);
         $db->execute("DELETE FROM WapReply WHERE module='article' AND contentid=?", [$id]);
         echo '<div class="success">删除成功</div>';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
     }
 }
 

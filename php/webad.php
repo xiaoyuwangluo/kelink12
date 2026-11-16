@@ -10,7 +10,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 <div class="head_bg"><div class="head"><div class="logo"><h1><a href="index.php">小宇网络WAP建站</a></h1></div>
 <div class="menu"><nav><ul>
 <li><a href="index.php">首页</a></li><li><a href="webad.php" class="a1">程序介绍</a></li>
-<li><a href="webreg.php">注册站长</a></li><li><a href="admin/login.php">登录体验</a></li>
+<li><a href="wapindex.php">进入站点</a></li><li><a href="admin/login.php">登录体验</a></li>
 <li><a href="webmodel.php">企业模版</a></li><li><a href="webcallme.php">联系我们</a></li>
 </ul></nav></div></div></div></div></header>
 <div class="main">

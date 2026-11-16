@@ -15,8 +15,7 @@ class AdminClassPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $siteid = $this->siteid > 0 ? $this->siteid : 1;
-        $back = 'class.php?siteid=' . $siteid;
+        $back = 'class.php';
 
         // POST 操作：新增 / 编辑 / 删除（防重复提交）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,16 +37,14 @@ class AdminClassPage extends WapPage {
                 $postgroup = preg_replace('/[^0-9,]/', '', trim($_POST['postgroup'] ?? ''));
                 $managegroup = preg_replace('/[^0-9,]/', '', trim($_POST['managegroup'] ?? ''));
                 if ($action === 'save' && $id > 0) {
-                    $db->execute("UPDATE WapClass SET classname=?, module=?, orderid=?, parentid=?, isshow=?, postgroup=?, managegroup=? WHERE id=? AND siteid=?",
-                        [$classname, $module, $orderid, $parentid, $isshow, $postgroup, $managegroup, $id, $siteid]);
+                    $db->execute("UPDATE WapClass SET classname=?, module=?, orderid=?, parentid=?, isshow=?, postgroup=?, managegroup=? WHERE id=?",[$classname,$module,$orderid,$parentid,$isshow,$postgroup,$managegroup,$id]);
                     $this->showSuccess('栏目保存成功', $back);
                 } else {
-                    $newId = $db->insert("INSERT INTO WapClass (siteid,parentid,classname,module,orderid,isshow,postgroup,managegroup) VALUES (?,?,?,?,?,?,?,?)",
-                        [$siteid, $parentid, $classname, $module, $orderid, $isshow, $postgroup, $managegroup]);
+                    $newId = $db->insert("INSERT INTO WapClass (parentid,classname,module,orderid,isshow,postgroup,managegroup) VALUES (?,?,?,?,?,?,?)",[$parentid,$classname,$module,$orderid,$isshow,$postgroup,$managegroup]);
                     $this->showSuccess('栏目添加成功，ID=' . $newId, $back);
                 }
             } elseif ($action === 'delete') {
-                $db->execute("DELETE FROM WapClass WHERE id=? AND siteid=?", [$id, $siteid]);
+                $db->execute("DELETE FROM WapClass WHERE id=?",[$id]);
                 $this->showSuccess('栏目已删除', $back);
             } else {
                 $this->showError('非法操作', $back);
@@ -56,14 +53,14 @@ class AdminClassPage extends WapPage {
 
         $this->strTitle = '栏目管理';
         $this->showTop($this->strTitle);
-        echo '<div class="subtitle">栏目管理 (站点' . $siteid . ')</div><div><a href="index.php">返回后台首页</a></div>';
+        echo '<div class="subtitle">栏目管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 新增/编辑表单
         $editId = (int)($_GET['edit'] ?? 0);
         $row = null;
         $isEdit = true;
         if ($editId > 0) {
-            $row = $db->getOne("SELECT * FROM WapClass WHERE id=? AND siteid=?", [$editId, $siteid]);
+            $row = $db->getOne("SELECT * FROM WapClass WHERE id=?",[$editId]);
             if (!$row) { echo '<div class="error">栏目不存在</div>'; $row = []; }
         } else {
             $isEdit = false;
@@ -92,7 +89,7 @@ class AdminClassPage extends WapPage {
             . '</form></div>';
 
         // 栏目列表
-        $list = $db->getAll("SELECT * FROM WapClass WHERE siteid=? ORDER BY orderid ASC, id ASC", [$siteid]);
+        $list = $db->getAll("SELECT * FROM WapClass ORDER BY orderid ASC, id ASC",[]);
         echo '<div class="content"><ul class="list">';
         foreach ($list as $c) {
             $hide = empty($c['isshow']) ? '<span style="color:red">[隐藏]</span>' : '';

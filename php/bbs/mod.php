@@ -22,11 +22,11 @@ class BbsModPage extends WapPage {
         if (!$isAdmin) {
             $this->checkLogin(); // 未登录跳转登录页
             if ((int)$thread['userid'] !== (int)$this->userSession->getUserId()) {
-                $this->showError('无权限操作此帖子', '../myfile.php?siteid=' . $this->siteid);
+                $this->showError('无权限操作此帖子', '../myfile.php');
             }
         }
 
-        $backUrl = 'view.php?siteid=' . $this->siteid . '&classid=' . $thread['classid'] . '&id=' . $id;
+        $backUrl = 'view.php?classid=' . $thread['classid'] . '&id=' . $id;
 
         // 置顶/加精/锁帖属于管理操作，仅管理员可用
         if (!$isAdmin && in_array($act, ['top', 'good', 'lock'], true)) {
@@ -43,25 +43,25 @@ class BbsModPage extends WapPage {
             case 'del':
                 $db->execute("DELETE FROM WapBbs WHERE id=?", [$id]);
                 $db->execute("DELETE FROM WapBbsReply WHERE bbsid=?", [$id]);
-                kl_cache_clear_site($this->siteid);
+                kl_cache_clear_site();
                 $this->showSuccess('帖子已删除', $backUrl);
                 break;
             case 'top':
                 $new = $thread['istop'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET istop=? WHERE id=?", [$new, $id]);
-                kl_cache_clear_site($this->siteid);
+                kl_cache_clear_site();
                 $this->showSuccess($new ? '已置顶' : '已取消置顶', $backUrl);
                 break;
             case 'good':
                 $new = $thread['isgood'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET isgood=? WHERE id=?", [$new, $id]);
-                kl_cache_clear_site($this->siteid);
+                kl_cache_clear_site();
                 $this->showSuccess($new ? '已加精' : '已取消精华', $backUrl);
                 break;
             case 'lock':
                 $new = $thread['islock'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET islock=? WHERE id=?", [$new, $id]);
-                kl_cache_clear_site($this->siteid);
+                kl_cache_clear_site();
                 $this->showSuccess($new ? '已锁帖' : '已解锁', $backUrl);
                 break;
             default:
@@ -74,11 +74,11 @@ class BbsModPage extends WapPage {
     private function showEditForm($thread) {
         $this->showTop('编辑帖子');
         echo '<div class="subtitle">编辑帖子</div>';
-        echo '<div class="content"><form method="post" action="mod.php?siteid=' . $this->siteid . '&act=edit&id=' . (int)$thread['id'] . '">';
+        echo '<div class="content"><form method="post" action="mod.php?act=edit&id=' . (int)$thread['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($thread['title']) . '" required/><br/>';
         echo '内容:<textarea name="content" rows="8" required>' . $this->ToHtm($thread['content']) . '</textarea><br/>';
         echo '<input type="submit" value="保存修改"/></form></div>';
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
+        echo '<div><a href="view.php?id=' . (int)$thread['id'] . '">返回帖子</a></div>';
     }
 
     /** 执行编辑 */
@@ -89,7 +89,7 @@ class BbsModPage extends WapPage {
         if (WapTool::checkSqlInject($title) || WapTool::checkSqlInject($content)) $this->showError('含非法字符');
         if (!$this->userSession->checkSubmitLimit()) $this->showError('操作过于频繁，请稍后再试');
         $this->db->execute("UPDATE WapBbs SET title=?, content=? WHERE id=?", [$title, $content, $id]);
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->showSuccess('修改成功', $backUrl);
     }
 }

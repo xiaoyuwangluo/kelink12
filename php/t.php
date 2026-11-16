@@ -36,5 +36,5 @@ http_response_code(404);
 <html><head><meta charset="utf-8"><title>短链不存在 - 小宇网络</title></head>
 <body>
 <div class="error">短链接不存在或已失效。</div>
-<div><a href="wapindex.php?siteid=1">返回站点首页</a></div>
+<div><a href="wapindex.php">返回站点首页</a></div>
 </body></html>

@@ -10,7 +10,7 @@ class AdminFilterPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'filter.php?siteid=' . $this->siteid;
+        $back = 'filter.php';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $act = $_POST['act'] ?? '';
@@ -18,14 +18,14 @@ class AdminFilterPage extends WapPage {
                 $this->doAdd($back);
             } elseif ($act === 'del') {
                 $id = (int)($_POST['id'] ?? 0);
-                $db->execute("DELETE FROM WapFilter WHERE id=? AND siteid=?", [$id, $this->siteid]);
-                kl_cache_clear_site($this->siteid);
+                $db->execute("DELETE FROM WapFilter WHERE id=?",[$id]);
+                kl_cache_clear_site();
                 $this->showSuccess('敏感词已删除', $back);
             }
             $this->showError('非法操作', $back);
         }
 
-        $rows = $db->getAll("SELECT * FROM WapFilter WHERE siteid=? ORDER BY id DESC", [$this->siteid]);
+        $rows = $db->getAll("SELECT * FROM WapFilter ORDER BY id DESC",[]);
 
         $this->strTitle = '敏感词库';
         $this->showTop($this->strTitle);
@@ -69,7 +69,7 @@ class AdminFilterPage extends WapPage {
         if (!$words) $this->showError('请输入有效敏感词（单个长度 1-50）', $back);
 
         $existing = [];
-        foreach ($db->getAll("SELECT word FROM WapFilter WHERE siteid=?", [$this->siteid]) as $r) {
+        foreach ($db->getAll("SELECT word FROM WapFilter",[]) as $r) {
             $existing[(string)$r['word']] = true;
         }
 
@@ -78,14 +78,14 @@ class AdminFilterPage extends WapPage {
         foreach (array_keys($words) as $word) {
             if (isset($existing[$word])) { $skipped++; continue; }
             try {
-                $db->insert("INSERT INTO WapFilter (siteid,word,addtime) VALUES (?,?,NOW())", [$this->siteid, $word]);
+                $db->insert("INSERT INTO WapFilter (word,addtime) VALUES (?,NOW())",[$word]);
                 $existing[$word] = true;
                 $added++;
             } catch (Exception $e) {
                 $skipped++;
             }
         }
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->showSuccess('已添加 ' . $added . ' 个敏感词' . ($skipped > 0 ? '，跳过重复/无效 ' . $skipped . ' 个' : ''), $back);
     }
 }

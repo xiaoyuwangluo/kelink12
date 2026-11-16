@@ -26,7 +26,7 @@ class LinkModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改链接</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '网站名称:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '网站说明:<textarea name="content" rows="5">' . $this->ToHtm($a['content'] ?? '') . '</textarea><br/>';
         echo 'Logo地址:<input type="text" name="picurl" value="' . $this->ToHtm($a['picurl'] ?? '') . '"/><br/>';
@@ -51,7 +51,7 @@ class LinkModifyPage extends WapPage {
             "UPDATE WapLink SET title=?,content=?,picurl=?,downurl=?,istop=? WHERE id=?",
             [$title, $content, $picurl, $downurl, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

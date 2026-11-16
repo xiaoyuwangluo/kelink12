@@ -24,7 +24,7 @@ class ArticleReplyPage extends WapPage {
 
         // 发表评论
         echo '<div class="re_form">';
-        echo '<form method="post" action="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<form method="post" action="book_re.php?classid=' . $this->classid . '&id=' . $id . '">';
         if ($this->userSession->isLogin()) {
             echo '昵称:' . $this->ToHtm($this->userSession->getUserName()) . '<br/>';
         } else {
@@ -53,13 +53,13 @@ class ArticleReplyPage extends WapPage {
         // 分页
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">返回文章</a></div>';
+        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $id . '">返回文章</a></div>';
         $this->showDown();
     }
 
@@ -86,10 +86,7 @@ class ArticleReplyPage extends WapPage {
             return;
         }
         $uid = $this->userSession->getUserId();
-        $db->insert(
-            "INSERT INTO WapReply (module,contentid,siteid,classid,userid,nickname,content,addtime,isshow) VALUES ('article',?,?,?,?,?,?,NOW(),1)",
-            [$id, $this->siteid, $this->classid, $uid, $nickname, $content]
-        );
+        $db->insert("INSERT INTO WapReply (module,contentid,classid,userid,nickname,content,addtime,isshow) VALUES ('article',?,?,?,?,?,NOW(),1)",[$id,$this->classid,$uid,$nickname,$content]);
         echo '<div class="success">评论发表成功</div>';
     }
 }

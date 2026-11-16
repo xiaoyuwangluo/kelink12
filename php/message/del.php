@@ -20,7 +20,7 @@ class MessageDelPage extends WapPage {
         }
 
         $db->execute("DELETE FROM WapMessage WHERE id=?", [$id]);
-        $this->showSuccess('已删除', 'index.php?siteid=' . $this->siteid);
+        $this->showSuccess('已删除', 'index.php');
     }
 }
 

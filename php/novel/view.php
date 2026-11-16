@@ -12,7 +12,7 @@ class NovelViewPage extends WapPage {
         $cid = (int)($_GET['cid'] ?? 0); // 章节ID
 
         if ($id <= 0) $this->showError('参数错误');
-        $novel = $db->getOne("SELECT * FROM WapNovel WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $novel = $db->getOne("SELECT * FROM WapNovel WHERE id=?",[$id]);
         if (!$novel) $this->showError('小说不存在');
 
         $db->execute("UPDATE WapNovel SET hits=hits+1 WHERE id=?", [$id]);
@@ -29,9 +29,9 @@ class NovelViewPage extends WapPage {
             $prev = $db->getOne("SELECT id,title FROM WapNovelChapter WHERE novelid=? AND id<? ORDER BY id DESC LIMIT 1", [$id, $cid]);
             $next = $db->getOne("SELECT id,title FROM WapNovelChapter WHERE novelid=? AND id>? ORDER BY id ASC LIMIT 1", [$id, $cid]);
             echo '<div class="prevnext">';
-            if ($prev) echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&cid=' . $prev['id'] . '">上一章</a> ';
-            echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">目录</a> ';
-            if ($next) echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&cid=' . $next['id'] . '">下一章</a>';
+            if ($prev) echo '<a href="view.php?classid=' . $this->classid . '&id=' . $id . '&cid=' . $prev['id'] . '">上一章</a> ';
+            echo '<a href="view.php?classid=' . $this->classid . '&id=' . $id . '">目录</a> ';
+            if ($next) echo '<a href="view.php?classid=' . $this->classid . '&id=' . $id . '&cid=' . $next['id'] . '">下一章</a>';
             echo '</div>';
         } else {
             // 章节列表
@@ -52,21 +52,21 @@ class NovelViewPage extends WapPage {
             }
             echo '<div class="chapterlist"><ul>';
             foreach ($chapters as $c) {
-                echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&cid=' . $c['id'] . '">' . $this->ToHtm($c['title']) . '</a>';
+                echo '<li><a href="view.php?classid=' . $this->classid . '&id=' . $id . '&cid=' . $c['id'] . '">' . $this->ToHtm($c['title']) . '</a>';
                 if ($canManage) {
-                    echo ' <a href="chapter_mod.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">修改</a>'
-                       . ' <a href="chapter_del.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">删除</a>';
+                    echo ' <a href="chapter_mod.php?classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">修改</a>'
+                       . ' <a href="chapter_del.php?classid=' . $this->classid . '&cid=' . (int)$c['id'] . '">删除</a>';
                 }
                 echo '</li>';
             }
             echo '</ul></div>';
             if ($canManage) {
                 echo '<div class="actionbar">'
-                    . '<a href="chapter_add.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&novelid=' . $id . '">添加章节</a> '
-                    . '<a href="import.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&novelid=' . $id . '">导入TXT</a></div>';
+                    . '<a href="chapter_add.php?classid=' . $this->classid . '&novelid=' . $id . '">添加章节</a> '
+                    . '<a href="import.php?classid=' . $this->classid . '&novelid=' . $id . '">导入TXT</a></div>';
             }
         }
-        echo '<div><a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回书单</a></div>';
+        echo '<div><a href="list.php?classid=' . $this->classid . '">返回书单</a></div>';
         $this->showDown();
     }
 }

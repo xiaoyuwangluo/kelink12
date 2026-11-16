@@ -16,7 +16,7 @@ class ZoneFollowingPage extends WapPage {
                 $this->strTitle = '我关注的人';
                 $this->showTop($this->strTitle);
                 echo '<div class="content">请先登录后查看</div>';
-                echo '<div><a href="../waplogin.php?siteid=' . $this->siteid . '">去登录</a></div>';
+                echo '<div><a href="../waplogin.php">去登录</a></div>';
                 $this->showDown();
                 return;
             }
@@ -31,18 +31,14 @@ class ZoneFollowingPage extends WapPage {
         $this->strTitle = ($isSelf ? '我关注的人' : $name . '关注的人');
         $this->showTop($this->strTitle);
 
-        $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE siteid=? AND userid=?",
-            [$this->siteid, $uid]);
+        $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE userid=?",[$uid]);
 
         echo '<div class="subtitle">' . $this->ToHtm($this->strTitle) . '</div>';
         echo '<div class="content">共关注 ' . $total . ' 人</div>';
 
-        $rows = $db->getAll(
-            "SELECT f.followuid, f.addtime, u.username, u.nickname
-             FROM WapFollow f LEFT JOIN WapUser u ON u.id=f.followuid
-             WHERE f.siteid=? AND f.userid=? ORDER BY f.id DESC LIMIT 100",
-            [$this->siteid, $uid]
-        );
+        $rows = $db->getAll("SELECT f.followuid, f.addtime, u.username, u.nickname
+ FROM WapFollow f LEFT JOIN WapUser u ON u.id=f.followuid
+ WHERE f.userid=? ORDER BY f.id DESC LIMIT 100",[$uid]);
 
         if (empty($rows)) {
             echo '<div class="content">暂无关注</div>';
@@ -52,14 +48,14 @@ class ZoneFollowingPage extends WapPage {
                 $rowName = ($r['nickname'] !== '' && $r['nickname'] !== null)
                     ? $r['nickname'] . '(' . $r['username'] . ')'
                     : ($r['username'] !== '' && $r['username'] !== null ? $r['username'] : '已注销用户');
-                echo '<li><a href="index.php?siteid=' . $this->siteid . '&uid=' . (int)$r['followuid'] . '">'
+                echo '<li><a href="index.php?uid=' . (int)$r['followuid'] . '">'
                     . $this->ToHtm($rowName) . '</a>';
                 echo ' <span class="time">' . $this->ToHtm($r['addtime']) . '</span></li>';
             }
             echo '</ul></div>';
         }
 
-        echo '<div class="actionbar"><a href="index.php?siteid=' . $this->siteid . '&uid=' . $uid . '">返回空间</a></div>';
+        echo '<div class="actionbar"><a href="index.php?uid=' . $uid . '">返回空间</a></div>';
         $this->showDown();
     }
 }

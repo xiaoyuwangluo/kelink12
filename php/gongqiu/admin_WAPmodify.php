@@ -26,7 +26,7 @@ class GongqiuModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改供求</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '内容详情:<textarea name="content" rows="10">' . $this->ToHtm($a['content'] ?? '') . '</textarea><br/>';
         echo '相关网址:<input type="text" name="downurl" value="' . $this->ToHtm($a['downurl'] ?? '') . '"/><br/>';
@@ -49,7 +49,7 @@ class GongqiuModifyPage extends WapPage {
             "UPDATE WapGongqiu SET title=?,content=?,downurl=?,istop=? WHERE id=?",
             [$title, $content, $downurl, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

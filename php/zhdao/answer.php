@@ -12,7 +12,7 @@ class ZhdaoAnswerPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $question = $db->getOne("SELECT * FROM WapZhiDao WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $question = $db->getOne("SELECT * FROM WapZhiDao WHERE id=?",[$id]);
         if (!$question) $this->showError('问题不存在');
 
         $this->showTop('回答问题');
@@ -27,11 +27,11 @@ class ZhdaoAnswerPage extends WapPage {
 
     private function showForm($title) {
         echo '<div class="subtitle">回答：' . $this->ToHtm($title) . '</div>';
-        echo '<div class="content"><form method="post" action="answer.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)($_GET['id'] ?? 0) . '">';
+        echo '<div class="content"><form method="post" action="answer.php?classid=' . $this->classid . '&id=' . (int)($_GET['id'] ?? 0) . '">';
         echo '回答内容:<textarea name="content" rows="6" required></textarea><br/>';
         echo '<input type="submit" value="提交回答"/>';
         echo '</form></div>';
-        echo '<div class="actionbar"><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)($_GET['id'] ?? 0) . '">返回问题</a></div>';
+        echo '<div class="actionbar"><a href="view.php?classid=' . $this->classid . '&id=' . (int)($_GET['id'] ?? 0) . '">返回问题</a></div>';
     }
 
     private function doAnswer($id, $title) {
@@ -55,14 +55,11 @@ class ZhdaoAnswerPage extends WapPage {
         $nick = $this->userVo['nickname'] ?? '';
         if ($nick === '' || $nick === null) $nick = $this->userVo['username'] ?? '会员';
 
-        $db->insert(
-            "INSERT INTO WapZhiDaoReply (zhidoid,siteid,userid,nickname,content,isbest,addtime) VALUES (?,?,?,?,?,0,NOW())",
-            [$id, $this->siteid, $uid, $nick, $content]
-        );
+        $db->insert("INSERT INTO WapZhiDaoReply (zhidoid,userid,nickname,content,isbest,addtime) VALUES (?,?,?,?,0,NOW())",[$id,$uid,$nick,$content]);
         // 回答后问题状态置为已答
         $db->execute("UPDATE WapZhiDao SET status=1 WHERE id=?", [$id]);
 
-        header('Location: view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id);
+        header('Location: view.php?classid=' . $this->classid . '&id=' . $id);
         exit;
     }
 }

@@ -20,7 +20,7 @@ class WapLoginPage extends WapPage {
         $backurl = $_GET['backurl'] ?? '';
         echo '<div class="subtitle">' . $this->GetLang('会员登录|会员登录|Member Login') . '</div>';
         echo '<div class="content">';
-        echo '<form method="post" action="waplogin.php?siteid=' . $this->siteid . '">';
+        echo '<form method="post" action="waplogin.php">';
         echo '<input type="hidden" name="backurl" value="' . $this->ToHtm($backurl) . '"/>';
         echo '用户名:<input type="text" name="username" required/><br/>';
         echo '密 码:<input type="password" name="password" required/><br/>';
@@ -30,11 +30,11 @@ class WapLoginPage extends WapPage {
             echo '验证码:<input type="text" name="checkcode"/> <span>' . $code . '</span><br/>';
         }
         echo '<input type="submit" value="' . $this->GetLang('登录|登录|Login') . '"/>';
-        echo ' <a href="wapreg.php?siteid=' . $this->siteid . '">' . $this->GetLang('注册|注册|Register') . '</a>';
+        echo ' <a href="wapreg.php">' . $this->GetLang('注册|注册|Register') . '</a>';
         echo '</form></div>';
         // QQ登录入口 (仅 KL_QQ_Login_Open=1 时显示)
         if (KL_QQ_Login_Open == 1) {
-            echo '<div class="content"><a href="oauth/index.php?siteid=' . $this->siteid . '">QQ登录</a></div>';
+            echo '<div class="content"><a href="oauth/index.php">QQ登录</a></div>';
         }
     }
 
@@ -59,7 +59,7 @@ class WapLoginPage extends WapPage {
         }
         list($ok, $msg, $user) = $this->userSession->login($username, $password);
         if ($ok) {
-            $url = $backurl ? $backurl : 'wapindex.php?siteid=' . $this->siteid;
+            $url = $backurl ? $backurl : 'wapindex.php';
             header('Location: ' . $url);
             exit;
         } else {

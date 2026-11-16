@@ -28,9 +28,9 @@ class FriendIndexPage extends WapPage {
                 $name = $fu ? ($fu['nickname'] !== '' ? $fu['nickname'] . '(' . $fu['username'] . ')' : $fu['username']) : '已注销用户';
                 echo '<li>' . $this->ToHtm($name);
                 if ($fu) {
-                    echo ' <a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . (int)$fu['id'] . '">[空间]</a>';
-                    echo ' <a href="../message/send.php?siteid=' . $this->siteid . '&to=' . urlencode($fu['username']) . '">[发短信]</a>';
-                    echo ' <a href="del.php?siteid=' . $this->siteid . '&fid=' . (int)$f['friendid'] . '">[删除]</a>';
+                    echo ' <a href="../zone/index.php?uid=' . (int)$fu['id'] . '">[空间]</a>';
+                    echo ' <a href="../message/send.php?to=' . urlencode($fu['username']) . '">[发短信]</a>';
+                    echo ' <a href="del.php?fid=' . (int)$f['friendid'] . '">[删除]</a>';
                 }
                 echo ' <span class="time">' . $this->ToHtm($f['addtime']) . '</span></li>';
             }
@@ -39,19 +39,18 @@ class FriendIndexPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
         // 添加好友
         echo '<div class="content"><form method="get" action="add.php">';
-        echo '<input type="hidden" name="siteid" value="' . $this->siteid . '"/>';
         echo '添加好友(用户名):<input type="text" name="username"/> <input type="submit" value="添加"/>';
         echo '</form></div>';
 
-        echo '<div><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div><a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 }

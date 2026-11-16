@@ -15,29 +15,27 @@ class ZoneFollowPage extends WapPage {
 
         $uid = (int)($_GET['uid'] ?? 0);
         if ($uid <= 0) $this->showError('参数错误');
-        if ($uid === $me) $this->showError('不能关注自己', 'index.php?siteid=' . $this->siteid . '&uid=' . $me);
+        if ($uid === $me) $this->showError('不能关注自己', 'index.php?uid=' . $me);
 
         $user = $db->getOne("SELECT id FROM WapUser WHERE id=?", [$uid]);
-        if (!$user) $this->showError('用户不存在', 'index.php?siteid=' . $this->siteid . '&uid=' . $me);
-        if (kl_is_blocked($db, $this->siteid, $me, $uid)) {
-            $this->showError('存在拉黑关系，无法关注', 'index.php?siteid=' . $this->siteid . '&uid=' . $uid);
+        if (!$user) $this->showError('用户不存在', 'index.php?uid=' . $me);
+        if (kl_is_blocked($db, $me, $uid)) {
+            $this->showError('存在拉黑关系，无法关注', 'index.php?uid=' . $uid);
         }
 
-        $backUrl = 'index.php?siteid=' . $this->siteid . '&uid=' . $uid;
-        $exists = $db->getOne("SELECT id FROM WapFollow WHERE siteid=? AND userid=? AND followuid=?",
-            [$this->siteid, $me, $uid]);
+        $backUrl = 'index.php?uid=' . $uid;
+        $exists = $db->getOne("SELECT id FROM WapFollow WHERE userid=? AND followuid=?",[$me,$uid]);
 
         if ($exists) {
             $db->execute("DELETE FROM WapFollow WHERE id=?", [$exists['id']]);
             $msg = '已取消关注';
         } else {
-            $db->insert("INSERT INTO WapFollow (siteid,userid,followuid,addtime) VALUES (?,?,?,?)",
-                [$this->siteid, $me, $uid, date('Y-m-d H:i:s')]);
-            kl_notice_add($db, $this->siteid, $uid, $me, 'follow', 'zone', $me, '关注了你');
+            $db->insert("INSERT INTO WapFollow (userid,followuid,addtime) VALUES (?,?,?)",[$me,$uid,date('Y-m-d H:i:s')]);
+            kl_notice_add($db, $uid, $me, 'follow', 'zone', $me, '关注了你');
             $msg = '已关注';
         }
 
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->showSuccess($msg, $backUrl);
     }
 }

@@ -32,7 +32,7 @@ class YuehuiModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改约会信息</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '内容:<textarea name="content" rows="10">' . $this->ToHtm($a['content']) . '</textarea><br/>';
         echo '图片地址:<input type="text" name="picurl" value="' . $this->ToHtm($a['picurl'] ?? '') . '"/><br/>';
@@ -57,7 +57,7 @@ class YuehuiModifyPage extends WapPage {
             "UPDATE WapYuehui SET title=?,content=?,picurl=?,downurl=?,istop=? WHERE id=?",
             [$title, $content, $picurl, $downurl, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

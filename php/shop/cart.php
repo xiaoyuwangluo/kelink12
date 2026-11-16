@@ -22,18 +22,18 @@ class ShopCartPage extends WapPage {
                 $this->doDel($uid);
             }
             // 操作后重定向回购物车，防止刷新重复提交
-            header('Location: cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+            header('Location: cart.php?classid=' . $this->classid);
             exit;
         }
 
         // 购物车列表
-        $rows = $db->getAll("SELECT * FROM WapShopCart WHERE userid=? AND siteid=? ORDER BY id DESC", [$uid, $this->siteid]);
+        $rows = $db->getAll("SELECT * FROM WapShopCart WHERE userid=? ORDER BY id DESC",[$uid]);
         $this->strTitle = '购物车';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">购物车</div>';
 
         if (!$rows) {
-            echo '<div class="content">购物车是空的。<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">去逛逛</a></div>';
+            echo '<div class="content">购物车是空的。<a href="list.php?classid=' . $this->classid . '">去逛逛</a></div>';
         } else {
             $total = 0;
             echo '<div class="content"><ul class="cartlist">';
@@ -42,14 +42,14 @@ class ShopCartPage extends WapPage {
                 $total += $subtotal;
                 echo '<li>';
                 echo $this->ToHtm($r['title']) . ' ￥' . (int)$r['price'] . ' × ';
-                echo '<form method="post" action="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" style="display:inline">';
+                echo '<form method="post" action="cart.php?classid=' . $this->classid . '" style="display:inline">';
                 echo '<input type="hidden" name="act" value="update"/>';
                 echo '<input type="hidden" name="cartid" value="' . (int)$r['id'] . '"/>';
                 echo '<input type="number" name="num" value="' . (int)$r['num'] . '" min="1" style="width:4em"/>';
                 echo '<input type="submit" value="改"/>';
                 echo '</form>';
                 echo ' 小计￥' . $subtotal;
-                echo '<form method="post" action="cart.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" style="display:inline">';
+                echo '<form method="post" action="cart.php?classid=' . $this->classid . '" style="display:inline">';
                 echo '<input type="hidden" name="act" value="del"/>';
                 echo '<input type="hidden" name="cartid" value="' . (int)$r['id'] . '"/>';
                 echo '<input type="submit" value="删除"/>';
@@ -58,7 +58,7 @@ class ShopCartPage extends WapPage {
             }
             echo '</ul>';
             echo '<div class="total">合计:￥' . $total . '</div>';
-            echo '<form method="post" action="checkout.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+            echo '<form method="post" action="checkout.php?classid=' . $this->classid . '">';
             echo '<div>勾选结算:</div>';
             foreach ($rows as $r) {
                 echo '<label><input type="checkbox" name="ids[]" value="' . (int)$r['id'] . '" checked/>' . $this->ToHtm($r['title']) . '</label><br/>';
@@ -68,9 +68,9 @@ class ShopCartPage extends WapPage {
         }
 
         echo '<div class="nav">';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">商城</a> ';
-        echo '<a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a> ';
-        echo '<a href="../myaccount/index.php?siteid=' . $this->siteid . '">余额充值</a>';
+        echo '<a href="list.php?classid=' . $this->classid . '">商城</a> ';
+        echo '<a href="myorder.php?classid=' . $this->classid . '">我的订单</a> ';
+        echo '<a href="../myaccount/index.php">余额充值</a>';
         echo '</div>';
         $this->showDown();
     }
@@ -82,21 +82,19 @@ class ShopCartPage extends WapPage {
         $num = max(1, (int)($_POST['num'] ?? 1));
         if ($shopid <= 0 || $num > 999) return;
 
-        $product = $db->getOne("SELECT * FROM WapShop WHERE id=? AND siteid=? AND isshow=1", [$shopid, $this->siteid]);
+        $product = $db->getOne("SELECT * FROM WapShop WHERE id=? AND isshow=1",[$shopid]);
         if (!$product) return;
 
         // 库存校验（含已加购数量）
-        $oldNum = (int)$db->getScalar("SELECT num FROM WapShopCart WHERE userid=? AND siteid=? AND shopid=?", [$uid, $this->siteid, $shopid]);
+        $oldNum = (int)$db->getScalar("SELECT num FROM WapShopCart WHERE userid=? AND shopid=?",[$uid,$shopid]);
         if ((int)$product['stock'] > 0 && $oldNum + $num > (int)$product['stock']) return;
 
         $price = (int)round($product['price']); // 金额按整数元处理
         if ($oldNum > 0) {
             // 已存在同款商品，累加数量
-            $db->execute("UPDATE WapShopCart SET num=?, price=?, title=? WHERE userid=? AND siteid=? AND shopid=?",
-                [$oldNum + $num, $price, $product['title'], $uid, $this->siteid, $shopid]);
+            $db->execute("UPDATE WapShopCart SET num=?, price=?, title=? WHERE userid=? AND shopid=?",[$oldNum + $num,$price,$product['title'],$uid,$shopid]);
         } else {
-            $db->insert("INSERT INTO WapShopCart (siteid,userid,shopid,title,price,num,addtime) VALUES (?,?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, $shopid, $product['title'], $price, $num]);
+            $db->insert("INSERT INTO WapShopCart (userid,shopid,title,price,num,addtime) VALUES (?,?,?,?,?,NOW())",[$uid,$shopid,$product['title'],$price,$num]);
         }
     }
 
@@ -106,7 +104,7 @@ class ShopCartPage extends WapPage {
         $cartid = (int)($_POST['cartid'] ?? 0);
         $num = max(1, (int)($_POST['num'] ?? 1));
         if ($cartid <= 0 || $num > 999) return;
-        $row = $db->getOne("SELECT * FROM WapShopCart WHERE id=? AND userid=? AND siteid=?", [$cartid, $uid, $this->siteid]);
+        $row = $db->getOne("SELECT * FROM WapShopCart WHERE id=? AND userid=?",[$cartid,$uid]);
         if (!$row) return;
         $stock = (int)$db->getScalar("SELECT stock FROM WapShop WHERE id=?", [$row['shopid']]);
         if ($stock > 0 && $num > $stock) $num = $stock;
@@ -118,7 +116,7 @@ class ShopCartPage extends WapPage {
         $db = $this->db;
         $cartid = (int)($_POST['cartid'] ?? 0);
         if ($cartid <= 0) return;
-        $db->execute("DELETE FROM WapShopCart WHERE id=? AND userid=? AND siteid=?", [$cartid, $uid, $this->siteid]);
+        $db->execute("DELETE FROM WapShopCart WHERE id=? AND userid=?",[$cartid,$uid]);
     }
 }
 $page = new ShopCartPage();

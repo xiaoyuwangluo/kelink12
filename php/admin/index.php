@@ -9,7 +9,6 @@ $page = new WapPage();
 $page->checkAdminLogin();
 
 $db = Database::getInstance();
-$siteCount = $db->getScalar("SELECT COUNT(*) FROM WapSite");
 $userCount = $db->getScalar("SELECT COUNT(*) FROM WapUser");
 $articleCount = $db->getScalar("SELECT COUNT(*) FROM WapArticle");
 $bbsCount = $db->getScalar("SELECT COUNT(*) FROM WapBbs");
@@ -53,30 +52,28 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 </div>
 <div class="container">
 <div class="stats">
-<div class="stat-card"><div class="num"><?php echo $siteCount; ?></div><div class="label">站点数</div></div>
 <div class="stat-card"><div class="num"><?php echo $userCount; ?></div><div class="label">会员数</div></div>
 <div class="stat-card"><div class="num"><?php echo $articleCount; ?></div><div class="label">文章数</div></div>
 <div class="stat-card"><div class="num"><?php echo $bbsCount; ?></div><div class="label">帖子数</div></div>
 </div>
 <div class="menu">
-<a href="../wapindex.php?siteid=1">站点首页</a>
-<a href="site.php?siteid=1">站点管理</a>
-<a href="class.php?siteid=1">栏目管理</a>
-<a href="user.php?siteid=1">会员管理</a>
-<a href="content.php?siteid=1&module=article">内容管理</a>
-<a href="reply.php?siteid=1">评论审核</a>
-<a href="audit.php?siteid=1">内容审核（待审 <?php echo $auditPending; ?>）</a>
-<a href="report.php?siteid=1">举报管理</a>
-<a href="community.php?siteid=1">社区报表</a>
-<a href="tag.php?siteid=1">标签管理</a>
-<a href="online.php?siteid=1">在线用户</a>
-<a href="sysmsg.php?siteid=1">系统公告</a>
-<a href="card.php?siteid=1">充值卡</a>
-<a href="pointgoods.php?siteid=1">积分商品</a>
-<a href="pointorder.php?siteid=1">兑换订单（待发放 <?php echo $pointPending; ?>）</a>
-<a href="filter.php?siteid=1">敏感词库</a>
-<a href="upload.php?siteid=1">文件管理</a>
-<a href="setting.php?siteid=1">系统设置</a>
+<a href="../wapindex.php">站点首页</a>
+<a href="class.php">栏目管理</a>
+<a href="user.php">会员管理</a>
+<a href="content.php?module=article">内容管理</a>
+<a href="reply.php">评论审核</a>
+<a href="audit.php">内容审核（待审 <?php echo $auditPending; ?>）</a>
+<a href="report.php">举报管理</a>
+<a href="community.php">社区报表</a>
+<a href="tag.php">标签管理</a>
+<a href="online.php">在线用户</a>
+<a href="sysmsg.php">系统公告</a>
+<a href="card.php">充值卡</a>
+<a href="pointgoods.php">积分商品</a>
+<a href="pointorder.php">兑换订单（待发放 <?php echo $pointPending; ?>）</a>
+<a href="filter.php">敏感词库</a>
+<a href="upload.php">文件管理</a>
+<a href="setting.php">系统设置</a>
 </div>
 </div>
 </body>

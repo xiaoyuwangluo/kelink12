@@ -18,7 +18,6 @@ class WapPage {
     ];
 
     // 公共属性 (对应原 base.* 属性)
-    public $siteid = 0;
     public $classid = 0;
     public $ver = '';               // 1=WAP1.0 2=WAP2.0 3=电脑版 4=触屏版 (空=待UA识别)
     public $siteVo = null;          // 站点信息
@@ -138,7 +137,7 @@ class WapPage {
         if (!$this->checkPostPerm()) {
             $act = ($file === 'book_re.php') ? '发表评论' : '投稿';
             $this->showError('无权限：您的会员分组不允许在该栏目' . $act . '，请联系管理员调整分组',
-                '../wapindex.php?siteid=' . $this->siteid);
+                '../wapindex.php');
         }
     }
 
@@ -157,29 +156,29 @@ class WapPage {
             if ($row) {
                 $this->db->execute("UPDATE WapOnline SET lasttime=?, page=? WHERE id=?", [$now, $page, $row['id']]);
             } else {
-                $this->db->insert("INSERT INTO WapOnline (siteid,userid,username,ip,page,lasttime) VALUES (?,?,?,?,?,?)",
-                    [$this->siteid, $uid, $uname, $ip, $page, $now]);
+                $this->db->insert("INSERT INTO WapOnline (userid,username,ip,page,lasttime) VALUES (?,?,?,?,?)",
+                    [$uid, $uname, $ip, $page, $now]);
             }
             // 清理超时在线 (KL_DelOnlineTime 分钟)
             $limit = date('Y-m-d H:i:s', time() - KL_DelOnlineTime * 60);
             $this->db->execute("DELETE FROM WapOnline WHERE lasttime < ?", [$limit]);
 
             // 流量统计 (KL_VisiteCount_Close: 0开 1关)
-            if (KL_VisiteCount_Close == 0 && $this->siteid > 0) {
+            if (KL_VisiteCount_Close == 0) {
                 $today = date('Y-m-d');
-                $vis = $this->db->getOne("SELECT id FROM WapVisite WHERE siteid=? AND visitdate=?", [$this->siteid, $today]);
-                $isNewIp = !$this->db->getScalar("SELECT COUNT(*) FROM WapVisiteLog WHERE siteid=? AND ip=? AND date(addtime)=?",
-                    [$this->siteid, $ip, $today]);
+                $vis = $this->db->getOne("SELECT id FROM WapVisite WHERE visitdate=?", [$today]);
+                $isNewIp = !$this->db->getScalar("SELECT COUNT(*) FROM WapVisiteLog WHERE ip=? AND date(addtime)=?",
+                    [$ip, $today]);
                 if ($vis) {
                     $sql = "UPDATE WapVisite SET pv=pv+1" . ($isNewIp ? ",uv=uv+1" : "") . " WHERE id=?";
                     $this->db->execute($sql, [$vis['id']]);
                 } else {
-                    $this->db->insert("INSERT INTO WapVisite (siteid,visitdate,pv,uv) VALUES (?,?,1,1)", [$this->siteid, $today]);
+                    $this->db->insert("INSERT INTO WapVisite (visitdate,pv,uv) VALUES (?,1,1)", [$today]);
                 }
                 if ($isNewIp) {
                     $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-                    $this->db->insert("INSERT INTO WapVisiteLog (siteid,ip,url,ua,addtime) VALUES (?,?,?,?,?)",
-                        [$this->siteid, $ip, $page, substr($ua, 0, 200), $now]);
+                    $this->db->insert("INSERT INTO WapVisiteLog (ip,url,ua,addtime) VALUES (?,?,?,?)",
+                        [$ip, $page, substr($ua, 0, 200), $now]);
                 }
             }
         } catch (Exception $e) {
@@ -189,7 +188,6 @@ class WapPage {
 
     /** 初始化请求参数 */
     protected function initParams() {
-        $this->siteid = isset($_GET['siteid']) ? (int)$_GET['siteid'] : 0;
         $this->classid = isset($_GET['classid']) ? (int)$_GET['classid'] : 0;
         if (isset($_GET['ver'])) {
             $this->ver = $_GET['ver'];
@@ -222,8 +220,10 @@ class WapPage {
 
     /** 加载站点信息 */
     protected function loadSiteInfo() {
-        if ($this->siteid > 0) {
-            $this->siteVo = $this->db->getOne("SELECT * FROM WapSite WHERE id=?", [$this->siteid]);
+        try {
+            $this->siteVo = $this->db->getOne("SELECT * FROM WapSite ORDER BY id ASC LIMIT 1");
+        } catch (Exception $e) {
+            $this->siteVo = null;
         }
         if (!$this->siteVo) {
             // 默认站点信息
@@ -245,7 +245,7 @@ class WapPage {
             $this->classVo = $this->db->getOne("SELECT * FROM WapClass WHERE id=?", [$this->classid]);
         }
         if (!$this->classVo) {
-            $this->classVo = (object)['id' => 0, 'childid' => 0, 'classname' => '首页', 'siteid' => $this->siteid];
+            $this->classVo = (object)['id' => 0, 'childid' => 0, 'classname' => '首页'];
         }
     }
 
@@ -253,7 +253,6 @@ class WapPage {
     protected function buildWmlVo() {
         $this->wmlVo = (object)[
             'ver' => $this->ver,
-            'siteid' => $this->siteid,
             'classid' => $this->classid,
             'http_start' => $this->http_start,
         ];
@@ -288,7 +287,7 @@ class WapPage {
         if (!$this->userSession->isLogin()) {
             if ($redirect) {
                 $backurl = urlencode($_SERVER['REQUEST_URI'] ?? '');
-                header('Location: ' . $this->http_start . 'waplogin.php?siteid=' . $this->siteid . '&backurl=' . $backurl);
+                header('Location: ' . $this->http_start . 'waplogin.php?backurl=' . $backurl);
                 exit;
             }
             return false;

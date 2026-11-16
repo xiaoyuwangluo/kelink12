@@ -15,7 +15,6 @@ class SearchPage extends WapPage {
 
         echo '<div class="subtitle">' . $this->GetLang('搜索|搜索|Search') . '</div>';
         echo '<div class="searchbar"><form method="get" action="search.php">';
-        echo '<input type="hidden" name="siteid" value="' . $this->siteid . '"/>';
         echo '<input type="text" name="keyword" value="' . $this->ToHtm($keyword) . '"/>';
         echo '<input type="submit" value="搜索"/></form></div>';
 
@@ -27,14 +26,11 @@ class SearchPage extends WapPage {
                 $tables = ['WapArticle' => 'article', 'WapBbs' => 'bbs', 'WapShop' => 'shop', 'WapNovel' => 'novel', 'WapVideo' => 'video'];
                 echo '<div class="content">';
                 foreach ($tables as $table => $module) {
-                    $rows = $this->db->getAll(
-                        "SELECT id,title FROM $table WHERE siteid=? AND title LIKE ? AND isshow=1 ORDER BY id DESC LIMIT 10",
-                        [$this->siteid, '%' . $keyword . '%']
-                    );
+                    $rows = $this->db->getAll("SELECT id,title FROM $table WHERE title LIKE ? AND isshow=1 ORDER BY id DESC LIMIT 10",['%' . $keyword . '%']);
                     if ($rows) {
                         echo '<div class="searchgroup"><b>' . $module . '</b><ul>';
                         foreach ($rows as $r) {
-                            echo '<li><a href="' . $module . '/view.php?siteid=' . $this->siteid . '&id=' . $r['id'] . '">' . $this->ToHtm($r['title']) . '</a></li>';
+                            echo '<li><a href="' . $module . '/view.php?id=' . $r['id'] . '">' . $this->ToHtm($r['title']) . '</a></li>';
                         }
                         echo '</ul></div>';
                     }

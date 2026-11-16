@@ -28,7 +28,7 @@ class ArticleAddPage extends WapPage {
 
     private function showForm() {
         echo '<div class="subtitle">添加文章</div>';
-        echo '<div class="content"><form method="post" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" enctype="multipart/form-data">';
+        echo '<div class="content"><form method="post" action="admin_WAPadd.php?classid=' . $this->classid . '" enctype="multipart/form-data">';
         echo '标题:<input type="text" name="title" required/><br/>';
         echo '作者:<input type="text" name="author" value="' . $this->ToHtm($this->userSession->getUserName()) . '"/><br/>';
         echo '内容:<textarea name="content" rows="10" required></textarea><br/>';
@@ -62,11 +62,8 @@ class ArticleAddPage extends WapPage {
         }
 
         $uid = $this->userSession->getUserId();
-        $id = $db->insert(
-            "INSERT INTO WapArticle (siteid,classid,userid,title,author,content,picurl,istop,isshow,addtime,hits) VALUES (?,?,?,?,?,?,?,?,1,NOW(),0)",
-            [$this->siteid, $this->classid, $uid, $title, $author, $content, $picurl, $istop]
-        );
-        echo '<div class="success">添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        $id = $db->insert("INSERT INTO WapArticle (classid,userid,title,author,content,picurl,istop,isshow,addtime,hits) VALUES (?,?,?,?,?,?,?,1,NOW(),0)",[$this->classid,$uid,$title,$author,$content,$picurl,$istop]);
+        echo '<div class="success">添加成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 
     private function uploadPic() {

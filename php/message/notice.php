@@ -29,14 +29,14 @@ class MessageNoticePage extends WapPage {
                 header('Location: ' . $this->noticeUrl($notice));
                 exit;
             }
-            header('Location: notice.php?siteid=' . $this->siteid);
+            header('Location: notice.php');
             exit;
         }
 
         // 全部标记已读
         if ($act === 'readall') {
             $db->execute("UPDATE WapNotice SET isread=1 WHERE uid=?", [$uid]);
-            header('Location: notice.php?siteid=' . $this->siteid);
+            header('Location: notice.php');
             exit;
         }
 
@@ -45,8 +45,8 @@ class MessageNoticePage extends WapPage {
         if (!in_array($type, $this->types, true)) $type = '';
         $page = max(1, (int)($_GET['page'] ?? 1));
 
-        $where = 'siteid=? AND uid=?';
-        $params = [$this->siteid, $uid];
+        $where = 'uid=?';
+        $params = [$uid];
         if ($onlyUnread) {
             $where .= ' AND isread=0';
         }
@@ -56,8 +56,7 @@ class MessageNoticePage extends WapPage {
         }
         $result = $db->getPage('WapNotice', '*', $where, 'id DESC', $page, 20, $params);
 
-        $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE siteid=? AND uid=? AND isread=0",
-            [$this->siteid, $uid]);
+        $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE uid=? AND isread=0",[$uid]);
 
         $suffix = ($onlyUnread ? '&only=unread' : '') . ($type !== '' ? '&type=' . urlencode($type) : '');
 
@@ -65,10 +64,10 @@ class MessageNoticePage extends WapPage {
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">通知中心</div>';
         echo '<div class="menu">';
-        echo '<a href="notice.php?siteid=' . $this->siteid . '">全部通知</a> | ';
-        echo '<a href="notice.php?siteid=' . $this->siteid . '&only=unread">仅未读(' . $unread . ')</a> | ';
-        echo '<a href="notice.php?siteid=' . $this->siteid . '&act=readall">全部标为已读</a> | ';
-        echo '<a href="index.php?siteid=' . $this->siteid . '">返回消息</a>';
+        echo '<a href="notice.php">全部通知</a> | ';
+        echo '<a href="notice.php?only=unread">仅未读(' . $unread . ')</a> | ';
+        echo '<a href="notice.php?act=readall">全部标为已读</a> | ';
+        echo '<a href="index.php">返回消息</a>';
         echo '</div>';
 
         // 类型筛选
@@ -77,7 +76,7 @@ class MessageNoticePage extends WapPage {
             'follow' => '关注', 'friend' => '好友', 'audit' => '审核'];
         $links = [];
         foreach ($labels as $k => $label) {
-            $url = 'notice.php?siteid=' . $this->siteid
+            $url = 'notice.php'
                 . ($onlyUnread ? '&only=unread' : '')
                 . ($k !== '' ? '&type=' . urlencode($k) : '');
             $links[] = $k === $type
@@ -113,9 +112,9 @@ class MessageNoticePage extends WapPage {
                 $time = '<span class="time">' . $this->ToHtm($n['addtime']) . '</span>';
                 $target = $this->noticeUrl($n);
                 if (!$n['isread']) {
-                    $href = 'notice.php?siteid=' . $this->siteid . '&act=read&id=' . (int)$n['id'];
+                    $href = 'notice.php?act=read&id=' . (int)$n['id'];
                     echo '<li><strong><a href="' . $href . '">' . $this->ToHtm($line) . '</a></strong> ' . $time . '</li>';
-                } elseif ($target !== 'notice.php?siteid=' . $this->siteid) {
+                } elseif ($target !== 'notice.php') {
                     echo '<li><a href="' . $this->ToHtm($target) . '">' . $this->ToHtm($line) . '</a> ' . $time . '</li>';
                 } else {
                     echo '<li>' . $this->ToHtm($line) . ' ' . $time . '</li>';
@@ -126,13 +125,13 @@ class MessageNoticePage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . $suffix . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?' . $suffix . '&page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . $suffix . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?' . $suffix . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div><a href="index.php?siteid=' . $this->siteid . '">返回消息中心</a></div>';
+        echo '<div><a href="index.php">返回消息中心</a></div>';
         $this->showDown();
     }
 
@@ -140,25 +139,24 @@ class MessageNoticePage extends WapPage {
      * 通知跳转地址：帖子/文章详情、关注与好友对象空间、其余回私信会话
      */
     private function noticeUrl($n) {
-        $sid = (int)$this->siteid;
         $ntype = (string)($n['ntype'] ?? '');
         $module = (string)($n['module'] ?? '');
         $cid = (int)($n['contentid'] ?? 0);
         $fid = (int)($n['fromuid'] ?? 0);
 
         if ($cid > 0 && $module === 'bbs') {
-            return '../bbs/view.php?siteid=' . $sid . '&id=' . $cid;
+            return '../bbs/view.php?id=' . $cid;
         }
         if ($cid > 0 && $module === 'article') {
-            return '../article/view.php?siteid=' . $sid . '&id=' . $cid;
+            return '../article/view.php?id=' . $cid;
         }
         if (($ntype === 'follow' || $ntype === 'friend') && $fid > 0) {
-            return '../zone/index.php?siteid=' . $sid . '&uid=' . $fid;
+            return '../zone/index.php?uid=' . $fid;
         }
         if ($fid > 0) {
-            return 'chat.php?siteid=' . $sid . '&uid=' . $fid;
+            return 'chat.php?uid=' . $fid;
         }
-        return 'notice.php?siteid=' . $sid;
+        return 'notice.php';
     }
 }
 

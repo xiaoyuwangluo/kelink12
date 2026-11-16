@@ -11,14 +11,13 @@ class MessageChatPage extends WapPage {
         $db = $this->db;
         $this->checkLogin();
         $uid = (int)$this->userSession->getUserId();
-        $sid = (int)$this->siteid;
         $peer = (int)($_GET['uid'] ?? 0);
-        $back = 'sessions.php?siteid=' . $sid;
+        $back = 'sessions.php';
 
         if ($peer <= 0 || $peer === $uid) $this->showError('参数错误', $back);
         $peerUser = $db->getOne("SELECT id,username,nickname FROM WapUser WHERE id=?", [$peer]);
         if (!$peerUser) $this->showError('用户不存在', $back);
-        if (kl_is_blocked($db, $sid, $uid, $peer)) $this->showError('你与对方存在拉黑关系，无法会话', $back);
+        if (kl_is_blocked($db, $uid, $peer)) $this->showError('你与对方存在拉黑关系，无法会话', $back);
 
         $peerName = trim((string)$peerUser['nickname']);
         if ($peerName === '') $peerName = (string)$peerUser['username'];
@@ -43,28 +42,22 @@ class MessageChatPage extends WapPage {
 
             if ($err === '') {
                 $me = $db->getOne("SELECT username FROM WapUser WHERE id=?", [$uid]);
-                $db->insert(
-                    "INSERT INTO WapMessage (siteid,fromid,fromname,toid,toname,title,content,isread,addtime) VALUES (?,?,?,?,?,?,?,0,NOW())",
-                    [$sid, $uid, (string)($me['username'] ?? ''), $peer, (string)$peerUser['username'], '', $content]
-                );
-                header('Location: chat.php?siteid=' . $sid . '&uid=' . $peer);
+                $db->insert("INSERT INTO WapMessage (fromid,fromname,toid,toname,title,content,isread,addtime) VALUES (?,?,?,?,?,?,0,NOW())",[$uid,(string)($me['username'] ?? ''),$peer,(string)$peerUser['username'],'',$content]);
+                header('Location: chat.php?uid=' . $peer);
                 exit;
             }
         }
 
         // 标记对方发来的消息为已读
-        $db->execute("UPDATE WapMessage SET isread=1 WHERE siteid=? AND fromid=? AND toid=? AND isread=0", [$sid, $peer, $uid]);
+        $db->execute("UPDATE WapMessage SET isread=1 WHERE fromid=? AND toid=? AND isread=0",[$peer,$uid]);
 
-        $rows = $db->getAll(
-            "SELECT * FROM WapMessage WHERE siteid=? AND ((fromid=? AND toid=?) OR (fromid=? AND toid=?)) ORDER BY id DESC LIMIT 50",
-            [$sid, $uid, $peer, $peer, $uid]
-        );
+        $rows = $db->getAll("SELECT * FROM WapMessage WHERE ((fromid=? AND toid=?) OR (fromid=? AND toid=?)) ORDER BY id DESC LIMIT 50",[$uid,$peer,$peer,$uid]);
         $rows = array_reverse($rows);
 
         $this->strTitle = '与 ' . $peerName . ' 的会话';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">与 ' . $this->ToHtm($peerName) . ' 的会话</div>';
-        echo '<div class="menu"><a href="' . $back . '">会话列表</a> | <a href="index.php?siteid=' . $sid . '">收件箱</a></div>';
+        echo '<div class="menu"><a href="' . $back . '">会话列表</a> | <a href="index.php">收件箱</a></div>';
         if ($err !== '') echo '<div class="error">' . $this->ToHtm($err) . '</div>';
 
         if (!$rows) {
@@ -83,10 +76,10 @@ class MessageChatPage extends WapPage {
             echo '</div>';
         }
 
-        echo '<div class="content"><form method="post" action="chat.php?siteid=' . $sid . '&uid=' . $peer . '">';
+        echo '<div class="content"><form method="post" action="chat.php?uid=' . $peer . '">';
         echo '<textarea name="content" rows="4" cols="30" maxlength="1000" required></textarea><br/>';
         echo '<input type="submit" value="发送"/></form></div>';
-        echo '<div><a href="../zone/index.php?siteid=' . $sid . '&uid=' . $peer . '">查看对方空间</a></div>';
+        echo '<div><a href="../zone/index.php?uid=' . $peer . '">查看对方空间</a></div>';
         $this->showDown();
     }
 }

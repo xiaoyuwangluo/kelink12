@@ -24,16 +24,14 @@ class BbsMyPage extends WapPage {
         }
 
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $postCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBbs WHERE siteid=? AND userid=?",
-            [$this->siteid, $this->uid]);
-        $replyCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBbsReply WHERE siteid=? AND userid=?",
-            [$this->siteid, $this->uid]);
+        $postCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBbs WHERE userid=?",[$this->uid]);
+        $replyCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapBbsReply WHERE userid=?",[$this->uid]);
 
         $this->strTitle = '我的帖子';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">我的帖子与回复</div>';
 
-        $base = 'my.php?siteid=' . $this->siteid . ($this->myClassid > 0 ? '&classid=' . $this->myClassid : '');
+        $base = 'my.php' . ($this->myClassid > 0 ? '&classid=' . $this->myClassid : '');
         echo '<div class="menu">';
         echo $this->type === 'posts'
             ? '<strong>我的帖子(' . $postCount . ')</strong>'
@@ -42,7 +40,7 @@ class BbsMyPage extends WapPage {
         echo $this->type === 'replies'
             ? '<strong>我的回复(' . $replyCount . ')</strong>'
             : '<a href="' . $base . '&type=replies">我的回复(' . $replyCount . ')</a>';
-        echo ' | <a href="list.php?siteid=' . $this->siteid . '&classid=' . ($this->myClassid > 0 ? $this->myClassid : 1) . '">返回论坛</a>';
+        echo ' | <a href="list.php?classid=' . ($this->myClassid > 0 ? $this->myClassid : 1) . '">返回论坛</a>';
         echo '</div>';
 
         $msg = trim((string)($_GET['msg'] ?? ''));
@@ -62,8 +60,7 @@ class BbsMyPage extends WapPage {
     /** 帖子列表 */
     private function renderPosts($page, $base) {
         $db = $this->db;
-        $result = $db->getPage('WapBbs', 'id,classid,title,isshow,replynum,hits,addtime',
-            'siteid=? AND userid=?', 'id DESC', $page, 20, [$this->siteid, $this->uid]);
+        $result = $db->getPage('WapBbs', 'id,classid,title,isshow,replynum,hits,addtime','userid=?', 'id DESC', $page, 20,[$this->uid]);
 
         if (empty($result['list'])) {
             echo '<div class="content">你还没有发布过帖子</div>';
@@ -74,8 +71,7 @@ class BbsMyPage extends WapPage {
             $pending = [];
             if ($ids) {
                 $in = implode(',', $ids);
-                foreach ($db->getAll("SELECT contentid FROM WapAudit WHERE siteid=? AND module='bbs' AND status=0 AND contentid IN ($in)",
-                    [$this->siteid]) as $a) {
+                foreach ($db->getAll("SELECT contentid FROM WapAudit WHERE module='bbs' AND status=0 AND contentid IN ($in)",[]) as $a) {
                     $pending[(int)$a['contentid']] = 1;
                 }
             }
@@ -89,12 +85,12 @@ class BbsMyPage extends WapPage {
                 $status = $isPending ? '待审核' : ($hidden ? '已隐藏' : '已发布');
 
                 echo '<li><span class="info">[' . $status . ']</span> ';
-                echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . $cid . '&id=' . $pid . '">'
+                echo '<a href="view.php?classid=' . $cid . '&id=' . $pid . '">'
                     . $this->ToHtm($p['title']) . '</a>';
                 echo ' <span class="info">回' . (int)$p['replynum'] . '/阅' . (int)$p['hits'] . '</span>';
                 echo ' <span class="time">' . date('m-d H:i', strtotime($p['addtime'])) . '</span>';
                 echo '<div class="actionbar">';
-                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=edit&id=' . $pid . '">编辑</a> ';
+                echo '<a href="mod.php?act=edit&id=' . $pid . '">编辑</a> ';
                 if ($isPending) {
                     echo '<span class="info">审核中不可操作</span>';
                 } else {
@@ -110,8 +106,7 @@ class BbsMyPage extends WapPage {
     /** 回复列表 */
     private function renderReplies($page, $base) {
         $db = $this->db;
-        $result = $db->getPage('WapBbsReply', 'id,bbsid,content,isshow,addtime',
-            'siteid=? AND userid=?', 'id DESC', $page, 20, [$this->siteid, $this->uid]);
+        $result = $db->getPage('WapBbsReply', 'id,bbsid,content,isshow,addtime','userid=?', 'id DESC', $page, 20,[$this->uid]);
 
         if (empty($result['list'])) {
             echo '<div class="content">你还没有发表过回复</div>';
@@ -137,7 +132,7 @@ class BbsMyPage extends WapPage {
 
                 echo '<li>';
                 if ($thread) {
-                    echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$thread['classid'] . '&id=' . $bid . '">'
+                    echo '<a href="view.php?classid=' . (int)$thread['classid'] . '&id=' . $bid . '">'
                         . $this->ToHtm($thread['title']) . '</a> ';
                 } else {
                     echo '<span class="info">[帖子已删除]</span> ';
@@ -157,7 +152,7 @@ class BbsMyPage extends WapPage {
 
     /** 操作按钮（POST，避免误触与链接抓取） */
     private function actionForm($act, $id, $label) {
-        return '<form method="post" action="my.php?siteid=' . $this->siteid . '&type=' . $this->type
+        return '<form method="post" action="my.php?type=' . $this->type
             . ($this->myClassid > 0 ? '&classid=' . $this->myClassid : '') . '" style="display:inline">'
             . '<input type="hidden" name="act" value="' . $this->ToHtm($act) . '"/>'
             . '<input type="hidden" name="id" value="' . (int)$id . '"/>'
@@ -179,7 +174,7 @@ class BbsMyPage extends WapPage {
         $db = $this->db;
         $act = trim((string)($_POST['act'] ?? ''));
         $id = (int)($_POST['id'] ?? 0);
-        $back = 'my.php?siteid=' . $this->siteid . '&type=' . $this->type
+        $back = 'my.php?type=' . $this->type
             . ($this->myClassid > 0 ? '&classid=' . $this->myClassid : '');
 
         if ($id <= 0 || !in_array($act, ['hide', 'restore', 'hidereply'], true)) {
@@ -187,30 +182,27 @@ class BbsMyPage extends WapPage {
         }
 
         if ($act === 'hidereply') {
-            $reply = $db->getOne("SELECT id FROM WapBbsReply WHERE id=? AND siteid=? AND userid=?",
-                [$id, $this->siteid, $this->uid]);
+            $reply = $db->getOne("SELECT id FROM WapBbsReply WHERE id=? AND userid=?",[$id,$this->uid]);
             if (!$reply) $this->redirect($back, '', '回复不存在或无权操作');
             $db->execute("UPDATE WapBbsReply SET isshow=0 WHERE id=? AND userid=?", [$id, $this->uid]);
-            kl_cache_clear_site($this->siteid);
+            kl_cache_clear_site();
             $this->redirect($back, '回复已隐藏');
         }
 
-        $post = $db->getOne("SELECT id,isshow FROM WapBbs WHERE id=? AND siteid=? AND userid=?",
-            [$id, $this->siteid, $this->uid]);
+        $post = $db->getOne("SELECT id,isshow FROM WapBbs WHERE id=? AND userid=?",[$id,$this->uid]);
         if (!$post) $this->redirect($back, '', '帖子不存在或无权操作');
 
         if ($act === 'hide') {
             $db->execute("UPDATE WapBbs SET isshow=0 WHERE id=? AND userid=?", [$id, $this->uid]);
-            kl_cache_clear_site($this->siteid);
+            kl_cache_clear_site();
             $this->redirect($back, '帖子已隐藏');
         }
 
         // restore: 审核中的内容不允许自行恢复
-        $pending = $db->getOne("SELECT id FROM WapAudit WHERE siteid=? AND module='bbs' AND contentid=? AND status=0",
-            [$this->siteid, $id]);
+        $pending = $db->getOne("SELECT id FROM WapAudit WHERE module='bbs' AND contentid=? AND status=0",[$id]);
         if ($pending) $this->redirect($back, '', '该帖子正在审核中，暂不能恢复');
         $db->execute("UPDATE WapBbs SET isshow=1 WHERE id=? AND userid=?", [$id, $this->uid]);
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->redirect($back, '帖子已恢复');
     }
 

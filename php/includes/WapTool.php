@@ -101,7 +101,6 @@ class WapTool {
      */
     public function GetVS($wmlVo = null) {
         $wmlVo = $wmlVo ?: $this->wmlVo;
-        $siteid = $wmlVo->siteid ?? 0;
         $classid = $wmlVo->classid ?? 0;
         $curVer = $wmlVo->ver ?? '2';
         $http = $wmlVo->http_start ?? '';
@@ -119,7 +118,7 @@ class WapTool {
                 if ($v == $curVer) {
                     $html .= $name . '<br/>';
                 } else {
-                    $html .= '<a href="' . $http . 'wapindex.php?siteid=' . $siteid . '&amp;classid=' . $classid . '&amp;ver=' . $v . '">' . $name . '</a><br/>';
+                    $html .= '<a href="' . $http . 'wapindex.php?classid=' . $classid . '&amp;ver=' . $v . '">' . $name . '</a><br/>';
                 }
             }
             $html .= '</p>';
@@ -130,7 +129,7 @@ class WapTool {
             if ($v == $curVer) {
                 $html .= '<span class="curver">' . $name . '</span> ';
             } else {
-                $html .= '<a href="' . $http . 'wapindex.php?siteid=' . $siteid . '&classid=' . $classid . '&ver=' . $v . '">' . $name . '</a> ';
+                $html .= '<a href="' . $http . 'wapindex.php?classid=' . $classid . '&ver=' . $v . '">' . $name . '</a> ';
             }
         }
         $html .= '</div>';
@@ -250,7 +249,7 @@ class WapTool {
      * 万能调用 [功能模块=N_M_X_Y]
      * 动态调用指定站点/栏目下某模块最新N条内容
      */
-    public function callModule($n, $moduleId, $siteid, $classid, $wmlVo = null) {
+    public function callModule($n, $moduleId, $siteParam = 0, $classid = 0, $wmlVo = null) {
         $wmlVo = $wmlVo ?: $this->wmlVo;
         $module = self::$MODULE_MAP[$moduleId] ?? '';
         $table = self::$MODULE_TABLE[$module] ?? '';
@@ -258,8 +257,8 @@ class WapTool {
         $n = min(50, $n);
         try {
             $db = Database::getInstance();
-            $where = 'siteid=? AND isshow=1';
-            $params = [$siteid];
+            $where = 'isshow=1';
+            $params = [];
             if ($classid > 0) { $where .= ' AND classid=?'; $params[] = $classid; }
             $order = 'id DESC';
             $result = $db->getPage($table, 'id,title', $where, $order, 1, $n, $params);
@@ -272,7 +271,7 @@ class WapTool {
             // WML 1.0: 调用结果输出为 <p> 内的 <a> 链接序列，URL 中 & 转 &amp;
             $html = '<p>';
             foreach ($result['list'] as $row) {
-                $url = str_replace('&', '&amp;', $http . $module . '/view.php?siteid=' . $siteid . '&classid=' . $classid . '&id=' . $row['id']);
+                $url = str_replace('&', '&amp;', $http . $module . '/view.php?classid=' . $classid . '&id=' . $row['id']);
                 $html .= '<a href="' . $url . '">' . $this->ToHtm($row['title']) . '</a><br/>';
             }
             $html .= '</p>';
@@ -280,7 +279,7 @@ class WapTool {
         }
         $html = '<div class="callmodule">';
         foreach ($result['list'] as $row) {
-            $url = $http . $module . '/view.php?siteid=' . $siteid . '&classid=' . $classid . '&id=' . $row['id'];
+            $url = $http . $module . '/view.php?classid=' . $classid . '&id=' . $row['id'];
             $html .= '<a href="' . $url . '">' . $this->ToHtm($row['title']) . '</a><br/>';
         }
         $html .= '</div>';
@@ -288,13 +287,10 @@ class WapTool {
     }
 
     /** 当前在线人数 */
-    public function onlineCount($siteid = 0) {
+    public function onlineCount() {
         try {
             $db = Database::getInstance();
             $limit = date('Y-m-d H:i:s', time() - KL_DelOnlineTime * 60);
-            if ($siteid > 0) {
-                return (int)$db->getScalar("SELECT COUNT(*) FROM WapOnline WHERE siteid=? AND lasttime>?", [$siteid, $limit]);
-            }
             return (int)$db->getScalar("SELECT COUNT(*) FROM WapOnline WHERE lasttime>?", [$limit]);
         } catch (Exception $e) { return 0; }
     }

@@ -20,7 +20,7 @@ class GuessbookChangePage extends WapPage {
 
         $this->showTop('切换显隐');
         echo '<div class="success">「' . $this->ToHtm($item['title']) . '」已设为' . ($new === 1 ? '显示' : '隐藏') . '</div>';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
         $this->showDown();
     }
 }

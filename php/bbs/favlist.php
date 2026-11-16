@@ -25,9 +25,9 @@ class BbsFavListPage extends WapPage {
             echo '<div class="content"><ul class="list">';
             foreach ($result['list'] as $row) {
                 $module = $row['module'] === 'bbs' ? 'view.php' : '../' . $row['module'] . '/view.php';
-                echo '<li><a href="' . $module . '?siteid=' . $this->siteid . '&id=' . (int)$row['contentid'] . '">';
+                echo '<li><a href="' . $module . '?id=' . (int)$row['contentid'] . '">';
                 echo '[' . $this->ToHtm($row['module']) . ']' . $this->ToHtm($row['title']) . '</a>';
-                echo ' <a href="fav.php?siteid=' . $this->siteid . '&module=' . $this->ToHtm($row['module']) . '&id=' . (int)$row['contentid'] . '">[取消]</a>';
+                echo ' <a href="fav.php?module=' . $this->ToHtm($row['module']) . '&id=' . (int)$row['contentid'] . '">[取消]</a>';
                 echo ' <span class="time">' . $this->ToHtm($row['addtime']) . '</span></li>';
             }
             echo '</ul></div>';
@@ -35,13 +35,13 @@ class BbsFavListPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div><a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 }

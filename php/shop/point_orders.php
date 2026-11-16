@@ -16,8 +16,7 @@ class ShopPointOrdersPage extends WapPage {
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">我的兑换记录</div>';
 
-        $result = $db->getPage('WapPointOrder', 'id,goodsname,points,num,status,addtime',
-            'userid=? AND siteid=?', 'id DESC', $page, 20, [$uid, $this->siteid]);
+        $result = $db->getPage('WapPointOrder', 'id,goodsname,points,num,status,addtime','userid=?', 'id DESC', $page, 20,[$uid]);
 
         echo '<div class="content">';
         if (!$result['list']) {
@@ -38,14 +37,14 @@ class ShopPointOrdersPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div class="nav"><a href="point.php?siteid=' . $this->siteid . '">继续兑换</a> ';
-        echo '<a href="../myaccount/index.php?siteid=' . $this->siteid . '">我的账户</a></div>';
+        echo '<div class="nav"><a href="point.php">继续兑换</a> ';
+        echo '<a href="../myaccount/index.php">我的账户</a></div>';
         $this->showDown();
     }
 }

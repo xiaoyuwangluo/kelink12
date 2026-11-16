@@ -23,8 +23,8 @@ class BbsFavPage extends WapPage {
         if (!$row) $this->showError('内容不存在');
 
         $backUrl = ($module === 'bbs')
-            ? 'view.php?siteid=' . $this->siteid . '&id=' . $contentid
-            : '../' . $module . '/view.php?siteid=' . $this->siteid . '&id=' . $contentid;
+            ? 'view.php?id=' . $contentid
+            : '../' . $module . '/view.php?id=' . $contentid;
 
         $fav = $db->getOne("SELECT id FROM WapFav WHERE userid=? AND module=? AND contentid=?",
             [$uid, $module, $contentid]);
@@ -32,9 +32,8 @@ class BbsFavPage extends WapPage {
             $db->execute("DELETE FROM WapFav WHERE id=?", [$fav['id']]);
             $this->showSuccess('已取消收藏', $backUrl);
         } else {
-            $db->insert("INSERT INTO WapFav (siteid,userid,module,contentid,title,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, $module, $contentid, $row['title']]);
-            $this->showSuccess('收藏成功', 'favlist.php?siteid=' . $this->siteid);
+            $db->insert("INSERT INTO WapFav (userid,module,contentid,title,addtime) VALUES (?,?,?,?,NOW())",[$uid,$module,$contentid,$row['title']]);
+            $this->showSuccess('收藏成功', 'favlist.php');
         }
     }
 }

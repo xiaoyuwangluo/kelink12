@@ -22,7 +22,7 @@ class SigninPage extends WapPage {
         if ($signed) {
             echo '<div class="content">您今日已签到，已连续签到 <strong>' . (int)$signed['days'] . '</strong> 天。<br/>请勿重复签到。</div>';
             $this->showHistory($uid);
-            echo '<div><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+            echo '<div><a href="../myfile.php">返回用户中心</a></div>';
             $this->showDown();
             return;
         }
@@ -38,13 +38,12 @@ class SigninPage extends WapPage {
         $point = 10;
         if ($days % 7 === 0) $point *= 2;
 
-        $db->insert("INSERT INTO WapSignin (siteid,userid,signdate,days,addtime) VALUES (?,?,?,?,NOW())",
-            [$this->siteid, $uid, $today, $days]);
+        $db->insert("INSERT INTO WapSignin (userid,signdate,days,addtime) VALUES (?,?,?,NOW())",[$uid,$today,$days]);
         $db->execute("UPDATE WapUser SET point=point+? WHERE id=?", [$point, $uid]);
 
         echo '<div class="success">签到成功！连续 ' . $days . ' 天，获得积分 ' . $point . ($days % 7 === 0 ? '(连续7天翻倍)' : '') . '</div>';
         $this->showHistory($uid);
-        echo '<div><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div><a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 

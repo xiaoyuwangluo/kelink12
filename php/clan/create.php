@@ -20,12 +20,12 @@ class ClanCreatePage extends WapPage {
 
     private function showForm() {
         echo '<div class="subtitle">创建家族</div>';
-        echo '<div class="content"><form method="post" action="create.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<div class="content"><form method="post" action="create.php?classid=' . $this->classid . '">';
         echo '家族名称:<input type="text" name="name" maxlength="50" required/><br/>';
         echo '家族简介:<textarea name="intro" rows="4" maxlength="500"></textarea><br/>';
         echo '<input type="submit" value="创建"/>';
         echo '</form></div>';
-        echo '<div class="actionbar"><a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="actionbar"><a href="index.php?classid=' . $this->classid . '">返回列表</a></div>';
     }
 
     private function doCreate() {
@@ -51,7 +51,7 @@ class ClanCreatePage extends WapPage {
             echo '<div class="error">操作过于频繁，请稍后再试</div>';
             return;
         }
-        if ($db->getScalar("SELECT COUNT(*) FROM WapClan WHERE siteid=? AND name=?", [$this->siteid, $name])) {
+        if ($db->getScalar("SELECT COUNT(*) FROM WapClan WHERE name=?",[$name])) {
             echo '<div class="error">该家族名称已存在</div>';
             $this->showForm();
             return;
@@ -62,15 +62,12 @@ class ClanCreatePage extends WapPage {
         if ($nick === '' || $nick === null) $nick = $this->userVo['username'] ?? '会员';
 
         // 创建家族，族长即创建者，成员数记1
-        $clanid = $db->insert(
-            "INSERT INTO WapClan (siteid,userid,name,intro,members,point,addtime) VALUES (?,?,?,?,1,0,NOW())",
-            [$this->siteid, $uid, $name, $intro]
-        );
+        $clanid = $db->insert("INSERT INTO WapClan (userid,name,intro,members,point,addtime) VALUES (?,?,?,1,0,NOW())",[$uid,$name,$intro]);
         $db->insert(
             "INSERT INTO WapClanMember (clanid,userid,nickname,role,addtime) VALUES (?,?,?,1,NOW())",
             [$clanid, $uid, $nick]
         );
-        header('Location: view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $clanid);
+        header('Location: view.php?classid=' . $this->classid . '&id=' . $clanid);
         exit;
     }
 }

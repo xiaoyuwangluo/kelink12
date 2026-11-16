@@ -15,18 +15,17 @@ class MessageIndexPage extends WapPage {
 
         // 未读数
         $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapMessage WHERE toid=? AND isread=0", [$uid]);
-        $noticeUnread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE siteid=? AND uid=? AND isread=0",
-            [$this->siteid, $uid]);
+        $noticeUnread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE uid=? AND isread=0",[$uid]);
 
         $this->strTitle = $box === 'in' ? '收件箱' : '发件箱';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">' . $this->strTitle . '</div>';
         echo '<div class="menu">';
-        echo '<a href="index.php?siteid=' . $this->siteid . '&box=in">收件箱' . ($unread > 0 ? '(' . $unread . '未读)' : '') . '</a> | ';
-        echo '<a href="index.php?siteid=' . $this->siteid . '&box=out">发件箱</a> | ';
-        echo '<a href="notice.php?siteid=' . $this->siteid . '">通知中心' . ($noticeUnread > 0 ? '(未读' . $noticeUnread . ')' : '') . '</a> | ';
-        echo '<a href="sessions.php?siteid=' . $this->siteid . '">会话</a> | ';
-        echo '<a href="send.php?siteid=' . $this->siteid . '">发送短信</a>';
+        echo '<a href="index.php?box=in">收件箱' . ($unread > 0 ? '(' . $unread . '未读)' : '') . '</a> | ';
+        echo '<a href="index.php?box=out">发件箱</a> | ';
+        echo '<a href="notice.php">通知中心' . ($noticeUnread > 0 ? '(未读' . $noticeUnread . ')' : '') . '</a> | ';
+        echo '<a href="sessions.php">会话</a> | ';
+        echo '<a href="send.php">发送短信</a>';
         echo '</div>';
 
         $where = $box === 'in' ? 'toid=?' : 'fromid=?';
@@ -40,7 +39,7 @@ class MessageIndexPage extends WapPage {
             foreach ($result['list'] as $m) {
                 $who = $box === 'in' ? '来自:' . $m['fromname'] : '发给:' . $m['toname'];
                 $new = ($box === 'in' && !$m['isread']) ? '<strong>[未读]</strong>' : '';
-                echo '<li>' . $new . '<a href="view.php?siteid=' . $this->siteid . '&id=' . (int)$m['id'] . '">';
+                echo '<li>' . $new . '<a href="view.php?id=' . (int)$m['id'] . '">';
                 echo $this->ToHtm($m['title'] !== '' ? $m['title'] : '(无标题)') . '</a>';
                 echo ' <span class="info">' . $this->ToHtm($who) . '</span>';
                 echo ' <span class="time">' . $this->ToHtm($m['addtime']) . '</span></li>';
@@ -50,13 +49,13 @@ class MessageIndexPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&box=' . $box . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?box=' . $box . '&page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&box=' . $box . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?box=' . $box . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div><a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div><a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 }

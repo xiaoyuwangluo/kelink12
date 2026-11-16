@@ -12,24 +12,24 @@ class PageTplPage extends WapPage {
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id > 0) {
-            $row = $db->getOne("SELECT * FROM WapPageTpl WHERE id=? AND siteid=?", [$id, $this->siteid]);
-            if (!$row) $this->showError('页面不存在', 'page.php?siteid=' . $this->siteid);
+            $row = $db->getOne("SELECT * FROM WapPageTpl WHERE id=?",[$id]);
+            if (!$row) $this->showError('页面不存在', 'page.php');
             $this->strTitle = $row['name'];
             $this->showTop($row['name']);
             // 内容经 ToWML 解析，支持 UBB 与万能调用 [功能模块=N_M_X_Y]
             echo '<div class="content">' . $this->wapTool->ToWML($row['content'], $this->wmlVo) . '</div>';
-            echo '<div class="pagenav"><a href="wapindex.php?siteid=' . $this->siteid . '">回首页</a></div>';
+            echo '<div class="pagenav"><a href="wapindex.php">回首页</a></div>';
             $this->showDown();
             return;
         }
 
         $this->strTitle = '自定义页面';
         $this->showTop('自定义页面');
-        $list = $db->getAll("SELECT id,name FROM WapPageTpl WHERE siteid=? ORDER BY id DESC", [$this->siteid]);
+        $list = $db->getAll("SELECT id,name FROM WapPageTpl ORDER BY id DESC",[]);
         echo '<div class="content"><ul class="list">';
         if (!$list) echo '<li>暂无自定义页面</li>';
         foreach ($list as $row) {
-            echo '<li><a href="page.php?siteid=' . $this->siteid . '&id=' . $row['id'] . '">' . $this->ToHtm($row['name']) . '</a></li>';
+            echo '<li><a href="page.php?id=' . $row['id'] . '">' . $this->ToHtm($row['name']) . '</a></li>';
         }
         echo '</ul></div>';
         $this->showDown();

@@ -18,15 +18,15 @@ class BbsActivePage extends WapPage {
         echo '<div class="subtitle">' . ($days > 0 ? '近' . $days . '天' : '全部') . '活跃榜</div>';
         echo '<div class="menu">';
         foreach ([7, 30, 0] as $d) {
-            echo '<a href="active.php?siteid=' . $this->siteid . '&days=' . $d . '">'
+            echo '<a href="active.php?days=' . $d . '">'
                 . ($d > 0 ? '近' . $d . '天' : '全部') . '</a> ';
         }
         echo '</div>';
 
         // 发帖数
         $stat = [];
-        $sql = "SELECT userid, COUNT(*) AS c FROM WapBbs WHERE siteid=? AND isshow=1 AND userid>0";
-        $params = [$this->siteid];
+        $sql = "SELECT userid, COUNT(*) AS c FROM WapBbs WHERE isshow=1 AND userid>0";
+        $params = [];
         if ($cutoff !== '') { $sql .= " AND addtime>=?"; $params[] = $cutoff; }
         $sql .= " GROUP BY userid";
         foreach ($db->getAll($sql, $params) as $row) {
@@ -36,8 +36,8 @@ class BbsActivePage extends WapPage {
         }
 
         // 回复数
-        $sql = "SELECT userid, COUNT(*) AS c FROM WapBbsReply WHERE siteid=? AND isshow=1 AND userid>0";
-        $params = [$this->siteid];
+        $sql = "SELECT userid, COUNT(*) AS c FROM WapBbsReply WHERE isshow=1 AND userid>0";
+        $params = [];
         if ($cutoff !== '') { $sql .= " AND addtime>=?"; $params[] = $cutoff; }
         $sql .= " GROUP BY userid";
         foreach ($db->getAll($sql, $params) as $row) {
@@ -49,8 +49,8 @@ class BbsActivePage extends WapPage {
         // 被点赞数 (主帖)
         $sql = "SELECT b.userid AS uid, COUNT(*) AS c FROM WapLike l
                 INNER JOIN WapBbs b ON b.id=l.contentid
-                WHERE l.siteid=? AND l.module='bbs' AND l.replyid=0 AND b.userid>0";
-        $params = [$this->siteid];
+                WHERE l.module='bbs' AND l.replyid=0 AND b.userid>0";
+        $params = [];
         if ($cutoff !== '') { $sql .= " AND l.addtime>=?"; $params[] = $cutoff; }
         $sql .= " GROUP BY b.userid";
         foreach ($db->getAll($sql, $params) as $row) {
@@ -62,8 +62,8 @@ class BbsActivePage extends WapPage {
         // 被点赞数 (回复)
         $sql = "SELECT r.userid AS uid, COUNT(*) AS c FROM WapLike l
                 INNER JOIN WapBbsReply r ON r.id=l.replyid
-                WHERE l.siteid=? AND l.module='bbs' AND l.replyid>0 AND r.userid>0";
-        $params = [$this->siteid];
+                WHERE l.module='bbs' AND l.replyid>0 AND r.userid>0";
+        $params = [];
         if ($cutoff !== '') { $sql .= " AND l.addtime>=?"; $params[] = $cutoff; }
         $sql .= " GROUP BY r.userid";
         foreach ($db->getAll($sql, $params) as $row) {
@@ -74,7 +74,7 @@ class BbsActivePage extends WapPage {
 
         if (empty($stat)) {
             echo '<div class="content">暂无活跃数据</div>';
-            echo '<div><a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回论坛</a></div>';
+            echo '<div><a href="list.php?classid=' . $this->classid . '">返回论坛</a></div>';
             $this->showDown();
             return;
         }
@@ -101,7 +101,7 @@ class BbsActivePage extends WapPage {
         $rank = 1;
         foreach ($stat as $u => $s) {
             $name = $nameMap[$u] ?? '已注销用户';
-            echo '<li>#' . $rank . ' <a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . $u . '">'
+            echo '<li>#' . $rank . ' <a href="../zone/index.php?uid=' . $u . '">'
                 . $this->ToHtm($name) . '</a>';
             echo ' <span class="info">发帖' . $s['posts'] . ' 回复' . $s['replies'] . ' 获赞' . $s['likes'] . '</span>';
             echo ' <span class="score">活跃分' . $s['score'] . '</span></li>';
@@ -109,7 +109,7 @@ class BbsActivePage extends WapPage {
         }
         echo '</ul></div>';
 
-        echo '<div><a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回论坛</a></div>';
+        echo '<div><a href="list.php?classid=' . $this->classid . '">返回论坛</a></div>';
         $this->showDown();
     }
 }

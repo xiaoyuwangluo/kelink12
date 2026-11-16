@@ -38,17 +38,17 @@ class NovelChapterModifyPage extends WapPage {
         $nick = (string)($_SESSION['kl_nickname'] ?? '');
         if ($author !== '' && ($author === $name || ($nick !== '' && $author === $nick))) return;
         $this->showError('无权限：仅管理员或小说作者可操作该小说',
-            'view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
+            'view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
     }
 
     private function showForm($novel, $chapter) {
         echo '<div class="subtitle">修改章节：' . $this->ToHtm($novel['title']) . '</div>';
-        echo '<form method="post" action="chapter_mod.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&cid=' . (int)$chapter['id'] . '">';
+        echo '<form method="post" action="chapter_mod.php?classid=' . (int)$novel['classid'] . '&cid=' . (int)$chapter['id'] . '">';
         echo '章节标题:<input type="text" name="title" value="' . $this->ToHtm($chapter['title']) . '"/><br/>';
         echo '排序值:<input type="number" name="orderindex" value="' . (int)($chapter['orderindex'] ?? 0) . '"/><br/>';
         echo '内容:<textarea name="content" rows="15">' . $this->ToHtm($chapter['content'] ?? '') . '</textarea><br/>';
         echo '<input type="submit" value="保存修改"/></form>';
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
+        echo '<div><a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
     }
 
     private function doModify($chapter) {
@@ -60,7 +60,7 @@ class NovelChapterModifyPage extends WapPage {
 
         $db->execute("UPDATE WapNovelChapter SET title=?,content=?,orderindex=? WHERE id=?",
             [$title, $content, $orderindex, $chapter['id']]);
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$this->classid . '&id=' . (int)$chapter['novelid'] . '&cid=' . (int)$chapter['id'] . '">查看本章</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . (int)$this->classid . '&id=' . (int)$chapter['novelid'] . '&cid=' . (int)$chapter['id'] . '">查看本章</a></div>';
     }
 }
 

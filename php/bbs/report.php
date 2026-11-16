@@ -15,7 +15,7 @@ class BbsReportPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $thread = $db->getOne("SELECT id,title FROM WapBbs WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $thread = $db->getOne("SELECT id,title FROM WapBbs WHERE id=?",[$id]);
         if (!$thread) $this->showError('帖子不存在');
 
         $this->showTop('举报帖子');
@@ -30,14 +30,14 @@ class BbsReportPage extends WapPage {
     private function showForm($thread) {
         echo '<div class="subtitle">举报帖子</div>';
         echo '<div class="content">被举报帖子：' . $this->ToHtm($thread['title']) . '</div>';
-        echo '<form method="post" action="report.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">';
+        echo '<form method="post" action="report.php?classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">';
         echo '举报原因:<br/>';
         foreach ($this->reasons as $i => $r) {
             echo '<label><input type="radio" name="reason" value="' . $this->ToHtm($r) . '"' . ($i === 0 ? ' required' : '') . '/>' . $this->ToHtm($r) . '</label> ';
         }
         echo '<br/>补充说明:<textarea name="note" rows="4"></textarea><br/>';
         echo '<input type="submit" value="提交举报"/></form>';
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
+        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
     }
 
     private function doReport($thread) {
@@ -54,13 +54,12 @@ class BbsReportPage extends WapPage {
         $pending = $db->getOne("SELECT id FROM WapReport WHERE bbsid=? AND userid=? AND status=0", [$thread['id'], $uid]);
         if ($pending) {
             echo '<div class="error">您已举报过该帖子，正在处理中，请勿重复举报</div>';
-            echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
+            echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
             return;
         }
 
-        $db->insert("INSERT INTO WapReport (siteid,bbsid,userid,reason,note,status,addtime) VALUES (?,?,?,?,?,0,NOW())",
-            [$this->siteid, $thread['id'], $uid, $reason, $note]);
-        echo '<div class="success">举报已提交，感谢监督 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
+        $db->insert("INSERT INTO WapReport (bbsid,userid,reason,note,status,addtime) VALUES (?,?,?,?,0,NOW())",[$thread['id'],$uid,$reason,$note]);
+        echo '<div class="success">举报已提交，感谢监督 <a href="view.php?classid=' . $this->classid . '&id=' . (int)$thread['id'] . '">返回帖子</a></div>';
     }
 }
 

@@ -22,7 +22,7 @@ class BbsReplyPage extends WapPage {
         }
 
         echo '<div class="subtitle">回复:' . $this->ToHtm($thread['title']) . '</div>';
-        echo '<div class="content"><form method="post" action="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<div class="content"><form method="post" action="book_re.php?classid=' . $this->classid . '&id=' . $id . '">';
         if ($this->userSession->isLogin()) {
             echo '昵称:' . $this->ToHtm($this->userSession->getUserName()) . '<br/>';
         } else {
@@ -36,7 +36,7 @@ class BbsReplyPage extends WapPage {
         echo '内容:<textarea name="content" rows="5" required></textarea><br/>';
         echo '<input type="submit" value="发表回复"/></form></div>';
 
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">返回帖子</a></div>';
+        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $id . '">返回帖子</a></div>';
         $this->showDown();
     }
 
@@ -68,20 +68,17 @@ class BbsReplyPage extends WapPage {
         }
 
         // 敏感词检测：命中则回复进入待审核（isshow=0）并写审核记录
-        $isSensitive = kl_has_sensitive($content, $this->db, $this->siteid);
+        $isSensitive = kl_has_sensitive($content, $db);
         $isshow = $isSensitive ? 0 : 1;
 
-        $replyid = $db->insert(
-            "INSERT INTO WapBbsReply (bbsid,siteid,classid,userid,nickname,content,addtime,isshow) VALUES (?,?,?,?,?,?,NOW(),?)",
-            [$id, $this->siteid, $this->classid, $uid, $nickname, $content, $isshow]
-        );
+        $replyid = $db->insert("INSERT INTO WapBbsReply (bbsid,classid,userid,nickname,content,addtime,isshow) VALUES (?,?,?,?,?,NOW(),?)",[$id,$this->classid,$uid,$nickname,$content,$isshow]);
         if ($isSensitive) {
-            kl_audit_add($db, $this->siteid, $uid, 'bbs_re', $replyid, '', $content);
+            kl_audit_add($db, $uid, 'bbs_re', $replyid, '', $content);
         }
         $db->execute("UPDATE WapBbs SET replynum=replynum+1 WHERE id=?", [$id]);
 
         // 通知楼主 (楼主=回复者则自动跳过)
-        kl_notice_add($db, $this->siteid, (int)$thread['userid'], $uid, 'reply', 'bbs', $id, '回复了你的帖子');
+        kl_notice_add($db, (int)$thread['userid'], $uid, 'reply', 'bbs', $id, '回复了你的帖子');
 
         // 解析 @昵称，最多 5 个，命中且非本人则写 mention 通知
         if (preg_match_all('/@([\p{Han}A-Za-z0-9_]{1,20})/u', $content, $m)) {
@@ -90,13 +87,13 @@ class BbsReplyPage extends WapPage {
                 $target = $db->getOne("SELECT id FROM WapUser WHERE nickname=? OR username=? LIMIT 1",
                     [$name, $name]);
                 if ($target && (int)$target['id'] !== (int)$uid
-                    && !kl_is_blocked($db, $this->siteid, (int)$target['id'], $uid)) {
-                    kl_notice_add($db, $this->siteid, (int)$target['id'], $uid, 'mention', 'bbs', $id, '在回复中提到了你');
+                    && !kl_is_blocked($db, (int)$target['id'], $uid)) {
+                    kl_notice_add($db, (int)$target['id'], $uid, 'mention', 'bbs', $id, '在回复中提到了你');
                 }
             }
         }
 
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         echo '<div class="success">回复成功' . ($isSensitive ? '，内容含敏感词，待管理员审核' : '') . '</div>';
     }
 }

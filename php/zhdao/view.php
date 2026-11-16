@@ -11,7 +11,7 @@ class ZhdaoViewPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $question = $db->getOne("SELECT * FROM WapZhiDao WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $question = $db->getOne("SELECT * FROM WapZhiDao WHERE id=?",[$id]);
         if (!$question) $this->showError('问题不存在');
 
         // 更新点击
@@ -29,10 +29,7 @@ class ZhdaoViewPage extends WapPage {
         echo '</div>';
 
         // 回答列表 (采纳最佳答案在前)
-        $replies = $db->getAll(
-            "SELECT * FROM WapZhiDaoReply WHERE zhidoid=? AND siteid=? ORDER BY isbest DESC, id ASC",
-            [$id, $this->siteid]
-        );
+        $replies = $db->getAll("SELECT * FROM WapZhiDaoReply WHERE zhidoid=? ORDER BY isbest DESC, id ASC",[$id]);
         echo '<div class="subtitle">回答 (' . count($replies) . ')</div>';
         echo '<div class="replylist">';
         $floor = 1;
@@ -49,8 +46,8 @@ class ZhdaoViewPage extends WapPage {
         echo '</div>';
 
         echo '<div class="actionbar">';
-        echo '<a href="answer.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">回答问题</a> ';
-        echo '<a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="answer.php?classid=' . $this->classid . '&id=' . $id . '">回答问题</a> ';
+        echo '<a href="index.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
         $this->showDown();
     }

@@ -10,8 +10,7 @@ class AdminSysMsgPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $siteid = $this->siteid > 0 ? $this->siteid : 1;
-        $back = 'sysmsg.php?siteid=' . $siteid;
+        $back = 'sysmsg.php';
 
         // POST 操作：新增 / 编辑 / 删除（防重复提交）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,15 +26,14 @@ class AdminSysMsgPage extends WapPage {
                     $this->showError('公告标题不能为空', $back);
                 }
                 if ($action === 'save' && $id > 0) {
-                    $db->execute("UPDATE WapSysMsg SET title=?, content=? WHERE id=? AND siteid=?", [$title, $content, $id, $siteid]);
+                    $db->execute("UPDATE WapSysMsg SET title=?, content=? WHERE id=?",[$title,$content,$id]);
                     $this->showSuccess('公告保存成功', $back);
                 } else {
-                    $newId = $db->insert("INSERT INTO WapSysMsg (siteid,title,content,addtime) VALUES (?,?,?,datetime('now','localtime'))",
-                        [$siteid, $title, $content]);
+                    $newId = $db->insert("INSERT INTO WapSysMsg (title,content,addtime) VALUES (?,?,datetime('now','localtime'))",[$title,$content]);
                     $this->showSuccess('公告添加成功，ID=' . $newId, $back);
                 }
             } elseif ($action === 'delete') {
-                $db->execute("DELETE FROM WapSysMsg WHERE id=? AND siteid=?", [$id, $siteid]);
+                $db->execute("DELETE FROM WapSysMsg WHERE id=?",[$id]);
                 $this->showSuccess('公告已删除', $back);
             } else {
                 $this->showError('非法操作', $back);
@@ -51,7 +49,7 @@ class AdminSysMsgPage extends WapPage {
         $row = ['id' => 0, 'title' => '', 'content' => ''];
         $isEdit = $editId > 0;
         if ($isEdit) {
-            $found = $db->getOne("SELECT * FROM WapSysMsg WHERE id=? AND siteid=?", [$editId, $siteid]);
+            $found = $db->getOne("SELECT * FROM WapSysMsg WHERE id=?",[$editId]);
             if ($found) { $row = $found; } else { $isEdit = false; }
         }
         $act = $isEdit ? 'save' : 'add';
@@ -64,7 +62,7 @@ class AdminSysMsgPage extends WapPage {
             . '</form></div>';
 
         // 公告列表
-        $list = $db->getAll("SELECT * FROM WapSysMsg WHERE siteid=? ORDER BY id DESC", [$siteid]);
+        $list = $db->getAll("SELECT * FROM WapSysMsg ORDER BY id DESC",[]);
         echo '<div class="content"><ul class="list">';
         foreach ($list as $m) {
             $mid = (int)$m['id'];

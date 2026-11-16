@@ -11,7 +11,7 @@ class NovelAddPage extends WapPage {
     }
     private function showForm() {
         echo '<div class="subtitle">添加小说</div>';
-        echo '<form method="post" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" enctype="multipart/form-data">';
+        echo '<form method="post" action="admin_WAPadd.php?classid=' . $this->classid . '" enctype="multipart/form-data">';
         echo '书名:<input type="text" name="title" required/><br/>';
         echo '作者:<input type="text" name="author"/><br/>';
         echo '简介:<textarea name="intro" rows="5"></textarea><br/>';
@@ -35,9 +35,8 @@ class NovelAddPage extends WapPage {
             }
         }
         $uid = $this->userSession->getUserId();
-        $id = $db->insert("INSERT INTO WapNovel (siteid,classid,title,author,intro,picurl,isshow,hits,addtime) VALUES (?,?,?,?,?,?,1,0,NOW())",
-            [$this->siteid, $this->classid, $title, $_POST['author'] ?? '', $intro, $picurl]);
-        echo '<div class="success">添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        $id = $db->insert("INSERT INTO WapNovel (classid,title,author,intro,picurl,isshow,hits,addtime) VALUES (?,?,?,?,?,1,0,NOW())",[$this->classid,$title,$_POST['author'] ?? '',$intro,$picurl]);
+        echo '<div class="success">添加成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 $page = new NovelAddPage();

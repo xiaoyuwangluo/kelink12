@@ -26,7 +26,7 @@ class RingModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改铃声</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '铃声名称:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '说明内容:<textarea name="content" rows="10">' . $this->ToHtm($a['content'] ?? '') . '</textarea><br/>';
         echo '图片地址:<input type="text" name="picurl" value="' . $this->ToHtm($a['picurl'] ?? '') . '"/><br/>';
@@ -51,7 +51,7 @@ class RingModifyPage extends WapPage {
             "UPDATE WapRing SET title=?,content=?,picurl=?,downurl=?,istop=? WHERE id=?",
             [$title, $content, $picurl, $downurl, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

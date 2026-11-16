@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS `WapSite` (
 
 CREATE TABLE IF NOT EXISTS `WapClass` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `parentid` int(11) DEFAULT 0,
   `childid` int(11) DEFAULT 0,
   `classname` varchar(100) NOT NULL,
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `WapClass` (
   `isshow` tinyint(1) DEFAULT 1,
   `config` text,
   PRIMARY KEY (`id`),
-  KEY `idx_site` (`siteid`,`parentid`)
+  KEY `idx_site` (`parentid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='栏目表';
 
 CREATE TABLE IF NOT EXISTS `WapUser` (
@@ -63,7 +62,6 @@ CREATE TABLE IF NOT EXISTS `WapAdmin` (
 -- 文章模块
 CREATE TABLE IF NOT EXISTS `WapArticle` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -76,14 +74,12 @@ CREATE TABLE IF NOT EXISTS `WapArticle` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`),
-  KEY `idx_site` (`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章表';
 
 -- 论坛模块
 CREATE TABLE IF NOT EXISTS `WapBbs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `nickname` varchar(50) DEFAULT '',
@@ -97,13 +93,12 @@ CREATE TABLE IF NOT EXISTS `WapBbs` (
   `replynum` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='论坛帖子表';
 
 CREATE TABLE IF NOT EXISTS `WapBbsReply` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `bbsid` int(11) NOT NULL,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `nickname` varchar(50) DEFAULT '',
@@ -117,7 +112,6 @@ CREATE TABLE IF NOT EXISTS `WapBbsReply` (
 -- 商城模块
 CREATE TABLE IF NOT EXISTS `WapShop` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -129,12 +123,11 @@ CREATE TABLE IF NOT EXISTS `WapShop` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商城商品表';
 
 CREATE TABLE IF NOT EXISTS `WapShopOrder` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL,
   `shopid` int(11) NOT NULL,
   `num` int(11) DEFAULT 1,
@@ -149,7 +142,6 @@ CREATE TABLE IF NOT EXISTS `WapShopOrder` (
 -- 小说模块
 CREATE TABLE IF NOT EXISTS `WapNovel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `title` varchar(255) NOT NULL,
   `author` varchar(50) DEFAULT '',
@@ -160,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `WapNovel` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='小说表';
 
 CREATE TABLE IF NOT EXISTS `WapNovelChapter` (
@@ -177,7 +169,6 @@ CREATE TABLE IF NOT EXISTS `WapNovelChapter` (
 -- 视频模块
 CREATE TABLE IF NOT EXISTS `WapVideo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `title` varchar(255) NOT NULL,
   `content` text,
@@ -187,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `WapVideo` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='视频表';
 
 -- 通用评论表
@@ -195,7 +186,6 @@ CREATE TABLE IF NOT EXISTS `WapReply` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `module` varchar(30) NOT NULL,
   `contentid` int(11) NOT NULL,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `nickname` varchar(50) DEFAULT '',
@@ -209,7 +199,6 @@ CREATE TABLE IF NOT EXISTS `WapReply` (
 -- 其他内容模块通用表
 CREATE TABLE IF NOT EXISTS `WapPicture` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -221,11 +210,10 @@ CREATE TABLE IF NOT EXISTS `WapPicture` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='图片表';
 CREATE TABLE IF NOT EXISTS `WapDownload` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -237,11 +225,10 @@ CREATE TABLE IF NOT EXISTS `WapDownload` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='下载表';
 CREATE TABLE IF NOT EXISTS `WapRing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -253,11 +240,10 @@ CREATE TABLE IF NOT EXISTS `WapRing` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='铃声表';
 CREATE TABLE IF NOT EXISTS `WapLink` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -269,11 +255,10 @@ CREATE TABLE IF NOT EXISTS `WapLink` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='链接表';
 CREATE TABLE IF NOT EXISTS `WapGuestbook` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -285,11 +270,10 @@ CREATE TABLE IF NOT EXISTS `WapGuestbook` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='留言表';
 CREATE TABLE IF NOT EXISTS `WapGongqiu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -301,11 +285,10 @@ CREATE TABLE IF NOT EXISTS `WapGongqiu` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供求表';
 CREATE TABLE IF NOT EXISTS `WapPaimai` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -317,11 +300,10 @@ CREATE TABLE IF NOT EXISTS `WapPaimai` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='拍卖表';
 CREATE TABLE IF NOT EXISTS `WapYuehui` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -333,11 +315,10 @@ CREATE TABLE IF NOT EXISTS `WapYuehui` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='约会表';
 CREATE TABLE IF NOT EXISTS `WapWabao` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -349,11 +330,10 @@ CREATE TABLE IF NOT EXISTS `WapWabao` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='挖宝表';
 CREATE TABLE IF NOT EXISTS `WapGuangbo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -365,11 +345,10 @@ CREATE TABLE IF NOT EXISTS `WapGuangbo` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='广播表';
 CREATE TABLE IF NOT EXISTS `WapAdlink` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -381,11 +360,10 @@ CREATE TABLE IF NOT EXISTS `WapAdlink` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='广告表';
 CREATE TABLE IF NOT EXISTS `WapAirplane` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -397,11 +375,10 @@ CREATE TABLE IF NOT EXISTS `WapAirplane` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='飞机表';
 CREATE TABLE IF NOT EXISTS `WapAlbum` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -413,11 +390,10 @@ CREATE TABLE IF NOT EXISTS `WapAlbum` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='相册表';
 CREATE TABLE IF NOT EXISTS `WapHotel` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -429,11 +405,10 @@ CREATE TABLE IF NOT EXISTS `WapHotel` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='酒店表';
 CREATE TABLE IF NOT EXISTS `WapRizhi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -445,11 +420,10 @@ CREATE TABLE IF NOT EXISTS `WapRizhi` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
 CREATE TABLE IF NOT EXISTS `WapXinzhang` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `classid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) DEFAULT 0,
   `title` varchar(255) NOT NULL,
@@ -461,7 +435,7 @@ CREATE TABLE IF NOT EXISTS `WapXinzhang` (
   `hits` int(11) DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_class` (`classid`,`siteid`)
+  KEY `idx_class` (`classid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='新站表';
 
 -- 默认管理员 (密码: admin123, md5)
@@ -472,48 +446,47 @@ ON DUPLICATE KEY UPDATE `username`=`username`;
 INSERT INTO `WapSite` (`id`,`sitename`,`copyright`) VALUES (1,'小宇网络默认站点','Copyright (C) 小宇网络 All Rights Reserved.')
 ON DUPLICATE KEY UPDATE `sitename`=`sitename`;
 -- ===== 补充数据表 (全模块移植新增) =====
-CREATE TABLE WapOnline (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, username VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', page VARCHAR(255) NOT NULL DEFAULT '', lasttime DATETIME DEFAULT CURRENT_TIMESTAMP, KEY idx_site (siteid,lasttime)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapSignin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, signdate VARCHAR(20) DEFAULT '', days INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapMessage (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, fromid INT DEFAULT 0, fromname VARCHAR(255) NOT NULL DEFAULT '', toid INT DEFAULT 0, toname VARCHAR(255) NOT NULL DEFAULT '', title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, isread INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapSysMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapFriend (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, friendid INT DEFAULT 0, status INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapFav (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, module VARCHAR(255) NOT NULL DEFAULT '', contentid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapVote (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, bbsid INT DEFAULT 0, question VARCHAR(255) NOT NULL DEFAULT '', total INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapOnline (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, username VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', page VARCHAR(255) NOT NULL DEFAULT '', lasttime DATETIME DEFAULT CURRENT_TIMESTAMP, KEY idx_site (lasttime)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapSignin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, signdate VARCHAR(20) DEFAULT '', days INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapMessage (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, fromid INT DEFAULT 0, fromname VARCHAR(255) NOT NULL DEFAULT '', toid INT DEFAULT 0, toname VARCHAR(255) NOT NULL DEFAULT '', title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, isread INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapSysMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapFriend (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, friendid INT DEFAULT 0, status INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapFav (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, module VARCHAR(255) NOT NULL DEFAULT '', contentid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapVote (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, bbsid INT DEFAULT 0, question VARCHAR(255) NOT NULL DEFAULT '', total INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapVoteOption (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, voteid INT DEFAULT 0, optionname VARCHAR(255) NOT NULL DEFAULT '', votes INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapVoteLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, voteid INT DEFAULT 0, userid INT DEFAULT 0, optionid INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapBbsFile (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, bbsid INT DEFAULT 0, filename VARCHAR(255) NOT NULL DEFAULT '', filepath VARCHAR(255) NOT NULL DEFAULT '', filesize INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapChatSpeak (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapClan (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, members INT DEFAULT 1, point INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapBbsFile (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, bbsid INT DEFAULT 0, filename VARCHAR(255) NOT NULL DEFAULT '', filepath VARCHAR(255) NOT NULL DEFAULT '', filesize INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapChatSpeak (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapClan (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, members INT DEFAULT 1, point INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapClanMember (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, clanid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', role INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapClanChat (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, clanid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapGames (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', picurl VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, clicks INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapGamesScore (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, gameid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', score INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapCard (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, cardno VARCHAR(255) NOT NULL DEFAULT '', cardpwd VARCHAR(255) NOT NULL DEFAULT '', cardtype VARCHAR(255) NOT NULL DEFAULT '', money INT DEFAULT 0, isused INT DEFAULT 0, userid INT DEFAULT 0, usetime TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapAccountLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, type TEXT DEFAULT 'in', num INT DEFAULT 0, balance INT DEFAULT 0, remark VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapShopCart (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, shopid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', price INT DEFAULT 0, num INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapVisite (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, visitdate TEXT, pv INT DEFAULT 0, uv INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapVisiteLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, ip VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', ua VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapArticleFile (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, classid INT DEFAULT 0, articleid INT DEFAULT 0, filename VARCHAR(255) NOT NULL DEFAULT '', filepath VARCHAR(255) NOT NULL DEFAULT '', filesize INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapForm (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, classid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', fields TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapFormData (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, formid INT DEFAULT 0, userid INT DEFAULT 0, data TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapPageTpl (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapDomain (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, domain VARCHAR(255) NOT NULL DEFAULT '', status INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapGames (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL DEFAULT '', picurl VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, clicks INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapGamesScore (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, gameid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', score INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapCard (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, cardno VARCHAR(255) NOT NULL DEFAULT '', cardpwd VARCHAR(255) NOT NULL DEFAULT '', cardtype VARCHAR(255) NOT NULL DEFAULT '', money INT DEFAULT 0, isused INT DEFAULT 0, userid INT DEFAULT 0, usetime TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapAccountLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, type TEXT DEFAULT 'in', num INT DEFAULT 0, balance INT DEFAULT 0, remark VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapShopCart (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, shopid INT DEFAULT 0, title VARCHAR(255) NOT NULL DEFAULT '', price INT DEFAULT 0, num INT DEFAULT 1, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapVisite (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, visitdate TEXT, pv INT DEFAULT 0, uv INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapVisiteLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, ip VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', ua VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapArticleFile (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, classid INT DEFAULT 0, articleid INT DEFAULT 0, filename VARCHAR(255) NOT NULL DEFAULT '', filepath VARCHAR(255) NOT NULL DEFAULT '', filesize INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapForm (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, classid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', fields TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapFormData (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, formid INT DEFAULT 0, userid INT DEFAULT 0, data TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapPageTpl (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapDomain (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, domain VARCHAR(255) NOT NULL DEFAULT '', status INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE WapTemplate (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL DEFAULT '', dir VARCHAR(255) NOT NULL DEFAULT '', isdefault INT DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapWeixin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, appid VARCHAR(255) NOT NULL DEFAULT '', secret VARCHAR(255) NOT NULL DEFAULT '', token VARCHAR(255) NOT NULL DEFAULT '', isopen INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapWeixinMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, fromuser VARCHAR(255) NOT NULL DEFAULT '', content TEXT, reply TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapSms (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, mobile VARCHAR(255) NOT NULL DEFAULT '', content TEXT, status INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapCaiji (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, name VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', classid INT DEFAULT 0, lastrun TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapNongChang (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, level INT DEFAULT 1, exp INT DEFAULT 0, gold INT DEFAULT 100, plots TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapZhiDao (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, classid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, status INT DEFAULT 0, hits INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapZhiDaoReply (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, zhidoid INT DEFAULT 0, siteid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, isbest INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapUserLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, action VARCHAR(255) NOT NULL DEFAULT '', content VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapZone (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, userid INT DEFAULT 0, zonename VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, pic VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapZoneMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, zoneid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-CREATE TABLE WapPaimaiBid (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, siteid INT DEFAULT 0, paimaiid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', price INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-ALTER TABLE WapOnline ADD INDEX idx_online_site (siteid,lasttime);
+CREATE TABLE WapWeixin (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, appid VARCHAR(255) NOT NULL DEFAULT '', secret VARCHAR(255) NOT NULL DEFAULT '', token VARCHAR(255) NOT NULL DEFAULT '', isopen INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapWeixinMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, fromuser VARCHAR(255) NOT NULL DEFAULT '', content TEXT, reply TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapSms (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, mobile VARCHAR(255) NOT NULL DEFAULT '', content TEXT, status INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapCaiji (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL DEFAULT '', url VARCHAR(255) NOT NULL DEFAULT '', classid INT DEFAULT 0, lastrun TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapNongChang (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, level INT DEFAULT 1, exp INT DEFAULT 0, gold INT DEFAULT 100, plots TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapZhiDao (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, classid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', title VARCHAR(255) NOT NULL DEFAULT '', content TEXT, status INT DEFAULT 0, hits INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapZhiDaoReply (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, zhidoid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, isbest INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapUserLog (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, action VARCHAR(255) NOT NULL DEFAULT '', content VARCHAR(255) NOT NULL DEFAULT '', ip VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapZone (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, userid INT DEFAULT 0, zonename VARCHAR(255) NOT NULL DEFAULT '', intro TEXT, pic VARCHAR(255) NOT NULL DEFAULT '', addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapZoneMsg (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, zoneid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', content TEXT, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE WapPaimaiBid (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, paimaiid INT DEFAULT 0, userid INT DEFAULT 0, nickname VARCHAR(255) NOT NULL DEFAULT '', price INT DEFAULT 0, addtime TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE WapMessage ADD INDEX idx_msg_to (toid,isread);
 ALTER TABLE WapFriend ADD INDEX idx_friend_user (userid,friendid);
-ALTER TABLE WapShopCart ADD INDEX idx_cart_user (userid,siteid);
+ALTER TABLE WapShopCart ADD INDEX idx_cart_user (userid);
 ALTER TABLE WapSignin ADD INDEX idx_signin_user (userid,signdate);
 ALTER TABLE WapZhiDaoReply ADD INDEX idx_zdreply (zhidoid);
 
@@ -534,7 +507,6 @@ ALTER TABLE WapUser ADD COLUMN qq_openid VARCHAR(64) DEFAULT '';
 -- 帖子举报表
 CREATE TABLE IF NOT EXISTS `WapReport` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `bbsid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0,
   `reason` varchar(50) NOT NULL DEFAULT '',
@@ -548,7 +520,6 @@ CREATE TABLE IF NOT EXISTS `WapReport` (
 -- v6 积分商城
 CREATE TABLE IF NOT EXISTS `WapPointGoods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `name` varchar(100) NOT NULL DEFAULT '',
   `intro` varchar(255) DEFAULT '',
   `points` int(11) NOT NULL DEFAULT 0,
@@ -558,12 +529,11 @@ CREATE TABLE IF NOT EXISTS `WapPointGoods` (
   `sortnum` int(11) NOT NULL DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_pgoods_site` (`siteid`,`isshow`,`sortnum`)
+  KEY `idx_pgoods_site` (`isshow`,`sortnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='积分商品表';
 
 CREATE TABLE IF NOT EXISTS `WapPointOrder` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0,
   `goodsid` int(11) NOT NULL DEFAULT 0,
   `goodsname` varchar(100) NOT NULL DEFAULT '',
@@ -573,35 +543,32 @@ CREATE TABLE IF NOT EXISTS `WapPointOrder` (
   `note` varchar(255) DEFAULT '',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_porder_user` (`siteid`,`userid`)
+  KEY `idx_porder_user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='积分兑换订单表';
 
 CREATE TABLE IF NOT EXISTS `WapPointLog` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0,
   `num` int(11) NOT NULL DEFAULT 0 COMMENT '正为获得 负为消耗',
   `balance` int(11) NOT NULL DEFAULT 0,
   `remark` varchar(255) DEFAULT '',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_plog_user` (`siteid`,`userid`)
+  KEY `idx_plog_user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='积分流水表';
 
 -- v6 自定义敏感词库
 CREATE TABLE IF NOT EXISTS `WapFilter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `word` varchar(50) NOT NULL DEFAULT '',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_filter` (`siteid`,`word`)
+  UNIQUE KEY `uk_filter` (`word`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义敏感词表';
 
 -- v6 敏感词审核记录
 CREATE TABLE IF NOT EXISTS `WapAudit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0,
   `module` varchar(50) DEFAULT '',
   `contentid` int(11) NOT NULL DEFAULT 0,
@@ -611,49 +578,45 @@ CREATE TABLE IF NOT EXISTS `WapAudit` (
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0待审核 1通过 2删除',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_audit_site` (`siteid`,`status`)
+  KEY `idx_audit_site` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='敏感词审核记录表';
 
 -- v16 审核操作日志
 CREATE TABLE IF NOT EXISTS `WapAuditLog` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `auditid` int(11) NOT NULL DEFAULT 0,
   `adminid` int(11) NOT NULL DEFAULT 0,
   `act` varchar(10) NOT NULL DEFAULT '',
   `reason` varchar(255) DEFAULT '',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_auditlog` (`siteid`,`auditid`)
+  KEY `idx_auditlog` (`auditid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='审核操作日志表';
 
 -- v7 社区基础能力: 关注 / 点赞 / 通知
 CREATE TABLE IF NOT EXISTS `WapFollow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0 COMMENT '关注者',
   `followuid` int(11) NOT NULL DEFAULT 0 COMMENT '被关注者',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_follow` (`siteid`,`userid`,`followuid`),
+  UNIQUE KEY `uk_follow` (`userid`,`followuid`),
   KEY `idx_followuid` (`followuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='关注关系表';
 
 CREATE TABLE IF NOT EXISTS `WapLike` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `module` varchar(20) DEFAULT 'bbs',
   `contentid` int(11) NOT NULL DEFAULT 0,
   `replyid` int(11) NOT NULL DEFAULT 0 COMMENT '0=主帖',
   `userid` int(11) NOT NULL DEFAULT 0,
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_like` (`siteid`,`module`,`contentid`,`replyid`,`userid`)
+  UNIQUE KEY `uk_like` (`module`,`contentid`,`replyid`,`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='点赞表';
 
 CREATE TABLE IF NOT EXISTS `WapNotice` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `uid` int(11) NOT NULL DEFAULT 0 COMMENT '接收者',
   `fromuid` int(11) DEFAULT 0,
   `ntype` varchar(20) DEFAULT '',
@@ -669,23 +632,21 @@ CREATE TABLE IF NOT EXISTS `WapNotice` (
 -- v16 帖子标签
 CREATE TABLE IF NOT EXISTS `WapBbsTag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `bbsid` int(11) NOT NULL DEFAULT 0,
   `tagname` varchar(30) NOT NULL DEFAULT '',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_bbstag` (`siteid`,`bbsid`,`tagname`),
-  KEY `idx_tag` (`siteid`,`tagname`)
+  UNIQUE KEY `uk_bbstag` (`bbsid`,`tagname`),
+  KEY `idx_tag` (`tagname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='帖子标签表';
 
 -- v16 用户拉黑
 CREATE TABLE IF NOT EXISTS `WapBlock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `siteid` int(11) NOT NULL DEFAULT 0,
   `userid` int(11) NOT NULL DEFAULT 0 COMMENT '拉黑发起者',
   `blockuid` int(11) NOT NULL DEFAULT 0 COMMENT '被拉黑者',
   `addtime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_block` (`siteid`,`userid`,`blockuid`),
+  UNIQUE KEY `uk_block` (`userid`,`blockuid`),
   KEY `idx_blockuid` (`blockuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户拉黑表';

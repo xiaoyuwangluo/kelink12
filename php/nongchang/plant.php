@@ -16,7 +16,7 @@ class NongchangPlantPage extends WapPage {
         $pid = (int)($_GET['id'] ?? 0);
         if ($pid < 1 || $pid > 6) $this->showError('地块参数错误');
 
-        $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=? AND siteid=?", [$uid, $this->siteid]);
+        $farm = $db->getOne("SELECT * FROM WapNongChang WHERE userid=?",[$uid]);
         if (!$farm) $this->showError('请先访问农场主页开垦土地');
 
         $plots = json_decode($farm['plots'] ?? '[]', true);
@@ -42,7 +42,7 @@ class NongchangPlantPage extends WapPage {
         $db->execute("UPDATE WapNongChang SET plots=?, gold=? WHERE id=?",
             [json_encode($plots, JSON_UNESCAPED_UNICODE), $gold - 5, (int)$farm['id']]);
 
-        header('Location: index.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+        header('Location: index.php?classid=' . $this->classid);
         exit;
     }
 }

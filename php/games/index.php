@@ -13,10 +13,7 @@ class GamesIndexPage extends WapPage {
 
         echo '<div class="subtitle">' . $this->ToHtm($this->strTitle) . '</div>';
 
-        $rows = $db->getAll(
-            "SELECT id,name,picurl,url,intro,clicks FROM WapGames WHERE siteid=? ORDER BY id DESC LIMIT 100",
-            [$this->siteid]
-        );
+        $rows = $db->getAll("SELECT id,name,picurl,url,intro,clicks FROM WapGames ORDER BY id DESC LIMIT 100",[]);
         echo '<div class="content"><ul class="list">';
         if (!$rows) echo '<li>暂无游戏</li>';
         foreach ($rows as $r) {
@@ -31,7 +28,7 @@ class GamesIndexPage extends WapPage {
                 echo $this->ToHtm($r['name']);
             }
             echo ' <span class="info">点击' . (int)$r['clicks'] . '</span>';
-            echo ' <a href="rank.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&gameid=' . $gid . '">[排行]</a>';
+            echo ' <a href="rank.php?classid=' . $this->classid . '&gameid=' . $gid . '">[排行]</a>';
             if (!empty($r['intro'])) {
                 echo '<div class="info">' . $this->ToHtm($r['intro']) . '</div>';
             }
@@ -39,7 +36,7 @@ class GamesIndexPage extends WapPage {
         }
         echo '</ul></div>';
 
-        echo '<div class="actionbar"><a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div>';
+        echo '<div class="actionbar"><a href="../wapindex.php">返回首页</a></div>';
         $this->showDown();
     }
 }

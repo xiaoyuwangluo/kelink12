@@ -29,7 +29,7 @@ class NovelModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改小说</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '书名:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '作者:<input type="text" name="author" value="' . $this->ToHtm($a['author'] ?? '') . '"/><br/>';
         echo '大小:<input type="text" name="size" value="' . $this->ToHtm($a['size'] ?? '') . '"/><br/>';
@@ -54,7 +54,7 @@ class NovelModifyPage extends WapPage {
             "UPDATE WapNovel SET title=?,author=?,size=?,picurl=?,intro=? WHERE id=?",
             [$title, $author, $size, $picurl, $intro, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

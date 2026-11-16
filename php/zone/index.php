@@ -24,8 +24,7 @@ class ZoneIndexPage extends WapPage {
         $zone = $db->getOne("SELECT * FROM WapZone WHERE userid=?", [$uid]);
         if (!$zone) {
             $zonename = ($user['nickname'] !== '' ? $user['nickname'] : $user['username']) . '的空间';
-            $zid = $db->insert("INSERT INTO WapZone (siteid,userid,zonename,intro,pic,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, $zonename, '', '']);
+            $zid = $db->insert("INSERT INTO WapZone (userid,zonename,intro,pic,addtime) VALUES (?,?,?,?,NOW())",[$uid,$zonename,'','']);
             $zone = $db->getOne("SELECT * FROM WapZone WHERE id=?", [$zid]);
         }
 
@@ -34,19 +33,11 @@ class ZoneIndexPage extends WapPage {
         echo '<div class="subtitle">' . $this->ToHtm($zone['zonename']) . '</div>';
 
         // 会员信息
-        $followingCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE siteid=? AND userid=?",
-            [$this->siteid, $uid]);
-        $fansCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE siteid=? AND followuid=?",
-            [$this->siteid, $uid]);
-        $likeReceived = (int)$db->getScalar(
-            "SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbs b ON b.id=l.contentid
-             WHERE l.siteid=? AND l.module='bbs' AND l.replyid=0 AND b.userid=?",
-            [$this->siteid, $uid]
-        ) + (int)$db->getScalar(
-            "SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbsReply r ON r.id=l.replyid
-             WHERE l.siteid=? AND l.module='bbs' AND l.replyid>0 AND r.userid=?",
-            [$this->siteid, $uid]
-        );
+        $followingCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE userid=?",[$uid]);
+        $fansCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapFollow WHERE followuid=?",[$uid]);
+        $likeReceived = (int)$db->getScalar("SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbs b ON b.id=l.contentid
+ WHERE l.module='bbs' AND l.replyid=0 AND b.userid=?",[$uid]) + (int)$db->getScalar("SELECT COUNT(*) FROM WapLike l INNER JOIN WapBbsReply r ON r.id=l.replyid
+ WHERE l.module='bbs' AND l.replyid>0 AND r.userid=?",[$uid]);
 
         $isLogin = $this->userSession->isLogin();
         $me = $isLogin ? (int)$this->userSession->getUserId() : 0;
@@ -64,28 +55,22 @@ class ZoneIndexPage extends WapPage {
 
         // 关注按钮 (不能关注自己)
         if (!$isSelf) {
-            $followed = $me > 0 ? (bool)$db->getOne(
-                "SELECT id FROM WapFollow WHERE siteid=? AND userid=? AND followuid=?",
-                [$this->siteid, $me, $uid]
-            ) : false;
-            $blocked = $me > 0 ? (bool)$db->getOne(
-                "SELECT id FROM WapBlock WHERE siteid=? AND userid=? AND blockuid=?",
-                [$this->siteid, $me, $uid]
-            ) : false;
-            echo '<div class="actionbar"><a href="follow.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+            $followed = $me > 0 ? (bool)$db->getOne("SELECT id FROM WapFollow WHERE userid=? AND followuid=?",[$me,$uid]) : false;
+            $blocked = $me > 0 ? (bool)$db->getOne("SELECT id FROM WapBlock WHERE userid=? AND blockuid=?",[$me,$uid]) : false;
+            echo '<div class="actionbar"><a href="follow.php?uid=' . $uid . '">'
                 . ($followed ? '已关注' : '关注') . '</a> '
-                . '<a href="block.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+                . '<a href="block.php?uid=' . $uid . '">'
                 . ($blocked ? '已拉黑' : '拉黑') . '</a></div>';
         }
 
         // 关注/粉丝入口
         echo '<div class="menu">';
-        echo '<a href="following.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+        echo '<a href="following.php?uid=' . $uid . '">'
             . ($isSelf ? '我关注的人' : 'TA关注的人') . '(' . $followingCount . ')</a> | ';
-        echo '<a href="fans.php?siteid=' . $this->siteid . '&uid=' . $uid . '">'
+        echo '<a href="fans.php?uid=' . $uid . '">'
             . ($isSelf ? '我的粉丝' : 'TA的粉丝') . '(' . $fansCount . ')</a>';
         if ($isSelf) {
-            echo ' | <a href="block.php?siteid=' . $this->siteid . '">我的黑名单</a>';
+            echo ' | <a href="block.php">我的黑名单</a>';
         }
         echo '</div>';
 
@@ -96,7 +81,7 @@ class ZoneIndexPage extends WapPage {
             echo '暂无文章';
         } else {
             foreach ($arts as $a) {
-                echo '<a href="../article/view.php?siteid=' . $this->siteid . '&id=' . (int)$a['id'] . '">' . $this->ToHtm($a['title']) . '</a>';
+                echo '<a href="../article/view.php?id=' . (int)$a['id'] . '">' . $this->ToHtm($a['title']) . '</a>';
                 echo ' <span class="time">' . $this->ToHtm(substr($a['addtime'], 0, 10)) . '</span><br/>';
             }
         }
@@ -109,7 +94,7 @@ class ZoneIndexPage extends WapPage {
             echo '暂无帖子';
         } else {
             foreach ($threads as $t) {
-                echo '<a href="../bbs/view.php?siteid=' . $this->siteid . '&id=' . (int)$t['id'] . '">' . $this->ToHtm($t['title']) . '</a>';
+                echo '<a href="../bbs/view.php?id=' . (int)$t['id'] . '">' . $this->ToHtm($t['title']) . '</a>';
                 echo ' <span class="time">' . $this->ToHtm(substr($t['addtime'], 0, 10)) . '</span><br/>';
             }
         }
@@ -128,8 +113,8 @@ class ZoneIndexPage extends WapPage {
         }
         echo '</div>';
 
-        echo '<div class="actionbar"><a href="msg.php?siteid=' . $this->siteid . '&zoneid=' . (int)$zone['id'] . '">给TA留言</a> ';
-        echo '<a href="../myfile.php?siteid=' . $this->siteid . '">返回用户中心</a></div>';
+        echo '<div class="actionbar"><a href="msg.php?zoneid=' . (int)$zone['id'] . '">给TA留言</a> ';
+        echo '<a href="../myfile.php">返回用户中心</a></div>';
         $this->showDown();
     }
 }

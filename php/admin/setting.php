@@ -75,7 +75,7 @@ class AdminSettingPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'setting.php?siteid=' . $this->siteid;
+        $back = 'setting.php';
 
         // POST 保存可编辑项 (仅更新 WapSite id=1，无法修改 config.php 常量)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

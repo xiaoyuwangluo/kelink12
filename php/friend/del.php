@@ -11,13 +11,13 @@ class FriendDelPage extends WapPage {
         $this->checkLogin();
         $uid = (int)$this->userSession->getUserId();
         $fid = (int)($_GET['fid'] ?? 0);
-        if ($fid <= 0) $this->showError('参数错误', 'index.php?siteid=' . $this->siteid);
+        if ($fid <= 0) $this->showError('参数错误', 'index.php');
 
         $row = $db->getOne("SELECT id FROM WapFriend WHERE userid=? AND friendid=?", [$uid, $fid]);
-        if (!$row) $this->showError('您没有该好友', 'index.php?siteid=' . $this->siteid);
+        if (!$row) $this->showError('您没有该好友', 'index.php');
 
         $db->execute("DELETE FROM WapFriend WHERE id=?", [$row['id']]);
-        $this->showSuccess('已删除好友', 'index.php?siteid=' . $this->siteid);
+        $this->showSuccess('已删除好友', 'index.php');
     }
 }
 

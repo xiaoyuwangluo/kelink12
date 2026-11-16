@@ -16,22 +16,22 @@ class AdminCaijiPage extends WapPage {
                 $name = trim($_POST['name'] ?? ''); $url = trim($_POST['url'] ?? ''); $classid = (int)($_POST['classid'] ?? 0);
                 if ($name === '' || $url === '') $msg = '<div class="error">名称与地址必填</div>';
                 else {
-                    $db->insert("INSERT INTO WapCaiji(siteid,name,url,classid,addtime) VALUES (?,?,?,?,NOW())", [$this->siteid ?: 1, $name, $url, $classid]);
+                    $db->insert("INSERT INTO WapCaiji(name,url,classid,addtime) VALUES (?,?,?,NOW())",[$name,$url,$classid]);
                     $msg = '<div class="success">添加成功</div>';
                 }
             } elseif ($_POST['act'] === 'run') {
                 $id = (int)$_POST['id'];
-                $db->execute("UPDATE WapCaiji SET lastrun=NOW() WHERE id=? AND siteid=?", [$id, $this->siteid ?: 1]);
+                $db->execute("UPDATE WapCaiji SET lastrun=NOW() WHERE id=?",[$id]);
                 $msg = '<div class="success">已触发采集任务 ' . $id . '（正式环境需对接远程采集源）</div>';
             } elseif ($_POST['act'] === 'del') {
-                $db->execute("DELETE FROM WapCaiji WHERE id=? AND siteid=?", [(int)$_POST['id'], $this->siteid ?: 1]);
+                $db->execute("DELETE FROM WapCaiji WHERE id=?",[(int)$_POST['id']]);
                 $msg = '<div class="success">已删除</div>';
             }
         }
         $this->strTitle = '采集管理';
         $this->showTop('采集管理');
         echo $msg;
-        $list = $db->getAll("SELECT * FROM WapCaiji WHERE siteid=? ORDER BY id DESC", [$this->siteid ?: 1]);
+        $list = $db->getAll("SELECT * FROM WapCaiji ORDER BY id DESC",[]);
         echo '<div class="content"><ul class="list">';
         foreach ($list as $r) {
             echo '<li>#' . $r['id'] . ' ' . $this->ToHtm($r['name']) . ' → ' . $this->ToHtm($r['url'])

@@ -20,11 +20,11 @@ class TemplateListPage extends WapPage {
             if ($row['dir'] === $curTpl) {
                 echo '<li><strong>' . $name . '</strong>（当前使用）</li>';
             } else {
-                echo '<li>' . $name . ' — <a href="' . $this->http_start . 'wapindex.php?siteid=' . $this->siteid . '&ver=4">预览触屏效果</a></li>';
+                echo '<li>' . $name . ' — <a href="' . $this->http_start . 'wapindex.php?ver=4">预览触屏效果</a></li>';
             }
         }
         echo '</ul>';
-        echo '<div class="pagenav"><a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a></div></div>';
+        echo '<div class="pagenav"><a href="../wapindex.php">返回首页</a></div></div>';
         $this->showDown();
     }
 }

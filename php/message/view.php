@@ -35,10 +35,10 @@ class MessageViewPage extends WapPage {
 
         echo '<div class="actionbar">';
         if ((int)$msg['fromid'] !== $uid) {
-            echo '<a href="send.php?siteid=' . $this->siteid . '&to=' . urlencode($msg['fromname']) . '">回复</a> ';
+            echo '<a href="send.php?to=' . urlencode($msg['fromname']) . '">回复</a> ';
         }
-        echo '<a href="del.php?siteid=' . $this->siteid . '&id=' . $id . '">删除</a> ';
-        echo '<a href="index.php?siteid=' . $this->siteid . '">返回收件箱</a>';
+        echo '<a href="del.php?id=' . $id . '">删除</a> ';
+        echo '<a href="index.php">返回收件箱</a>';
         echo '</div>';
         $this->showDown();
     }

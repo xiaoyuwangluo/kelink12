@@ -23,7 +23,7 @@ class ShopChangePage extends WapPage {
 
         $this->showTop('切换显隐');
         echo '<div class="success">已设为' . ($new ? '上架显示' : '下架隐藏') . '：' . $this->ToHtm($goods['title'])
-            . ' <a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+            . ' <a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

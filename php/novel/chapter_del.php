@@ -24,13 +24,13 @@ class NovelChapterDelPage extends WapPage {
         $this->showTop('删除章节');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->execute("DELETE FROM WapNovelChapter WHERE id=?", [$cid]);
-            echo '<div class="success">删除成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
+            echo '<div class="success">删除成功 <a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">返回目录</a></div>';
         } else {
             echo '<div class="subtitle">确认删除章节？</div>';
             echo '<div class="content">小说：' . $this->ToHtm($novel['title']) . '<br/>章节：' . $this->ToHtm($chapter['title']) . '</div>';
-            echo '<form method="post" action="chapter_del.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&cid=' . $cid . '">';
+            echo '<form method="post" action="chapter_del.php?classid=' . (int)$novel['classid'] . '&cid=' . $cid . '">';
             echo '<input type="submit" value="确认删除"/></form>';
-            echo '<a href="view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">取消返回</a>';
+            echo '<a href="view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id'] . '">取消返回</a>';
         }
         $this->showDown();
     }
@@ -43,7 +43,7 @@ class NovelChapterDelPage extends WapPage {
         $nick = (string)($_SESSION['kl_nickname'] ?? '');
         if ($author !== '' && ($author === $name || ($nick !== '' && $author === $nick))) return;
         $this->showError('无权限：仅管理员或小说作者可操作该小说',
-            'view.php?siteid=' . $this->siteid . '&classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
+            'view.php?classid=' . (int)$novel['classid'] . '&id=' . (int)$novel['id']);
     }
 }
 

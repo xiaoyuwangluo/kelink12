@@ -11,7 +11,7 @@ class AdminReportPage extends WapPage {
         $db = $this->db;
         $status = $_GET['status'] ?? '';
         $status = ($status === '0' || $status === '1' || $status === '2') ? $status : '';
-        $back = 'report.php?siteid=' . (int)$this->siteid . ($status !== '' ? '&status=' . $status : '');
+        $back = 'report.php' . ($status !== '' ? '&status=' . $status : '');
 
         // POST 操作（防重复提交）：处理/驳回，仅对未处理举报生效
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,16 +37,16 @@ class AdminReportPage extends WapPage {
 
         // 状态筛选
         echo '<div class="content">'
-            . '<a href="report.php?siteid=' . (int)$this->siteid . '">全部' . ($status === '' ? '√' : '') . '</a> | '
-            . '<a href="report.php?siteid=' . (int)$this->siteid . '&status=0">待处理' . ($status === '0' ? '√' : '') . '</a> | '
-            . '<a href="report.php?siteid=' . (int)$this->siteid . '&status=1">已处理' . ($status === '1' ? '√' : '') . '</a> | '
-            . '<a href="report.php?siteid=' . (int)$this->siteid . '&status=2">已驳回' . ($status === '2' ? '√' : '') . '</a></div>';
+            . '<a href="report.php">全部' . ($status === '' ? '√' : '') . '</a> | '
+            . '<a href="report.php?status=0">待处理' . ($status === '0' ? '√' : '') . '</a> | '
+            . '<a href="report.php?status=1">已处理' . ($status === '1' ? '√' : '') . '</a> | '
+            . '<a href="report.php?status=2">已驳回' . ($status === '2' ? '√' : '') . '</a></div>';
 
         // 分页列表（LEFT JOIN 带出帖子标题）
         $page = max(1, (int)($_GET['page'] ?? 1));
         $pageSize = 20;
-        $where = 'r.siteid=?';
-        $params = [$this->siteid];
+        $where = '1=1';
+        $params = [];
         if ($status !== '') { $where .= ' AND r.status=?'; $params[] = (int)$status; }
         $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapReport r WHERE $where", $params);
         $pageCount = max(1, (int)ceil($total / $pageSize));
@@ -60,7 +60,7 @@ class AdminReportPage extends WapPage {
             $rid = (int)$row['id'];
             $st = (int)$row['status'];
             $time = !empty($row['addtime']) ? date('m-d H:i', strtotime($row['addtime'])) : '';
-            echo '<li>ID:' . $rid . ' [' . $labels[$st] . '] 帖子：<a href="../bbs/view.php?siteid=' . (int)$row['siteid'] . '&id=' . (int)$row['bbsid'] . '">'
+            echo '<li>ID:' . $rid . ' [' . $labels[$st] . '] 帖子：<a href="../bbs/view.php?id=' . (int)$row['bbsid'] . '">'
                 . $this->ToHtm($row['bbs_title'] ?? '(帖子已删除)') . '</a><br/>'
                 . '举报人ID:' . (int)$row['userid'] . ' 原因:' . $this->ToHtm($row['reason'])
                 . ($row['note'] !== '' && $row['note'] !== null ? ' 说明:' . $this->ToHtm(mb_substr((string)$row['note'], 0, 80)) : '')

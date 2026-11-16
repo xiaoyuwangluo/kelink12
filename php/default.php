@@ -6,5 +6,5 @@
  */
 require_once __DIR__ . '/includes/bootstrap.php';
 
-header('Location: wapindex.php?siteid=1', true, 302);
+header('Location: wapindex.php', true, 302);
 exit;

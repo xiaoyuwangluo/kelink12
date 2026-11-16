@@ -25,7 +25,7 @@ class CachePage extends WapPage {
 
         $this->showTop('清空缓存');
         echo '<div class="success">缓存清理完成，共删除 ' . (int)$count . ' 个缓存文件。</div>';
-        echo '<div class="content"><a href="wapindex.php?siteid=1">返回前台首页</a> | ';
+        echo '<div class="content"><a href="wapindex.php">返回前台首页</a> | ';
         echo '<a href="admin/index.php">返回后台</a></div>';
         $this->showDown();
     }

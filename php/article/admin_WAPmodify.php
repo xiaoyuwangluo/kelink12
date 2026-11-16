@@ -26,7 +26,7 @@ class ArticleModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改文章</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '" enctype="multipart/form-data">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '" enctype="multipart/form-data">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '作者:<input type="text" name="author" value="' . $this->ToHtm($a['author'] ?? '') . '"/><br/>';
         echo '内容:<textarea name="content" rows="10">' . $this->ToHtm($a['content']) . '</textarea><br/>';
@@ -49,7 +49,7 @@ class ArticleModifyPage extends WapPage {
             "UPDATE WapArticle SET title=?,author=?,content=?,istop=? WHERE id=?",
             [$title, $author, $content, $istop, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

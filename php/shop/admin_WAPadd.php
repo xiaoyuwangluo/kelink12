@@ -11,7 +11,7 @@ class ShopAddPage extends WapPage {
     }
     private function showForm() {
         echo '<div class="subtitle">添加商品</div>';
-        echo '<form method="post" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" enctype="multipart/form-data">';
+        echo '<form method="post" action="admin_WAPadd.php?classid=' . $this->classid . '" enctype="multipart/form-data">';
         echo '商品名:<input type="text" name="title" required/><br/>';
         echo '价格:<input type="text" name="price" value="0.00"/><br/>';
         echo '库存:<input type="number" name="stock" value="0"/><br/>';
@@ -40,9 +40,8 @@ class ShopAddPage extends WapPage {
             }
         }
         $uid = $this->userSession->getUserId();
-        $id = $db->insert("INSERT INTO WapShop (siteid,classid,userid,title,content,picurl,price,stock,isshow,hits,addtime) VALUES (?,?,?,?,?,?,?,?,1,0,NOW())",
-            [$this->siteid, $this->classid, $uid, $title, $content, $picurl, $price, $stock]);
-        echo '<div class="success">添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        $id = $db->insert("INSERT INTO WapShop (classid,userid,title,content,picurl,price,stock,isshow,hits,addtime) VALUES (?,?,?,?,?,?,?,1,0,NOW())",[$this->classid,$uid,$title,$content,$picurl,$price,$stock]);
+        echo '<div class="success">添加成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 $page = new ShopAddPage();

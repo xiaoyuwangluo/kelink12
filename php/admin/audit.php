@@ -26,10 +26,9 @@ class AdminAuditPage extends WapPage {
         $page = max(1, (int)($_GET['page'] ?? 1));
         $limit = 20;
         $offset = ($page - 1) * $limit;
-        $sid = (int)$this->siteid;
 
-        $where = 'siteid=?';
-        $params = [$sid];
+        $where = '1=1';
+        $params = [];
         if ($status === 'pending')  { $where .= ' AND status=0'; }
         if ($status === 'passed')   { $where .= ' AND status=1'; }
         if ($status === 'rejected') { $where .= ' AND status=2'; }
@@ -41,9 +40,9 @@ class AdminAuditPage extends WapPage {
         );
 
         $counts = ['pending' => 0, 'passed' => 0, 'rejected' => 0, 'all' => 0];
-        $counts['pending']  = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE siteid=? AND status=0", [$sid]);
-        $counts['passed']   = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE siteid=? AND status=1", [$sid]);
-        $counts['rejected'] = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE siteid=? AND status=2", [$sid]);
+        $counts['pending']  = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE status=0",[]);
+        $counts['passed']   = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE status=1",[]);
+        $counts['rejected'] = (int)$db->getScalar("SELECT COUNT(*) FROM WapAudit WHERE status=2",[]);
         $counts['all']      = $counts['pending'] + $counts['passed'] + $counts['rejected'];
 
         $msg = (string)($_GET['msg'] ?? '');
@@ -56,7 +55,7 @@ class AdminAuditPage extends WapPage {
         if ($msg !== '') echo '<div class="success">' . $this->ToHtm($msg) . '</div>';
         if ($err !== '') echo '<div class="error">' . $this->ToHtm($err) . '</div>';
 
-        $base = 'audit.php?siteid=' . $sid;
+        $base = 'audit.php';
         echo '<div class="content">';
         echo '<a href="' . $base . '&status=pending">待审核(' . $counts['pending'] . ')</a> | ';
         echo '<a href="' . $base . '&status=passed">已通过(' . $counts['passed'] . ')</a> | ';
@@ -133,7 +132,7 @@ class AdminAuditPage extends WapPage {
         $ids = array_values(array_unique(array_filter(array_map('intval', $ids), function ($v) { return $v > 0; })));
         $status = in_array($_GET['status'] ?? '', ['pending', 'passed', 'rejected', 'all'], true) ? $_GET['status'] : 'pending';
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $back = 'audit.php?siteid=' . (int)$this->siteid . '&status=' . $status . '&page=' . $page;
+        $back = 'audit.php?status=' . $status . '&page=' . $page;
 
         if (!in_array($act, ['pass', 'reject'], true) || !$ids) {
             header('Location: ' . $back . '&err=' . urlencode('请先选择要处理的内容'));
@@ -147,24 +146,24 @@ class AdminAuditPage extends WapPage {
         $skip = 0;
         $adminid = (int)($_SESSION['kl_adminid'] ?? 0);
         foreach ($ids as $id) {
-            $row = $db->getOne("SELECT * FROM WapAudit WHERE id=? AND siteid=? AND status=0", [$id, $this->siteid]);
+            $row = $db->getOne("SELECT * FROM WapAudit WHERE id=? AND status=0",[$id]);
             if (!$row) { $skip++; continue; }
 
             $newStatus = $act === 'pass' ? 1 : 2;
-            $db->execute("UPDATE WapAudit SET status=? WHERE id=? AND siteid=?", [$newStatus, $id, $this->siteid]);
+            $db->execute("UPDATE WapAudit SET status=? WHERE id=?",[$newStatus,$id]);
 
             if ($act === 'pass') {
                 $this->applyVisible($row);
             } else {
                 $this->logAction($id, 'reject', $reason, $adminid);
-                kl_notice_add($db, $this->siteid, (int)$row['userid'], 0, 'audit', (string)$row['module'],
+                kl_notice_add($db, (int)$row['userid'], 0, 'audit', (string)$row['module'],
                     (int)$row['contentid'], '您发布的内容未通过审核：' . $reason);
             }
             if ($act === 'pass') $this->logAction($id, 'pass', '', $adminid);
             $ok++;
         }
 
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         if ($ok === 0) {
             header('Location: ' . $back . '&err=' . urlencode('所选内容已被处理或不存在'));
             exit;
@@ -181,9 +180,9 @@ class AdminAuditPage extends WapPage {
         if ($cid <= 0) return;
         try {
             if ($row['module'] === 'bbs') {
-                $this->db->execute("UPDATE WapBbs SET isshow=1 WHERE id=? AND siteid=?", [$cid, $this->siteid]);
+                $this->db->execute("UPDATE WapBbs SET isshow=1 WHERE id=?",[$cid]);
             } elseif ($row['module'] === 'bbs_re') {
-                $this->db->execute("UPDATE WapBbsReply SET isshow=1 WHERE id=? AND siteid=?", [$cid, $this->siteid]);
+                $this->db->execute("UPDATE WapBbsReply SET isshow=1 WHERE id=?",[$cid]);
             }
         } catch (Exception $e) {
             // 内容表不可用时跳过，不阻断审核
@@ -193,10 +192,7 @@ class AdminAuditPage extends WapPage {
     /** 写审核操作日志（表不存在时静默跳过） */
     private function logAction($auditid, $act, $reason, $adminid) {
         try {
-            $this->db->insert(
-                "INSERT INTO WapAuditLog (siteid,auditid,adminid,act,reason,addtime) VALUES (?,?,?,?,?,?)",
-                [(int)$this->siteid, (int)$auditid, (int)$adminid, (string)$act, (string)$reason, date('Y-m-d H:i:s')]
-            );
+            $this->db->insert("INSERT INTO WapAuditLog (auditid,adminid,act,reason,addtime) VALUES (?,?,?,?,?)",[(int)$auditid,(int)$adminid,(string)$act,(string)$reason,date('Y-m-d H:i:s')]);
         } catch (Exception $e) {
             // 日志表不可用时不影响审核结果
         }

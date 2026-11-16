@@ -12,12 +12,10 @@ class PictureListPage extends WapPage {
         $this->strTitle = $this->classVo->classname ?? 'picture';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">' . $this->ToHtm($this->classVo->classname ?? 'picture') . '</div>';
-        $result = $db->getPage('WapPicture', 'id,title,addtime,hits',
-            "siteid=? AND classid=? AND isshow=1", 'id DESC', $page, 20,
-            [$this->siteid, $this->classid]);
+        $result = $db->getPage('WapPicture', 'id,title,addtime,hits',"classid=? AND isshow=1", 'id DESC', $page, 20,[$this->classid]);
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
-            echo '<li><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $row['id'] . '">';
+            echo '<li><a href="view.php?classid=' . $this->classid . '&id=' . $row['id'] . '">';
             echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
             echo $this->adminLinks((int)$row['id']);
             echo '</li>';
@@ -25,9 +23,9 @@ class PictureListPage extends WapPage {
         echo '</ul></div>';
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
         $this->showDown();
@@ -36,10 +34,10 @@ class PictureListPage extends WapPage {
     /** 后台管理员(kl_adminid)可见的修改/删除/显隐操作链接 */
     private function adminLinks($id) {
         if (!$this->userSession->isAdminLogin()) return '';
-        $base = 'siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id;
-        return ' <a href="admin_WAPmodify.php?' . $base . '">修改</a>'
-             . ' <a href="admin_WAPdel.php?' . $base . '">删除</a>'
-             . ' <a href="admin_WAPchange.php?' . $base . '">显隐</a>';
+        $base = '?classid=' . $this->classid . '&id=' . $id;
+        return ' <a href="admin_WAPmodify.php' . $base . '">修改</a>'
+             . ' <a href="admin_WAPdel.php' . $base . '">删除</a>'
+             . ' <a href="admin_WAPchange.php' . $base . '">显隐</a>';
     }
 }
 $page = new PictureListPage();

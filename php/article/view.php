@@ -11,12 +11,12 @@ class ArticleViewPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
 
         if ($id <= 0) {
-            $this->showError('文章不存在', 'list.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+            $this->showError('文章不存在', 'list.php?classid=' . $this->classid);
         }
 
-        $article = $db->getOne("SELECT * FROM WapArticle WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $article = $db->getOne("SELECT * FROM WapArticle WHERE id=?",[$id]);
         if (!$article) {
-            $this->showError('文章不存在或已被删除', 'list.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+            $this->showError('文章不存在或已被删除', 'list.php?classid=' . $this->classid);
         }
 
         // 更新点击量
@@ -45,8 +45,8 @@ class ArticleViewPage extends WapPage {
 
         // 回复入口
         echo '<div class="replybar">';
-        echo '<a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看/发表评论</a>';
-        echo ' <a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">查看/发表评论</a>';
+        echo ' <a href="list.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
 
         $this->showDown();
@@ -59,10 +59,10 @@ class ArticleViewPage extends WapPage {
         $next = $db->getOne("SELECT id,title FROM WapArticle WHERE id>? AND classid=? ORDER BY id ASC LIMIT 1", [$id, $this->classid]);
         echo '<div class="prevnext">';
         if ($prev) {
-            echo '上一条:<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $prev['id'] . '">' . $this->ToHtm($prev['title']) . '</a><br/>';
+            echo '上一条:<a href="view.php?classid=' . $this->classid . '&id=' . $prev['id'] . '">' . $this->ToHtm($prev['title']) . '</a><br/>';
         }
         if ($next) {
-            echo '下一条:<a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $next['id'] . '">' . $this->ToHtm($next['title']) . '</a>';
+            echo '下一条:<a href="view.php?classid=' . $this->classid . '&id=' . $next['id'] . '">' . $this->ToHtm($next['title']) . '</a>';
         }
         echo '</div>';
     }

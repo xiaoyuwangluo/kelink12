@@ -11,7 +11,7 @@ class FormViewPage extends WapPage {
         $id = (int)($_GET['id'] ?? ($_POST['id'] ?? 0));
         if ($id <= 0) $this->showError('参数错误');
 
-        $form = $db->getOne("SELECT * FROM WapForm WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $form = $db->getOne("SELECT * FROM WapForm WHERE id=?",[$id]);
         if (!$form) $this->showError('表单不存在');
 
         $fields = json_decode($form['fields'] ?? '[]', true);
@@ -35,11 +35,8 @@ class FormViewPage extends WapPage {
                     $err = '操作过于频繁，请稍后再试';
                 } else {
                     $uid = $this->userSession->isLogin() ? (int)$this->userSession->getUserId() : 0;
-                    $db->insert(
-                        "INSERT INTO WapFormData (siteid,formid,userid,data,addtime) VALUES (?,?,?,?,NOW())",
-                        [$this->siteid, $id, $uid, json_encode($data, JSON_UNESCAPED_UNICODE)]
-                    );
-                    $this->showSuccess('提交成功', 'view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id);
+                    $db->insert("INSERT INTO WapFormData (formid,userid,data,addtime) VALUES (?,?,?,NOW())",[$id,$uid,json_encode($data, JSON_UNESCAPED_UNICODE)]);
+                    $this->showSuccess('提交成功', 'view.php?classid=' . $this->classid . '&id=' . $id);
                 }
             }
         }
@@ -50,7 +47,7 @@ class FormViewPage extends WapPage {
         if ($err !== '') echo '<div class="error">' . $this->ToHtm($err) . '</div>';
 
         // 动态渲染字段
-        echo '<div class="content"><form method="post" action="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">';
+        echo '<div class="content"><form method="post" action="view.php?classid=' . $this->classid . '">';
         echo '<input type="hidden" name="id" value="' . $id . '"/>';
         if (!$fields) echo '<div>该表单未配置字段</div>';
         foreach ($fields as $f) {
@@ -75,7 +72,7 @@ class FormViewPage extends WapPage {
         echo '<input type="submit" value="提交"/>';
         echo '</form></div>';
 
-        echo '<div class="actionbar"><a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回表单列表</a></div>';
+        echo '<div class="actionbar"><a href="index.php?classid=' . $this->classid . '">返回表单列表</a></div>';
         $this->showDown();
     }
 }

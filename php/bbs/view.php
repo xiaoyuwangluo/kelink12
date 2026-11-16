@@ -16,7 +16,7 @@ class BbsViewPage extends WapPage {
 
         if ($id <= 0) $this->showError('参数错误');
 
-        $thread = $db->getOne("SELECT * FROM WapBbs WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $thread = $db->getOne("SELECT * FROM WapBbs WHERE id=?",[$id]);
         if (!$thread) $this->showError('帖子不存在');
 
         // 更新点击
@@ -44,7 +44,7 @@ class BbsViewPage extends WapPage {
         echo '<div class="post">';
         echo '<div class="poster">';
         if ($threadUid > 0) {
-            echo '<a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . $threadUid . '">'
+            echo '<a href="../zone/index.php?uid=' . $threadUid . '">'
                 . $this->ToHtm($authorName) . '</a>';
         } else {
             echo $this->ToHtm($authorName);
@@ -55,32 +55,32 @@ class BbsViewPage extends WapPage {
         echo '</div>';
 
         // 帖子标签
-        $threadTags = $db->getAll("SELECT tagname FROM WapBbsTag WHERE siteid=? AND bbsid=? ORDER BY id", [$this->siteid, $id]);
+        $threadTags = $db->getAll("SELECT tagname FROM WapBbsTag WHERE bbsid=? ORDER BY id",[$id]);
         if ($threadTags) {
             echo '<div class="tags">标签：';
             foreach ($threadTags as $tt) {
                 $tname = (string)$tt['tagname'];
-                echo '<a href="tag.php?siteid=' . $this->siteid . '&name=' . rawurlencode($tname) . '">#'
+                echo '<a href="tag.php?name=' . rawurlencode($tname) . '">#'
                     . $this->ToHtm($tname) . '#</a> ';
             }
             echo '</div>';
         }
 
         // 主帖点赞
-        $likeCount = kl_like_count($db, $this->siteid, 'bbs', $id, 0);
+        $likeCount = kl_like_count($db, 'bbs', $id, 0);
         $isLogin = $this->userSession->isLogin();
-        $meLiked = $isLogin ? kl_like_exists($db, $this->siteid, 'bbs', $id, 0, (int)$this->userSession->getUserId()) : false;
+        $meLiked = $isLogin ? kl_like_exists($db, 'bbs', $id, 0, (int)$this->userSession->getUserId()) : false;
         echo '<div class="postlike">赞(' . $likeCount . ') ';
         if ($isLogin) {
-            echo '<a href="like.php?siteid=' . $this->siteid . '&id=' . $id . '&replyid=0&act='
+            echo '<a href="like.php?id=' . $id . '&replyid=0&act='
                 . ($meLiked ? 'unlike' : 'like') . '">' . ($meLiked ? '取消赞' : '赞') . '</a>';
         } else {
-            echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后点赞</a>';
+            echo '<a href="../waplogin.php">登录后点赞</a>';
         }
         echo '</div>';
 
         // 帖子图片附件 (WapBbsFile)
-        $bbsFiles = $db->getAll("SELECT * FROM WapBbsFile WHERE bbsid=? AND siteid=? ORDER BY id", [$id, $this->siteid]);
+        $bbsFiles = $db->getAll("SELECT * FROM WapBbsFile WHERE bbsid=? ORDER BY id",[$id]);
         if ($bbsFiles) {
             echo '<div class="content"><div class="time">图片附件:</div>';
             foreach ($bbsFiles as $bf) {
@@ -119,14 +119,12 @@ class BbsViewPage extends WapPage {
 
         // 批量取各回复点赞数与本用户点赞状态
         $replyLikeCounts = [];
-        foreach ($db->getAll("SELECT replyid, COUNT(*) AS c FROM WapLike WHERE siteid=? AND module='bbs' AND contentid=? GROUP BY replyid",
-            [$this->siteid, $id]) as $lc) {
+        foreach ($db->getAll("SELECT replyid, COUNT(*) AS c FROM WapLike WHERE module='bbs' AND contentid=? GROUP BY replyid",[$id]) as $lc) {
             $replyLikeCounts[(int)$lc['replyid']] = (int)$lc['c'];
         }
         $myReplyLikes = [];
         if ($isLogin) {
-            foreach ($db->getAll("SELECT replyid FROM WapLike WHERE siteid=? AND module='bbs' AND contentid=? AND userid=? AND replyid>0",
-                [$this->siteid, $id, (int)$this->userSession->getUserId()]) as $ml) {
+            foreach ($db->getAll("SELECT replyid FROM WapLike WHERE module='bbs' AND contentid=? AND userid=? AND replyid>0",[$id,(int)$this->userSession->getUserId()]) as $ml) {
                 $myReplyLikes[(int)$ml['replyid']] = 1;
             }
         }
@@ -146,7 +144,7 @@ class BbsViewPage extends WapPage {
             echo '<div class="reply">';
             echo '<div class="poster">#' . $floor . ' ';
             if ($rUid > 0) {
-                echo '<a href="../zone/index.php?siteid=' . $this->siteid . '&uid=' . $rUid . '">'
+                echo '<a href="../zone/index.php?uid=' . $rUid . '">'
                     . $this->ToHtm($rName) . '</a>';
             } else {
                 echo $this->ToHtm($rName);
@@ -158,10 +156,10 @@ class BbsViewPage extends WapPage {
             echo '<div class="replylike">赞(' . $rcount . ') ';
             if ($isLogin) {
                 $rLiked = isset($myReplyLikes[$rid]);
-                echo '<a href="like.php?siteid=' . $this->siteid . '&id=' . $id . '&replyid=' . $rid . '&act='
+                echo '<a href="like.php?id=' . $id . '&replyid=' . $rid . '&act='
                     . ($rLiked ? 'unlike' : 'like') . '">' . ($rLiked ? '取消赞' : '赞') . '</a>';
             } else {
-                echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后点赞</a>';
+                echo '<a href="../waplogin.php">登录后点赞</a>';
             }
             echo '</div>';
             echo '</div>';
@@ -172,45 +170,45 @@ class BbsViewPage extends WapPage {
         // 分页
         if ($pageCount > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a> ';
             echo '第' . $page . '/' . $pageCount . '页 ';
-            if ($page < $pageCount) echo '<a href="?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $pageCount) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
 
         // 回复/操作
         echo '<div class="actionbar">';
         if (!$thread['islock']) {
-            echo '<a href="book_re.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">回复</a> ';
+            echo '<a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">回复</a> ';
         }
-        echo '<a href="fav.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a> ';
+        echo '<a href="fav.php?classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a> ';
         if ($this->userSession->isLogin()) {
-            echo '<a href="report.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">举报</a> ';
+            echo '<a href="report.php?classid=' . $this->classid . '&id=' . $id . '">举报</a> ';
         }
         // 作者或管理员显示管理入口
         $isOwner = $this->userSession->isLogin() && (int)$thread['userid'] === (int)$this->userSession->getUserId();
         $isAdmin = !empty($_SESSION['kl_adminid']);
         if ($isOwner || $isAdmin) {
-            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=edit&id=' . $id . '">编辑</a> ';
+            echo '<a href="mod.php?act=edit&id=' . $id . '">编辑</a> ';
             if ($isAdmin) {
-                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=top&id=' . $id . '">置顶</a> ';
-                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=good&id=' . $id . '">加精</a> ';
-                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=lock&id=' . $id . '">锁帖</a> ';
+                echo '<a href="mod.php?act=top&id=' . $id . '">置顶</a> ';
+                echo '<a href="mod.php?act=good&id=' . $id . '">加精</a> ';
+                echo '<a href="mod.php?act=lock&id=' . $id . '">锁帖</a> ';
             }
-            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=del&id=' . $id . '">删除</a> ';
+            echo '<a href="mod.php?act=del&id=' . $id . '">删除</a> ';
         }
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
 
         // 帖子关联投票 (读 WapVote / WapVoteOption)
-        $vote = $db->getOne("SELECT * FROM WapVote WHERE bbsid=? AND siteid=?", [$id, $this->siteid]);
+        $vote = $db->getOne("SELECT * FROM WapVote WHERE bbsid=?",[$id]);
         if ($vote) {
             $options = $db->getAll("SELECT * FROM WapVoteOption WHERE voteid=? ORDER BY id", [$vote['id']]);
             $vtotal = max(1, (int)$vote['total']);
             echo '<div class="vote">';
             echo '<div class="subtitle">' . $this->ToHtm($vote['question']) . '</div>';
             $canVote = $this->userSession->isLogin();
-            echo '<form method="post" action="vote.php?siteid=' . $this->siteid . '&voteid=' . (int)$vote['id'] . '">';
+            echo '<form method="post" action="vote.php?voteid=' . (int)$vote['id'] . '">';
             foreach ($options as $o) {
                 $pct = round((int)$o['votes'] * 100 / $vtotal);
                 echo '<label>';
@@ -222,7 +220,7 @@ class BbsViewPage extends WapPage {
             if ($canVote) {
                 echo ' <input type="submit" value="投票"/>';
             } else {
-                echo ' <a href="../waplogin.php?siteid=' . $this->siteid . '">登录后投票</a>';
+                echo ' <a href="../waplogin.php">登录后投票</a>';
             }
             echo '</form></div>';
         }

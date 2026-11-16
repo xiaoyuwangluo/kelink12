@@ -7,6 +7,5 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 $page = new WapPage();
 $page->userSession->logout();
-$siteid = $page->siteid;
-header('Location: wapindex.php?siteid=' . $siteid);
+header('Location: wapindex.php');
 exit;

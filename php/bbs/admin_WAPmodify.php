@@ -22,7 +22,7 @@ class BbsModifyPage extends WapPage {
         // 非管理员仅允许修改自己的帖子，避免越权编辑
         $isAdmin = $this->userSession->isAdminLogin();
         if (!$isAdmin && (int)$post['userid'] !== (int)$this->userSession->getUserId()) {
-            $this->showError('无权限修改此帖子', '../myfile.php?siteid=' . $this->siteid);
+            $this->showError('无权限修改此帖子', '../myfile.php');
         }
 
         $this->showTop('修改帖子');
@@ -36,7 +36,7 @@ class BbsModifyPage extends WapPage {
 
     private function showForm($a, $isAdmin = false) {
         echo '<div class="subtitle">修改帖子</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '内容:<textarea name="content" rows="10">' . $this->ToHtm($a['content'] ?? '') . '</textarea><br/>';
         if ($isAdmin) {
@@ -64,8 +64,8 @@ class BbsModifyPage extends WapPage {
             "UPDATE WapBbs SET title=?,content=?,istop=?,isgood=?,islock=? WHERE id=?",
             [$title, $content, $istop, $isgood, $islock, $id]
         );
-        kl_cache_clear_site($this->siteid);
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        kl_cache_clear_site();
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

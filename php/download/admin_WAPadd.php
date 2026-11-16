@@ -15,7 +15,7 @@ class DownloadAddPage extends WapPage {
     }
     private function showForm() {
         echo '<div class="subtitle">添加内容</div>';
-        echo '<form method="post" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" enctype="multipart/form-data">';
+        echo '<form method="post" action="admin_WAPadd.php?classid=' . $this->classid . '" enctype="multipart/form-data">';
         echo '标题:<input type="text" name="title" required/><br/>';
         echo '内容:<textarea name="content" rows="8" required></textarea><br/>';
         echo '图片:<input type="file" name="pic"/><br/>';
@@ -41,9 +41,8 @@ class DownloadAddPage extends WapPage {
             }
         }
         $uid = $this->userSession->getUserId();
-        $id = $db->insert("INSERT INTO WapDownload (siteid,classid,userid,title,content,picurl,istop,isshow,addtime,hits) VALUES (?,?,?,?,?,?,0,1,NOW(),0)",
-            [$this->siteid, $this->classid, $uid, $title, $content, $picurl]);
-        echo '<div class="success">添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        $id = $db->insert("INSERT INTO WapDownload (classid,userid,title,content,picurl,istop,isshow,addtime,hits) VALUES (?,?,?,?,?,0,1,NOW(),0)",[$this->classid,$uid,$title,$content,$picurl]);
+        echo '<div class="success">添加成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 $page = new DownloadAddPage();

@@ -302,8 +302,8 @@ function klPaySettleOrder($db, $orderid, $paidYuan, $channel) {
         }
         // 写账户流水 (第三方支付不动余额，balance 记当前余额)
         $balance = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$order['userid']]);
-        $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
-            [$order['siteid'], $order['userid'], 'out', (int)round($order['totalprice']), $balance,
+        $db->insert("INSERT INTO WapAccountLog (userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",
+            [$order['userid'], 'out', (int)round($order['totalprice']), $balance,
              $channel . '支付订单 #' . $orderid]);
         $db->commit();
         return 'ok';

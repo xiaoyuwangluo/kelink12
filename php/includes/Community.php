@@ -6,11 +6,10 @@
 if (!defined('KL_ROOT')) exit;
 
 /**
- * 清理站点缓存文件
- * @param int $siteid 站点ID (缓存文件为全局文件，按目录统一清理)
+ * 清理缓存文件 (缓存为全局文件，统一清理)
  */
 if (!function_exists('kl_cache_clear_site')) {
-    function kl_cache_clear_site($siteid = 0) {
+    function kl_cache_clear_site() {
         if (!defined('KL_CACHE_DIR')) return;
         $files = glob(KL_CACHE_DIR . '/*.cache');
         if (!is_array($files)) return;
@@ -42,11 +41,10 @@ if (!function_exists('kl_filter_words')) {
  * 先按内置词 KL_Filter_All 匹配；传入 $db 时再读取当前站点自定义词库 WapFilter
  * @param string $text 待检测文本
  * @param Database|null $db 数据库实例 (可选)
- * @param int $siteid 站点ID
  * @return bool true=命中敏感词
  */
 if (!function_exists('kl_has_sensitive')) {
-    function kl_has_sensitive($text, $db = null, $siteid = 0) {
+    function kl_has_sensitive($text, $db = null) {
         $text = (string)$text;
         if ($text === '') return false;
 
@@ -56,7 +54,7 @@ if (!function_exists('kl_has_sensitive')) {
 
         if ($db) {
             try {
-                $rows = $db->getAll("SELECT word FROM WapFilter WHERE siteid=?", [(int)$siteid]);
+                $rows = $db->getAll("SELECT word FROM WapFilter");
                 foreach ($rows as $row) {
                     $word = trim((string)($row['word'] ?? ''));
                     if ($word !== '' && mb_stripos($text, $word) !== false) return true;
@@ -73,11 +71,11 @@ if (!function_exists('kl_has_sensitive')) {
  * 写审核记录 (敏感词命中时调用)
  */
 if (!function_exists('kl_audit_add')) {
-    function kl_audit_add($db, $siteid, $userid, $module, $contentid, $title, $content, $word = '') {
+    function kl_audit_add($db, $userid, $module, $contentid, $title, $content, $word = '') {
         try {
             $db->insert(
-                "INSERT INTO WapAudit (siteid,userid,module,contentid,title,content,word,status,addtime) VALUES (?,?,?,?,?,?,?,0,NOW())",
-                [(int)$siteid, (int)$userid, (string)$module, (int)$contentid, (string)$title, (string)$content, (string)$word]
+                "INSERT INTO WapAudit (userid,module,contentid,title,content,word,status,addtime) VALUES (?,?,?,?,?,?,0,NOW())",
+                [(int)$userid, (string)$module, (int)$contentid, (string)$title, (string)$content, (string)$word]
             );
         } catch (Exception $e) {
             // 审核表不可用时静默跳过，不阻断发帖
@@ -89,14 +87,14 @@ if (!function_exists('kl_audit_add')) {
  * 写一条通知 (接收者与来源相同时跳过)
  */
 if (!function_exists('kl_notice_add')) {
-    function kl_notice_add($db, $siteid, $uid, $fromuid, $ntype, $module, $contentid, $content) {
+    function kl_notice_add($db, $uid, $fromuid, $ntype, $module, $contentid, $content) {
         $uid = (int)$uid;
         $fromuid = (int)$fromuid;
         if ($uid <= 0 || $uid === $fromuid) return;
         try {
             $db->insert(
-                "INSERT INTO WapNotice (siteid,uid,fromuid,ntype,module,contentid,content,isread,addtime) VALUES (?,?,?,?,?,?,?,0,?)",
-                [(int)$siteid, $uid, $fromuid, (string)$ntype, (string)$module, (int)$contentid, (string)$content, date('Y-m-d H:i:s')]
+                "INSERT INTO WapNotice (uid,fromuid,ntype,module,contentid,content,isread,addtime) VALUES (?,?,?,?,?,?,0,?)",
+                [$uid, $fromuid, (string)$ntype, (string)$module, (int)$contentid, (string)$content, date('Y-m-d H:i:s')]
             );
         } catch (Exception $e) {
             // 通知表不可用时静默跳过，不阻断主流程
@@ -135,11 +133,11 @@ if (!function_exists('kl_notice_label_ext')) {
  * 点赞数 (replyid=0 表示主帖)
  */
 if (!function_exists('kl_like_count')) {
-    function kl_like_count($db, $siteid, $module, $contentid, $replyid = 0) {
+    function kl_like_count($db, $module, $contentid, $replyid = 0) {
         try {
             return (int)$db->getScalar(
-                "SELECT COUNT(*) FROM WapLike WHERE siteid=? AND module=? AND contentid=? AND replyid=?",
-                [(int)$siteid, (string)$module, (int)$contentid, (int)$replyid]
+                "SELECT COUNT(*) FROM WapLike WHERE module=? AND contentid=? AND replyid=?",
+                [(string)$module, (int)$contentid, (int)$replyid]
             );
         } catch (Exception $e) {
             return 0;
@@ -151,11 +149,11 @@ if (!function_exists('kl_like_count')) {
  * 是否已点赞
  */
 if (!function_exists('kl_like_exists')) {
-    function kl_like_exists($db, $siteid, $module, $contentid, $replyid, $userid) {
+    function kl_like_exists($db, $module, $contentid, $replyid, $userid) {
         try {
             $row = $db->getOne(
-                "SELECT id FROM WapLike WHERE siteid=? AND module=? AND contentid=? AND replyid=? AND userid=?",
-                [(int)$siteid, (string)$module, (int)$contentid, (int)$replyid, (int)$userid]
+                "SELECT id FROM WapLike WHERE module=? AND contentid=? AND replyid=? AND userid=?",
+                [(string)$module, (int)$contentid, (int)$replyid, (int)$userid]
             );
             return (bool)$row;
         } catch (Exception $e) {
@@ -168,10 +166,10 @@ if (!function_exists('kl_like_exists')) {
  * 单向拉黑判断：$userid 是否拉黑了 $blockuid
  */
 if (!function_exists('kl_block_exists')) {
-    function kl_block_exists($db, $siteid, $userid, $blockuid) {
+    function kl_block_exists($db, $userid, $blockuid) {
         try {
-            $row = $db->getOne("SELECT id FROM WapBlock WHERE siteid=? AND userid=? AND blockuid=?",
-                [(int)$siteid, (int)$userid, (int)$blockuid]);
+            $row = $db->getOne("SELECT id FROM WapBlock WHERE userid=? AND blockuid=?",
+                [(int)$userid, (int)$blockuid]);
             return (bool)$row;
         } catch (Exception $e) {
             return false;
@@ -183,9 +181,9 @@ if (!function_exists('kl_block_exists')) {
  * 双向拉黑判断：任一方拉黑另一方即视为不可互动
  */
 if (!function_exists('kl_is_blocked')) {
-    function kl_is_blocked($db, $siteid, $userid, $otheruid) {
+    function kl_is_blocked($db, $userid, $otheruid) {
         if ((int)$userid <= 0 || (int)$otheruid <= 0) return false;
-        return kl_block_exists($db, $siteid, $userid, $otheruid)
-            || kl_block_exists($db, $siteid, $otheruid, $userid);
+        return kl_block_exists($db, $userid, $otheruid)
+            || kl_block_exists($db, $otheruid, $userid);
     }
 }

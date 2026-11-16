@@ -17,11 +17,11 @@ class ShopPayPage extends WapPage {
         $db = $this->db;
         $uid = $this->userSession->getUserId();
         $orderid = (int)($_GET['orderid'] ?? $_POST['orderid'] ?? 0);
-        if ($orderid <= 0) $this->showError('参数错误', 'myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+        if ($orderid <= 0) $this->showError('参数错误', 'myorder.php?classid=' . $this->classid);
 
-        $order = $db->getOne("SELECT * FROM WapShopOrder WHERE id=? AND userid=? AND siteid=?", [$orderid, $uid, $this->siteid]);
+        $order = $db->getOne("SELECT * FROM WapShopOrder WHERE id=? AND userid=?",[$orderid,$uid]);
         if (!$order) $this->showError('订单不存在');
-        if ((int)$order['status'] != 0) $this->showError('该订单当前状态不可支付', 'myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+        if ((int)$order['status'] != 0) $this->showError('该订单当前状态不可支付', 'myorder.php?classid=' . $this->classid);
 
         $total = (int)round($order['totalprice']); // 金额按整数元处理
 
@@ -47,11 +47,11 @@ class ShopPayPage extends WapPage {
         echo '应付金额:<span class="price">￥' . $total . '</span><br/>';
         echo '账户余额:￥' . (int)$user['money'] . '<br/>';
         echo '<hr/>';
-        echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+        echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
         echo '<input type="hidden" name="act" value="balance"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
         echo '<input type="submit" value="使用余额支付"/></form>';
         echo '<hr/>';
-        echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+        echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
         echo '<input type="hidden" name="act" value="card"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
         echo '充值卡卡号:<input type="text" name="cardno" maxlength="32"/><br/>';
         echo '充值卡密码:<input type="password" name="cardpwd" maxlength="32"/><br/>';
@@ -62,21 +62,21 @@ class ShopPayPage extends WapPage {
         $aliReady = (new AliPay())->ready();
         $wxReady = (new WxPay())->ready();
         if ($aliReady) {
-            echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+            echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
             echo '<input type="hidden" name="act" value="alipay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="支付宝支付"/></form>';
         } else {
             echo '支付宝: 通道未启用 (需 KL_AliPay_Open=1 且凭据齐全)<br/>';
         }
         if ($wxReady) {
-            echo '<form method="post" action="pay.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&orderid=' . $orderid . '">';
+            echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
             echo '<input type="hidden" name="act" value="wxpay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="微信支付(扫码)"/></form>';
         } else {
             echo '微信支付: 通道未启用 (需 KL_WxPay_Open=1 且凭据齐全)';
         }
         echo '</div>';
-        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a></div>';
+        echo '<div><a href="myorder.php?classid=' . $this->classid . '">我的订单</a></div>';
         $this->showDown();
     }
 
@@ -120,8 +120,7 @@ class ShopPayPage extends WapPage {
             // 加余额 + 写充值流水(in)
             $db->execute("UPDATE WapUser SET money=money+? WHERE id=?", [$cardMoney, $uid]);
             $balance = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$uid]);
-            $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
-                [$this->siteid, $uid, 'in', $cardMoney, $balance, '充值卡充值 ' . $cardno]);
+            $db->insert("INSERT INTO WapAccountLog (userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",[$uid,'in',$cardMoney,$balance,'充值卡充值 ' . $cardno]);
             // 以余额完成订单支付
             if (!$this->doPayCore($uid, $order, $total)) {
                 $db->rollBack();
@@ -154,8 +153,7 @@ class ShopPayPage extends WapPage {
         if ($n != 1) { $db->rollBack(); $this->showError('余额不足，支付失败'); return false; }
         $balance = $money - $total;
         // 支出流水(out)
-        $db->insert("INSERT INTO WapAccountLog (siteid,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())",
-            [$this->siteid, $uid, 'out', $total, $balance, '支付订单 #' . $order['id']]);
+        $db->insert("INSERT INTO WapAccountLog (userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,NOW())",[$uid,'out',$total,$balance,'支付订单 #' . $order['id']]);
         // 订单置已付：仅状态0可置1，重复支付在此被拒
         $n = $db->execute("UPDATE WapShopOrder SET status=1 WHERE id=? AND status=0", [$order['id']]);
         if ($n != 1) { $db->rollBack(); $this->showError('订单已支付或已取消，不可重复支付'); return false; }
@@ -176,7 +174,7 @@ class ShopPayPage extends WapPage {
         $notifyUrl = $this->http_start . 'shop/notify_' . $channel . '.php';
         if ($channel === 'ali') {
             $pay = new AliPay();
-            $returnUrl = $this->http_start . 'shop/myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid;
+            $returnUrl = $this->http_start . 'shop/myorder.php?classid=' . $this->classid;
             $url = $pay->pagePay($orderid, $total, $subject, $notifyUrl, $returnUrl);
             if ($url === false) $this->showError($pay->getLastError() ?: '支付宝发起支付失败');
             header('Location: ' . $url);
@@ -191,7 +189,7 @@ class ShopPayPage extends WapPage {
         echo '<div class="success">下单成功，请使用微信扫描二维码支付</div>';
         echo '<div class="content">订单 #' . $orderid . ' 金额￥' . $total . '<br/>';
         echo '支付链接: <a href="' . $this->ToHtm($codeUrl) . '">' . $this->ToHtm($codeUrl) . '</a></div>';
-        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">支付完成后查看订单</a></div>';
+        echo '<div><a href="myorder.php?classid=' . $this->classid . '">支付完成后查看订单</a></div>';
         $this->showDown();
     }
 
@@ -200,8 +198,8 @@ class ShopPayPage extends WapPage {
         $this->strTitle = '支付成功';
         $this->showTop($this->strTitle);
         echo '<div class="success">' . $prefix . '支付成功！订单 #' . $orderid . ' 金额￥' . $total . '</div>';
-        echo '<div><a href="myorder.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">我的订单</a> ';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">继续购物</a></div>';
+        echo '<div><a href="myorder.php?classid=' . $this->classid . '">我的订单</a> ';
+        echo '<a href="list.php?classid=' . $this->classid . '">继续购物</a></div>';
         $this->showDown();
     }
 }

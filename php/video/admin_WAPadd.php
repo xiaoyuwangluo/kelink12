@@ -11,7 +11,7 @@ class VideoAddPage extends WapPage {
     }
     private function showForm() {
         echo '<div class="subtitle">添加视频</div>';
-        echo '<form method="post" action="admin_WAPadd.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '" enctype="multipart/form-data">';
+        echo '<form method="post" action="admin_WAPadd.php?classid=' . $this->classid . '" enctype="multipart/form-data">';
         echo '标题:<input type="text" name="title" required/><br/>';
         echo '视频地址:<input type="text" name="videourl"/><br/>';
         echo '封面:<input type="file" name="pic"/><br/>';
@@ -33,9 +33,8 @@ class VideoAddPage extends WapPage {
                 $picurl = '/uploadfiles/video/' . date('Ym') . '/' . $fname;
             }
         }
-        $id = $db->insert("INSERT INTO WapVideo (siteid,classid,title,content,picurl,videourl,isshow,hits,addtime) VALUES (?,?,?,?,?,?,1,0,NOW())",
-            [$this->siteid, $this->classid, $title, $_POST['content'] ?? '', $picurl, $_POST['videourl'] ?? '']);
-        echo '<div class="success">添加成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        $id = $db->insert("INSERT INTO WapVideo (classid,title,content,picurl,videourl,isshow,hits,addtime) VALUES (?,?,?,?,?,1,0,NOW())",[$this->classid,$title,$_POST['content'] ?? '',$picurl,$_POST['videourl'] ?? '']);
+        echo '<div class="success">添加成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 $page = new VideoAddPage();

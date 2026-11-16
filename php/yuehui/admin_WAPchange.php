@@ -20,7 +20,7 @@ class YuehuiChangePage extends WapPage {
 
         $this->showTop('显隐切换');
         echo '<div class="success">「' . $this->ToHtm($row['title']) . '」已切换为' . ($new ? '显示' : '隐藏') . '</div>';
-        echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
         $this->showDown();
     }
 

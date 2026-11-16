@@ -16,7 +16,7 @@ class PaimaiBidPage extends WapPage {
         $paimaiid = (int)($_GET['paimaiid'] ?? $_POST['paimaiid'] ?? 0);
         if ($paimaiid <= 0) $this->showError('参数错误');
 
-        $item = $db->getOne("SELECT * FROM WapPaimai WHERE id=? AND siteid=? AND isshow=1", [$paimaiid, $this->siteid]);
+        $item = $db->getOne("SELECT * FROM WapPaimai WHERE id=? AND isshow=1",[$paimaiid]);
         if (!$item) $this->showError('拍卖品不存在');
 
         $top = $db->getOne("SELECT MAX(price) AS top FROM WapPaimaiBid WHERE paimaiid=?", [$paimaiid]);
@@ -29,11 +29,9 @@ class PaimaiBidPage extends WapPage {
                 $this->showError('出价无效：须为不低于 ￥' . $minNext . ' 的整数（当前最高价￥' . $curTop . '，最小加价' . self::MIN_STEP . '元）');
             }
             $nickname = $this->userVo['nickname'] ?: $this->userVo['username'];
-            $db->insert(
-                "INSERT INTO WapPaimaiBid (siteid,paimaiid,userid,nickname,price,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, $paimaiid, $uid, $nickname, $price]);
+            $db->insert("INSERT INTO WapPaimaiBid (paimaiid,userid,nickname,price,addtime) VALUES (?,?,?,?,NOW())",[$paimaiid,$uid,$nickname,$price]);
             $this->showSuccess('出价成功！您的出价 ￥' . $price,
-                'view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $paimaiid);
+                'view.php?classid=' . $this->classid . '&id=' . $paimaiid);
             return;
         }
 
@@ -43,11 +41,11 @@ class PaimaiBidPage extends WapPage {
         echo '<div class="subtitle">出价 - ' . $this->ToHtm($item['title']) . '</div><div class="content">';
         echo '当前最高价:￥' . $curTop . '<br/>';
         echo '最低可出价:￥' . $minNext . '(加价幅度' . self::MIN_STEP . '元)<br/>';
-        echo '<form method="post" action="bid.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&paimaiid=' . $paimaiid . '">';
+        echo '<form method="post" action="bid.php?classid=' . $this->classid . '&paimaiid=' . $paimaiid . '">';
         echo '我的出价(元):<input type="number" name="price" min="' . $minNext . '" step="1" required/><br/>';
         echo '<input type="submit" value="确认出价"/></form>';
         echo '</div>';
-        echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $paimaiid . '">返回拍品</a></div>';
+        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $paimaiid . '">返回拍品</a></div>';
         $this->showDown();
     }
 }

@@ -29,7 +29,7 @@ class VideoModifyPage extends WapPage {
 
     private function showForm($a) {
         echo '<div class="subtitle">修改视频</div>';
-        echo '<form method="post" action="admin_WAPmodify.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $a['id'] . '">';
+        echo '<form method="post" action="admin_WAPmodify.php?classid=' . $this->classid . '&id=' . $a['id'] . '">';
         echo '标题:<input type="text" name="title" value="' . $this->ToHtm($a['title']) . '"/><br/>';
         echo '封面:<input type="text" name="picurl" value="' . $this->ToHtm($a['picurl'] ?? '') . '"/><br/>';
         echo '播放地址:<input type="text" name="videourl" value="' . $this->ToHtm($a['videourl'] ?? '') . '"/><br/>';
@@ -52,7 +52,7 @@ class VideoModifyPage extends WapPage {
             "UPDATE WapVideo SET title=?,content=?,picurl=?,videourl=? WHERE id=?",
             [$title, $content, $picurl, $videourl, $id]
         );
-        echo '<div class="success">修改成功 <a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
+        echo '<div class="success">修改成功 <a href="view.php?classid=' . $this->classid . '&id=' . $id . '">查看</a></div>';
     }
 }
 

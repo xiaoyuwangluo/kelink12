@@ -17,9 +17,8 @@ class BbsLikePage extends WapPage {
         $replyid = (int)($_GET['replyid'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $thread = $db->getOne("SELECT id,siteid,userid FROM WapBbs WHERE id=? AND siteid=?",
-            [$id, $this->siteid]);
-        if (!$thread) $this->showError('帖子不存在', 'list.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+        $thread = $db->getOne("SELECT id,userid FROM WapBbs WHERE id=?",[$id]);
+        if (!$thread) $this->showError('帖子不存在', 'list.php?classid=' . $this->classid);
 
         $reply = null;
         if ($replyid > 0) {
@@ -28,9 +27,9 @@ class BbsLikePage extends WapPage {
             if (!$reply) $this->showError('回复不存在');
         }
 
-        $backUrl = 'view.php?siteid=' . $this->siteid . '&id=' . $id;
+        $backUrl = 'view.php?id=' . $id;
         $act = strtolower(trim((string)($_GET['act'] ?? '')));
-        $exists = kl_like_exists($db, $this->siteid, 'bbs', $id, $replyid, $uid);
+        $exists = kl_like_exists($db, 'bbs', $id, $replyid, $uid);
 
         $doAdd = false;
         $doDelete = false;
@@ -47,25 +46,19 @@ class BbsLikePage extends WapPage {
         }
 
         if ($doAdd) {
-            $db->insert(
-                "INSERT INTO WapLike (siteid,module,contentid,replyid,userid,addtime) VALUES (?,?,?,?,?,?)",
-                [$this->siteid, 'bbs', $id, $replyid, $uid, date('Y-m-d H:i:s')]
-            );
+            $db->insert("INSERT INTO WapLike (module,contentid,replyid,userid,addtime) VALUES (?,?,?,?,?)",['bbs',$id,$replyid,$uid,date('Y-m-d H:i:s')]);
             $authorId = $replyid > 0 ? (int)$reply['userid'] : (int)$thread['userid'];
             $word = $replyid > 0 ? '赞了你的回复' : '赞了你的帖子';
-            kl_notice_add($db, $this->siteid, $authorId, $uid, 'like', 'bbs', $id, $word);
+            kl_notice_add($db, $authorId, $uid, 'like', 'bbs', $id, $word);
             $msg = '点赞成功';
         } elseif ($doDelete) {
-            $db->execute(
-                "DELETE FROM WapLike WHERE siteid=? AND module=? AND contentid=? AND replyid=? AND userid=?",
-                [$this->siteid, 'bbs', $id, $replyid, $uid]
-            );
+            $db->execute("DELETE FROM WapLike WHERE module=? AND contentid=? AND replyid=? AND userid=?",['bbs',$id,$replyid,$uid]);
             $msg = '已取消赞';
         } else {
             $msg = '已赞过';
         }
 
-        kl_cache_clear_site($this->siteid);
+        kl_cache_clear_site();
         $this->showSuccess($msg, $backUrl);
     }
 }

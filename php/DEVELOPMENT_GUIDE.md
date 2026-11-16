@@ -34,7 +34,7 @@
 ├── search.php                  # 全站搜索
 ├── version.php                 # 版本信息
 ├── down.php                    # 下载处理（防盗链）
-├── webad.php / webreg.php / webmodel.php / webcallme.php  # 营销页面
+├── webad.php / webmodel.php / webcallme.php  # 营销页面
 ├── .htaccess                   # 伪静态规则
 │
 ├── includes/                   # 核心框架
@@ -80,13 +80,13 @@
 ├── templates/                  # 模板系统(default/touch两套样式+list.php)
 ├── page.php                    # 自定义页面(支持万能调用)
 ├── sitemap.php / robots.txt    # SEO
-├── default.php wapregsite.php wapgetpw.php      # 默认入口/建站注册/找回密码
-├── webhelp.php webnews.php webrank.php          # 帮助/动态/站点排行
+├── default.php wapgetpw.php                     # 默认入口/找回密码
+├── webhelp.php webnews.php                      # 帮助/动态
 ├── ajax_ubb.php cache.php weixin.php sms.php t.php  # UBB预览/清缓存/微信/短信/短链
 │
 ├── admin/                      # 管理后台
 │   ├── login.php / logout.php / index.php       # 登录/退出/首页
-│   ├── site.php class.php user.php              # 站点/栏目/会员管理
+│   ├── class.php user.php                       # 栏目/会员管理
 │   ├── content.php reply.php                    # 内容审核/评论管理
 │   └── online.php sysmsg.php card.php           # 在线/公告/点卡
 │
@@ -108,7 +108,7 @@
 cd /workspace/php
 # config.php 中 KL_DB_TYPE 已设为 sqlite，直接启动
 php -S 127.0.0.1:8080
-# 访问 http://127.0.0.1:8080/wapindex.php?siteid=1
+# 访问 http://127.0.0.1:8080/wapindex.php
 ```
 
 ### 2. 使用 MySQL
@@ -120,7 +120,7 @@ php -S 127.0.0.1:8080
 ### 3. 默认账号
 
 - 管理员：`admin` / `admin123`
-- 测试站点 ID：`1`
+- 独立建站版仅维护一个站点，无需站点 ID
 
 ## 四、模块开发规范
 
@@ -149,13 +149,13 @@ class MymodListPage extends WapPage {
         $this->showTop($this->strTitle);
 
         $result = $db->getPage('WapMymod', 'id,title,addtime,hits',
-            "siteid=? AND classid=? AND isshow=1", 'id DESC',
+            "classid=? AND isshow=1", 'id DESC',
             max(1,(int)($_GET['page']??1)), 20,
-            [$this->siteid, $this->classid]);
+            [$this->classid]);
 
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
-            echo '<li><a href="view.php?siteid='.$this->siteid.'&classid='.$this->classid.'&id='.$row['id'].'">'.$this->ToHtm($row['title']).'</a></li>';
+            echo '<li><a href="view.php?classid='.$this->classid.'&id='.$row['id'].'">'.$this->ToHtm($row['title']).'</a></li>';
         }
         echo '</ul></div>';
         $this->showDown();
@@ -170,7 +170,7 @@ $page->run();
 ### WapPage 基类（所有页面可用）
 | 属性/方法 | 说明 |
 |---|---|
-| `$this->siteid` / `$this->classid` | 站点ID / 栏目ID |
+| `$this->classid` | 栏目ID |
 | `$this->ver` | 版本（1=WAP1.0, 2=WAP2.0, 3=PC, 4=触屏） |
 | `$this->siteVo` / `$this->classVo` | 站点/栏目信息对象 |
 | `$this->wmlVo` | 版本信息对象 |

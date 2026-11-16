@@ -10,7 +10,7 @@ class VideoViewPage extends WapPage {
         $db = $this->db;
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
-        $video = $db->getOne("SELECT * FROM WapVideo WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $video = $db->getOne("SELECT * FROM WapVideo WHERE id=?",[$id]);
         if (!$video) $this->showError('视频不存在');
         $db->execute("UPDATE WapVideo SET hits=hits+1 WHERE id=?", [$id]);
 
@@ -24,7 +24,7 @@ class VideoViewPage extends WapPage {
             echo '</div>';
         }
         echo '<div class="content">' . $this->wapTool->ToWML($video['content'], $this->wmlVo) . '</div>';
-        echo '<div><a href="download.php?id=' . $id . '">下载视频</a> | <a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div><a href="download.php?id=' . $id . '">下载视频</a> | <a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

@@ -29,7 +29,7 @@ class UtilityPage extends WapPage {
         echo '<li>数据库类型: ' . KL_DB_TYPE . '</li>';
         echo '<li>系统版本: ' . KL_Version . '</li>';
         echo '<li>服务器时间: ' . date('Y-m-d H:i:s') . '</li>';
-        $online = $this->wapTool->onlineCount($this->siteid);
+        $online = $this->wapTool->onlineCount();
         echo '<li>当前在线: ' . $online . ' 人</li>';
         echo '</ul></div>';
         $this->showDown();

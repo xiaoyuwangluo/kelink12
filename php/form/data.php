@@ -11,20 +11,19 @@ class FormDataPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $form = $db->getOne("SELECT * FROM WapForm WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $form = $db->getOne("SELECT * FROM WapForm WHERE id=?",[$id]);
         if (!$form) $this->showError('表单不存在');
 
         // 仅管理员可查看
         if (!$this->userSession->isAdminLogin()) {
-            $this->showError('仅管理员可查看提交记录', 'index.php?siteid=' . $this->siteid . '&classid=' . $this->classid);
+            $this->showError('仅管理员可查看提交记录', 'index.php?classid=' . $this->classid);
         }
 
         $this->strTitle = $form['name'] . ' - 提交记录';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">' . $this->ToHtm($this->strTitle) . '</div>';
 
-        $rows = $db->getAll("SELECT * FROM WapFormData WHERE formid=? AND siteid=? ORDER BY id DESC LIMIT 200",
-            [$id, $this->siteid]);
+        $rows = $db->getAll("SELECT * FROM WapFormData WHERE formid=? ORDER BY id DESC LIMIT 200",[$id]);
         if (!$rows) {
             echo '<div class="content">暂无提交记录</div>';
         }
@@ -42,7 +41,7 @@ class FormDataPage extends WapPage {
             echo '</div></div>';
         }
 
-        echo '<div class="actionbar"><a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回表单列表</a></div>';
+        echo '<div class="actionbar"><a href="index.php?classid=' . $this->classid . '">返回表单列表</a></div>';
         $this->showDown();
     }
 }

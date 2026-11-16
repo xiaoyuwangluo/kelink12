@@ -15,13 +15,9 @@ class AdminOnlinePage extends WapPage {
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">在线用户</div><div><a href="index.php">返回后台首页</a></div>';
 
-        // 按站点过滤（siteid>0 时），列出全部在线记录
+        // 列出全部在线记录
         $where = '1=1';
         $params = [];
-        if ($this->siteid > 0) {
-            $where = 'siteid=?';
-            $params[] = $this->siteid;
-        }
         $list = $db->getAll("SELECT * FROM WapOnline WHERE " . $where . " ORDER BY lasttime DESC", $params);
 
         echo '<div class="content"><div class="info">当前在线：' . count($list) . ' 人</div><ul class="list">';
@@ -33,7 +29,7 @@ class AdminOnlinePage extends WapPage {
         }
         if (empty($list)) echo '<li>当前无人在线</li>';
         echo '</ul></div>';
-        echo '<div><a href="online.php?siteid=' . (int)$this->siteid . '">刷新</a></div>';
+        echo '<div><a href="online.php">刷新</a></div>';
 
         $this->showDown();
     }

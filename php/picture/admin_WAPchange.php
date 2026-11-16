@@ -23,7 +23,7 @@ class PictureChangePage extends WapPage {
 
         $this->showTop('切换显隐');
         echo '<div class="success">已设为' . ($new ? '显示' : '隐藏') . '：' . $this->ToHtm($pic['title'])
-            . ' <a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+            . ' <a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

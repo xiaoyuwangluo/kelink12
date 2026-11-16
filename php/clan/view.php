@@ -11,7 +11,7 @@ class ClanViewPage extends WapPage {
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) $this->showError('参数错误');
 
-        $clan = $db->getOne("SELECT * FROM WapClan WHERE id=? AND siteid=?", [$id, $this->siteid]);
+        $clan = $db->getOne("SELECT * FROM WapClan WHERE id=?",[$id]);
         if (!$clan) $this->showError('家族不存在');
 
         $this->strTitle = $clan['name'];
@@ -48,13 +48,13 @@ class ClanViewPage extends WapPage {
         }
         echo '<div class="actionbar">';
         if ($isMember) {
-            echo '<a href="chat.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">家族聊天</a> ';
+            echo '<a href="chat.php?classid=' . $this->classid . '&id=' . $id . '">家族聊天</a> ';
         } elseif ($this->userSession->isLogin()) {
-            echo '<a href="join.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">加入家族</a> ';
+            echo '<a href="join.php?classid=' . $this->classid . '&id=' . $id . '">加入家族</a> ';
         } else {
-            echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后加入家族</a> ';
+            echo '<a href="../waplogin.php">登录后加入家族</a> ';
         }
-        echo '<a href="index.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
+        echo '<a href="index.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
 
         $this->showDown();

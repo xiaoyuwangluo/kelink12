@@ -53,16 +53,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step == '2') {
                 : "sqlsrv:Server=$host;Database=$dbname";
             $pdo = new PDO($dsn, $user, $pass);
         }
-        $sql = file_get_contents(KL_ROOT . '/install/schema.sql');
-        // 按分号拆分执行 (简化处理)
-        $statements = array_filter(array_map('trim', explode(";\n", $sql)));
-        foreach ($statements as $stmt) {
-            if ($stmt === '') continue;
-            if ($dbtype === 'sqlite') {
-                if (stripos($stmt, 'ADD INDEX') !== false) continue; // SQLite 不支持
-                $stmt = mysqlToSqlite($stmt);
+        $sqlFiles = [KL_ROOT . '/install/schema.sql', KL_ROOT . '/install/schema_community.sql'];
+        foreach ($sqlFiles as $sqlFile) {
+            if (!is_file($sqlFile)) continue;
+            $sql = file_get_contents($sqlFile);
+            // 按分号拆分执行 (简化处理)
+            $statements = array_filter(array_map('trim', explode(";\n", $sql)));
+            foreach ($statements as $stmt) {
+                if ($stmt === '') continue;
+                if ($dbtype === 'sqlite') {
+                    if (stripos($stmt, 'ADD INDEX') !== false) continue; // SQLite 不支持
+                    $stmt = mysqlToSqlite($stmt);
+                }
+                $pdo->exec($stmt);
             }
-            $pdo->exec($stmt);
         }
         $msg = '<div class="success">数据库安装成功！默认管理员账号: admin / admin123</div>';
         $step = '3';

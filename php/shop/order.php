@@ -19,13 +19,10 @@ class ShopOrderPage extends WapPage {
             $num = max(1, (int)($_POST['num'] ?? 1));
             $total = $product['price'] * $num;
             $uid = $this->userSession->getUserId();
-            $orderId = $db->insert(
-                "INSERT INTO WapShopOrder (siteid,userid,shopid,num,totalprice,status,addtime) VALUES (?,?,?,?,?,0,NOW())",
-                [$this->siteid, $uid, $id, $num, $total]
-            );
+            $orderId = $db->insert("INSERT INTO WapShopOrder (userid,shopid,num,totalprice,status,addtime) VALUES (?,?,?,?,0,NOW())",[$uid,$id,$num,$total]);
             $this->showTop('下单成功');
             echo '<div class="success">下单成功！订单号: ' . $orderId . ' 金额:￥' . number_format($total, 2) . '</div>';
-            echo '<div><a href="view.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">返回商品</a></div>';
+            echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $id . '">返回商品</a></div>';
             $this->showDown();
             return;
         }
@@ -36,7 +33,7 @@ class ShopOrderPage extends WapPage {
         echo '<div class="content">';
         echo '商品:' . $this->ToHtm($product['title']) . '<br/>';
         echo '单价:￥' . number_format($product['price'], 2) . '<br/>';
-        echo '<form method="post" action="order.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+        echo '<form method="post" action="order.php?classid=' . $this->classid . '&id=' . $id . '">';
         echo '数量:<input type="number" name="num" value="1" min="1"/><br/>';
         echo '<input type="submit" value="提交订单"/></form>';
         echo '</div>';

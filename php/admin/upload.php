@@ -29,7 +29,7 @@ class AdminUploadPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $msg = '';
-        $back = 'upload.php?siteid=' . $this->siteid;
+        $back = 'upload.php';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'] ?? '';

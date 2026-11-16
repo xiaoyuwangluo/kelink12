@@ -17,12 +17,10 @@ class ShopPointPage extends WapPage {
         $isLogin = $this->userSession->isLogin();
         $user = $isLogin ? $this->userSession->getUserVo() : null;
         if ($isLogin) {
-            echo '<div class="content">我的积分：' . (int)($user['point'] ?? 0) . ' <a href="point_orders.php?siteid=' . $this->siteid . '">我的兑换记录</a></div>';
+            echo '<div class="content">我的积分：' . (int)($user['point'] ?? 0) . ' <a href="point_orders.php">我的兑换记录</a></div>';
         }
 
-        $result = $db->getPage('WapPointGoods', 'id,name,intro,points,stock,image,addtime',
-            'siteid=? AND isshow=1 AND stock>0', 'sortnum DESC, id DESC', $page, 20,
-            [$this->siteid]);
+        $result = $db->getPage('WapPointGoods', 'id,name,intro,points,stock,image,addtime','isshow=1 AND stock>0', 'sortnum DESC, id DESC', $page, 20,[]);
 
         echo '<div class="content">';
         if (!$result['list']) {
@@ -36,9 +34,9 @@ class ShopPointPage extends WapPage {
                 if (!empty($g['intro'])) echo $this->ToHtm($g['intro']) . '<br/>';
                 echo '所需积分：' . (int)$g['points'] . ' 剩余库存：' . (int)$g['stock'] . '<br/>';
                 if ($isLogin) {
-                    echo '<a href="point_buy.php?siteid=' . $this->siteid . '&id=' . (int)$g['id'] . '">兑换</a>';
+                    echo '<a href="point_buy.php?id=' . (int)$g['id'] . '">兑换</a>';
                 } else {
-                    echo '<a href="../waplogin.php?siteid=' . $this->siteid . '">登录后兑换</a>';
+                    echo '<a href="../waplogin.php">登录后兑换</a>';
                 }
                 echo '</li>';
             }
@@ -48,14 +46,14 @@ class ShopPointPage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page - 1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="?page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . '&page=' . ($page + 1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div class="nav"><a href="../wapindex.php?siteid=' . $this->siteid . '">返回首页</a>';
-        if ($isLogin) echo ' <a href="point_orders.php?siteid=' . $this->siteid . '">我的兑换记录</a>';
+        echo '<div class="nav"><a href="../wapindex.php">返回首页</a>';
+        if ($isLogin) echo ' <a href="point_orders.php">我的兑换记录</a>';
         echo '</div>';
         $this->showDown();
     }

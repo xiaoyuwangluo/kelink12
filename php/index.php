@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
             <ul>
               <li><a href="index.php" class="a1">首页</a></li>
               <li><a href="webad.php">程序介绍</a></li>
-              <li><a href="webreg.php">注册站长</a></li>
+              <li><a href="wapindex.php">进入站点</a></li>
               <li><a href="admin/login.php">登录体验</a></li>
               <li><a href="webmodel.php">企业模版</a></li>
               <li><a href="webcallme.php">联系我们</a></li>
@@ -74,9 +74,9 @@ require_once __DIR__ . '/includes/bootstrap.php';
   </div>
   <div class="ExperienceBG">
     <div class="Experience">
-      <h3>小宇网络WAP手机自助建站系统</h3>
-      <p>体验神奇的WAP建站经历，走进全新wap网站时代！无需专业知识，只要您会打字，十分钟即可拥有精彩wap站点。</p>
-      <div class="GO"><a href="webreg.php">立即体验</a></div>
+      <h3>小宇网络WAP手机建站系统</h3>
+      <p>独立建站版，开箱即用。后台维护栏目与内容，前台自适应 WAP1.0 / WAP2.0 / 触屏版 / 电脑版。</p>
+      <div class="GO"><a href="wapindex.php">进入站点</a></div>
     </div>
   </div>
 </div>

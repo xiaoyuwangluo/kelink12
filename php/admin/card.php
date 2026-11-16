@@ -26,8 +26,7 @@ class AdminCardPage extends WapPage {
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $siteid = $this->siteid > 0 ? $this->siteid : 1;
-        $back = 'card.php?siteid=' . $siteid;
+        $back = 'card.php';
         $generated = [];
 
         // POST 操作：批量生成 / 作废（防重复提交）
@@ -49,13 +48,12 @@ class AdminCardPage extends WapPage {
                         $try++;
                     }
                     $plain = $this->makeCardPwd();
-                    $db->insert("INSERT INTO WapCard (siteid,cardno,cardpwd,cardtype,money,isused,addtime) VALUES (?,?,?,?,?,0,datetime('now','localtime'))",
-                        [$siteid, $cardno, md5($plain), $cardtype, $money]);
+                    $db->insert("INSERT INTO WapCard (cardno,cardpwd,cardtype,money,isused,addtime) VALUES (?,?,?,?,0,datetime('now','localtime'))",[$cardno,md5($plain),$cardtype,$money]);
                     $generated[] = [$cardno, $plain];
                 }
             } elseif ($action === 'void') {
                 $id = (int)($_POST['id'] ?? 0);
-                $row = $db->getOne("SELECT * FROM WapCard WHERE id=? AND siteid=?", [$id, $siteid]);
+                $row = $db->getOne("SELECT * FROM WapCard WHERE id=?",[$id]);
                 if (!$row) {
                     $this->showError('充值卡不存在', $back);
                 }
@@ -63,7 +61,7 @@ class AdminCardPage extends WapPage {
                     $this->showError('该卡已被使用，不能作废', $back);
                 }
                 // 作废：删除未使用的卡密记录
-                $db->execute("DELETE FROM WapCard WHERE id=? AND siteid=?", [$id, $siteid]);
+                $db->execute("DELETE FROM WapCard WHERE id=?",[$id]);
                 $this->showSuccess('充值卡已作废', $back);
             } else {
                 $this->showError('非法操作', $back);
@@ -93,7 +91,7 @@ class AdminCardPage extends WapPage {
 
         // 列表（分页）
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapCard', '*', 'siteid=?', 'id DESC', $page, 20, [$siteid]);
+        $result = $db->getPage('WapCard', '*','', 'id DESC', $page, 20,[]);
         echo '<div class="content">共' . $result['total'] . '张<br/><ul class="list">';
         foreach ($result['list'] as $c) {
             $cid = (int)$c['id'];

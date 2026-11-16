@@ -19,7 +19,7 @@ class WapRegPage extends WapPage {
 
     private function showForm() {
         echo '<div class="subtitle">' . $this->GetLang('会员注册|会员注册|Register') . '</div>';
-        echo '<div class="content"><form method="post" action="wapreg.php?siteid=' . $this->siteid . '">';
+        echo '<div class="content"><form method="post" action="wapreg.php">';
         echo '用户名:<input type="text" name="username" required/><br/>';
         echo '密 码:<input type="password" name="password" required/><br/>';
         echo '确认密码:<input type="password" name="password2" required/><br/>';
@@ -27,8 +27,8 @@ class WapRegPage extends WapPage {
         echo '邮箱:<input type="email" name="email"/><br/>';
         if (KL_RegUser_CheckCode == 1) {
             echo '验证码:<input type="text" name="checkcode" required/>'
-                . '<img src="captcha_img.php?siteid=' . $this->siteid . '&t=' . time() . '" alt="验证码" '
-                . 'onclick="this.src=\'captcha_img.php?siteid=' . $this->siteid . '&t=\'+Date.now()"/><br/>';
+                . '<img src="captcha_img.php?t=' . time() . '" alt="验证码" '
+                . 'onclick="this.src=\'captcha_img.php?t=\'+Date.now()"/><br/>';
         }
         echo '<input type="submit" value="注册"/></form></div>';
     }
@@ -55,7 +55,7 @@ class WapRegPage extends WapPage {
         if ($ok) {
             // 自动登录
             $this->userSession->login($username, $password);
-            header('Location: wapindex.php?siteid=' . $this->siteid);
+            header('Location: wapindex.php');
             exit;
         }
         echo '<div class="error">' . $this->ToHtm($msg) . '</div>';

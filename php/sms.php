@@ -21,7 +21,7 @@ class SmsPage extends WapPage {
     private function showForm() {
         $used = (int)($_SESSION['kl_sms_count'] ?? 0);
         echo '<div class="subtitle">' . $this->GetLang('短信发送(模拟)|短信发送(模拟)|短信发送(模拟)') . '</div>';
-        echo '<div class="content"><form method="post" action="sms.php?siteid=' . $this->siteid . '">';
+        echo '<div class="content"><form method="post" action="sms.php">';
         echo '手机号:<input type="text" name="mobile" maxlength="11" required/><br/>';
         echo '内容:<textarea name="content" rows="3" cols="20" required></textarea><br/>';
         echo '<input type="submit" value="发送短信"/></form></div>';
@@ -57,10 +57,7 @@ class SmsPage extends WapPage {
         }
 
         // 写入短信表，status=1 模拟发送成功
-        $this->db->insert(
-            "INSERT INTO WapSms (siteid, mobile, content, status, addtime) VALUES (?,?,?,?,NOW())",
-            [$this->siteid, $mobile, $content, 1]
-        );
+        $this->db->insert("INSERT INTO WapSms (mobile,content,status,addtime) VALUES (?,?,?,NOW())",[$mobile,$content,1]);
         $_SESSION['kl_sms_count'] = (int)$_SESSION['kl_sms_count'] + 1;
 
         echo '<div class="success">短信发送成功(模拟)！收件号码：' . $this->ToHtm($mobile) . '</div>';

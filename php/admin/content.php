@@ -55,18 +55,16 @@ class AdminContentPage extends WapPage {
     /** 处理附件上传并写入对应附件表 */
     private function doUploadFile($module, $table, $id) {
         $conf = $this->attachTable[$module];
-        $back = 'content.php?siteid=' . $this->siteid . '&module=' . $module . '&act=files&id=' . $id;
-        $row = $this->db->getOne("SELECT id,classid FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
-        if (!$row) $this->showError('内容不存在', 'content.php?siteid=' . $this->siteid . '&module=' . $module);
+        $back = 'content.php?module=' . $module . '&act=files&id=' . $id;
+        $row = $this->db->getOne("SELECT id,classid FROM " . $table . " WHERE id=?",[$id]);
+        if (!$row) $this->showError('内容不存在', 'content.php?module=' . $module);
         if (!isset($_FILES['userfile'])) $this->showError('未选择文件', $back);
         list($ok, $msg, $info) = Upload::save($_FILES['userfile']);
         if (!$ok) $this->showError($msg, $back);
         if ($conf['fk'] === 'articleid') {
-            $this->db->insert("INSERT INTO WapArticleFile (siteid,classid,articleid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,?,NOW())",
-                [$this->siteid, (int)($row['classid'] ?? 0), $id, $info['filename'], $info['relpath'], $info['size']]);
+            $this->db->insert("INSERT INTO WapArticleFile (classid,articleid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,NOW())",[(int)($row['classid'] ?? 0),$id,$info['filename'],$info['relpath'],$info['size']]);
         } else {
-            $this->db->insert("INSERT INTO WapBbsFile (siteid,bbsid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,?,NOW())",
-                [$this->siteid, $id, $info['filename'], $info['relpath'], $info['size']]);
+            $this->db->insert("INSERT INTO WapBbsFile (bbsid,filename,filepath,filesize,addtime) VALUES (?,?,?,?,NOW())",[$id,$info['filename'],$info['relpath'],$info['size']]);
         }
         $this->showSuccess('附件上传成功', $back);
     }
@@ -76,7 +74,7 @@ class AdminContentPage extends WapPage {
         $conf = $this->attachTable[$module];
         $fk = $conf['fk'];
         $id = (int)($_GET['id'] ?? 0);
-        $rows = $this->db->getAll("SELECT * FROM " . $conf['table'] . " WHERE $fk=? AND siteid=? ORDER BY id DESC", [$id, $this->siteid]);
+        $rows = $this->db->getAll("SELECT * FROM " . $conf['table'] . " WHERE $fk=? ORDER BY id DESC",[$id]);
 
         $this->strTitle = '附件管理';
         $this->showTop($this->strTitle);
@@ -111,7 +109,7 @@ class AdminContentPage extends WapPage {
         $cols = $this->getColumns($table);
         $hasShow = in_array('isshow', $cols, true);
         $hasTop = in_array('istop', $cols, true);
-        $back = 'content.php?siteid=' . $this->siteid . '&module=' . $module;
+        $back = 'content.php?module=' . $module;
 
         // POST 操作（批量删除，对应原 admin_WAPdelALL）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -123,7 +121,7 @@ class AdminContentPage extends WapPage {
                 $ids = array_filter(array_map('intval', (array)($_POST['ids'] ?? [])));
                 if (!$ids) $this->showError('未选择内容', $back);
                 $ph = '(' . rtrim(str_repeat('?,', count($ids)), ',') . ')';
-                $db->execute("DELETE FROM " . $table . " WHERE id IN" . $ph . " AND siteid=?", array_merge($ids, [$this->siteid]));
+                $db->execute("DELETE FROM " . $table . " WHERE id IN" . $ph, $ids);
                 $this->showSuccess('已批量删除 ' . count($ids) . ' 条', $back);
             } elseif ($action === 'upload_file' && isset($this->attachTable[$module])) {
                 $this->doUploadFile($module, $table, (int)($_POST['id'] ?? 0));
@@ -137,13 +135,13 @@ class AdminContentPage extends WapPage {
         $gid = (int)($_GET['gid'] ?? 0);
         if ($gact !== '' && $gid > 0) {
             if ($gact === 'tshow' && $hasShow) {
-                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=?",[$gid]);
                 $this->showSuccess('显示状态已切换', $back);
             } elseif ($gact === 'ttop' && $hasTop) {
-                $db->execute("UPDATE " . $table . " SET istop=CASE WHEN istop=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $db->execute("UPDATE " . $table . " SET istop=CASE WHEN istop=1 THEN 0 ELSE 1 END WHERE id=?",[$gid]);
                 $this->showSuccess('置顶状态已切换', $back);
             } elseif ($gact === 'del') {
-                $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$gid, $this->siteid]);
+                $db->execute("DELETE FROM " . $table . " WHERE id=?",[$gid]);
                 $this->showSuccess('内容已删除', $back);
             }
         }
@@ -160,7 +158,6 @@ class AdminContentPage extends WapPage {
 
         // 模块切换下拉
         echo '<div class="content"><form method="get" action="content.php">'
-            . '<input type="hidden" name="siteid" value="' . (int)$this->siteid . '"/>'
             . '<select name="module" onchange="this.form.submit()">';
         foreach (array_keys($this->moduleTable) as $m) {
             $sel = ($m === $module) ? ' selected="selected"' : '';
@@ -170,7 +167,7 @@ class AdminContentPage extends WapPage {
 
         // 分页列表（勾选 + 批量删除表单）
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage($table, '*', 'siteid=?', 'id DESC', $page, 20, [$this->siteid]);
+        $result = $db->getPage($table, '*','', 'id DESC', $page, 20,[]);
         echo '<form method="post" action="' . $back . '"><input type="hidden" name="action" value="delall"/>';
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {

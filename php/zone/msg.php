@@ -29,11 +29,11 @@ class ZoneMsgPage extends WapPage {
 
     private function showForm($zone) {
         echo '<div class="subtitle">留言到:' . $this->ToHtm($zone['zonename']) . '</div>';
-        echo '<div class="content"><form method="post" action="msg.php?siteid=' . $this->siteid . '&zoneid=' . (int)$zone['id'] . '">';
+        echo '<div class="content"><form method="post" action="msg.php?zoneid=' . (int)$zone['id'] . '">';
         echo '昵称:' . $this->ToHtm($this->userSession->getUserName()) . '<br/>';
         echo '内容:<textarea name="content" rows="5" required></textarea><br/>';
         echo '<input type="submit" value="发表留言"/></form></div>';
-        echo '<div><a href="index.php?siteid=' . $this->siteid . '&uid=' . (int)$zone['userid'] . '">返回空间</a></div>';
+        echo '<div><a href="index.php?uid=' . (int)$zone['userid'] . '">返回空间</a></div>';
     }
 
     private function doMsg($zone) {
@@ -49,9 +49,8 @@ class ZoneMsgPage extends WapPage {
             $this->showForm($zone); echo '<div class="error">今日留言已达上限</div>'; return;
         }
 
-        $db->insert("INSERT INTO WapZoneMsg (siteid,zoneid,userid,nickname,content,addtime) VALUES (?,?,?,?,?,NOW())",
-            [$this->siteid, (int)$zone['id'], $uid, $this->userSession->getUserName(), $content]);
-        $this->showSuccess('留言成功', 'index.php?siteid=' . $this->siteid . '&uid=' . (int)$zone['userid']);
+        $db->insert("INSERT INTO WapZoneMsg (zoneid,userid,nickname,content,addtime) VALUES (?,?,?,?,NOW())",[(int)$zone['id'],$uid,$this->userSession->getUserName(),$content]);
+        $this->showSuccess('留言成功', 'index.php?uid=' . (int)$zone['userid']);
     }
 }
 

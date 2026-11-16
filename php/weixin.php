@@ -13,12 +13,11 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 
 $db = Database::getInstance();
-$siteid = isset($_GET['siteid']) ? (int)$_GET['siteid'] : 1;
 
-// ===== 读取微信配置 (WapWeixin: siteid,appid,secret,token,isopen) =====
+// ===== 读取微信配置 (WapWeixin: appid,secret,token,isopen) =====
 $wxvo = null;
 try {
-    $wxvo = $db->getOne("SELECT * FROM WapWeixin WHERE siteid=?", [$siteid]);
+    $wxvo = $db->getOne("SELECT * FROM WapWeixin",[]);
 } catch (Exception $e) {
     $wxvo = null;
 }
@@ -148,10 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 写入消息表
     try {
-        $db->insert(
-            "INSERT INTO WapWeixinMsg (siteid, fromuser, content, reply, addtime) VALUES (?,?,?,?,NOW())",
-            [$siteid, $fromuser, $content, $reply]
-        );
+        $db->insert("INSERT INTO WapWeixinMsg (fromuser,content,reply,addtime) VALUES (?,?,?,NOW())",[$fromuser,$content,$reply]);
     } catch (Exception $e) {
         // 入库失败不影响回复
     }

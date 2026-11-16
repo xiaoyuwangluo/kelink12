@@ -11,7 +11,7 @@ class AdminReplyPage extends WapPage {
         $this->checkAdminLogin();
         $db = $this->db;
         $tab = ($_GET['tab'] ?? 'wap') === 'bbs' ? 'bbs' : 'wap';
-        $back = 'reply.php?siteid=' . $this->siteid . '&tab=' . $tab;
+        $back = 'reply.php?tab=' . $tab;
 
         // POST 操作（防重复提交）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,17 +23,17 @@ class AdminReplyPage extends WapPage {
             $fromBbs = ($_POST['from'] ?? 'wap') === 'bbs';
             $table = $fromBbs ? 'WapBbsReply' : 'WapReply';
             if ($action === 'toggle_show') {
-                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=? AND siteid=?", [$id, $this->siteid]);
+                $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=?",[$id]);
                 $this->showSuccess('审核状态已切换', $back);
             } elseif ($action === 'delete') {
-                $db->execute("DELETE FROM " . $table . " WHERE id=? AND siteid=?", [$id, $this->siteid]);
+                $db->execute("DELETE FROM " . $table . " WHERE id=?",[$id]);
                 $this->showSuccess('评论已删除', $back);
             } elseif ($action === 'edit') {
                 $content = trim($_POST['content'] ?? '');
                 if ($content === '') {
                     $this->showError('评论内容不能为空', $back);
                 }
-                $n = $db->execute("UPDATE " . $table . " SET content=? WHERE id=? AND siteid=?", [$content, $id, $this->siteid]);
+                $n = $db->execute("UPDATE " . $table . " SET content=? WHERE id=?",[$content,$id]);
                 $this->showSuccess($n > 0 ? '评论已保存' : '评论不存在或无变更', $back);
             } else {
                 $this->showError('非法操作', $back);
@@ -46,14 +46,14 @@ class AdminReplyPage extends WapPage {
 
         // 切换标签
         echo '<div class="content">'
-            . '<a href="reply.php?siteid=' . (int)$this->siteid . '&tab=wap">内容评论' . ($tab === 'wap' ? '√' : '') . '</a> | '
-            . '<a href="reply.php?siteid=' . (int)$this->siteid . '&tab=bbs">论坛回复' . ($tab === 'bbs' ? '√' : '') . '</a></div>';
+            . '<a href="reply.php?tab=wap">内容评论' . ($tab === 'wap' ? '√' : '') . '</a> | '
+            . '<a href="reply.php?tab=bbs">论坛回复' . ($tab === 'bbs' ? '√' : '') . '</a></div>';
 
         // 编辑表单 (GET edit=ID)
         $editId = (int)($_GET['edit'] ?? 0);
         if ($editId > 0) {
             $table = $tab === 'bbs' ? 'WapBbsReply' : 'WapReply';
-            $row = $db->getOne("SELECT * FROM " . $table . " WHERE id=? AND siteid=?", [$editId, $this->siteid]);
+            $row = $db->getOne("SELECT * FROM " . $table . " WHERE id=?",[$editId]);
             if ($row) {
                 echo '<div class="content"><form method="post" action="' . $back . '">'
                     . '<input type="hidden" name="action" value="edit"/>'
@@ -70,9 +70,9 @@ class AdminReplyPage extends WapPage {
         // 分页列表
         $page = max(1, (int)($_GET['page'] ?? 1));
         if ($tab === 'bbs') {
-            $result = $db->getPage('WapBbsReply', '*', 'siteid=?', 'id DESC', $page, 20, [$this->siteid]);
+            $result = $db->getPage('WapBbsReply', '*','', 'id DESC', $page, 20,[]);
         } else {
-            $result = $db->getPage('WapReply', '*', 'siteid=?', 'id DESC', $page, 20, [$this->siteid]);
+            $result = $db->getPage('WapReply', '*','', 'id DESC', $page, 20,[]);
         }
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {

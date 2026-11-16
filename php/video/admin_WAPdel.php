@@ -22,13 +22,13 @@ class VideoDelPage extends WapPage {
         $this->showTop('删除视频');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->execute("DELETE FROM WapVideo WHERE id=?", [$id]);
-            echo '<div class="success">删除成功 <a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a></div>';
+            echo '<div class="success">删除成功 <a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         } else {
             echo '<div class="subtitle">确认删除视频？</div>';
             echo '<div class="content">视频：' . $this->ToHtm($video['title']) . '</div>';
-            echo '<form method="post" action="admin_WAPdel.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '&id=' . $id . '">';
+            echo '<form method="post" action="admin_WAPdel.php?classid=' . $this->classid . '&id=' . $id . '">';
             echo '<input type="submit" value="确认删除"/></form>';
-            echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">取消返回</a>';
+            echo '<a href="list.php?classid=' . $this->classid . '">取消返回</a>';
         }
         $this->showDown();
     }
