@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 285/285；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 289/289；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **285/285 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员管理与栏目管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **289/289 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员管理、栏目管理与内容管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v23 内容管理增强（搜索 / 栏目与状态筛选 / 删除确认）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 关键词搜索 | [content.php](file:///workspace/php/admin/content.php)：按表实际列自动选择标题列（title/name/content/data），支持内容 ID 精确与关键词模糊匹配 | `module=shop&q=测试商品` 仅命中 ID:1 |
+| 栏目与状态筛选 | 含 `classid` 的表显示当前模块栏目下拉；含 `isshow` 的表显示全部/已显示/已隐藏三态与各态计数（计数随搜索与栏目条件联动）；分页保留全部筛选参数 | 商城列表显示 全部(3)/已显示(2)/已隐藏(1)；`classid=1` 命中 3 条；`status=hidden` 仅显示下架商品 |
+| 单条删除确认 | 列表删除改为 `act=del&id=N` 二次确认页，展示模块、ID、标题与风险提示；POST `deldone` 校验存在后删除；显示/隐藏、置顶、单条与批量删除均清站点缓存 | 确认页标题正确；提交后商品删除、总数 3→2；隐藏切换后 `isshow=0` |
+| 列表信息 | 每行展示所属栏目名称（未分类/无效栏目有兜底），保留勾选批量删除、显示/隐藏、置顶与附件入口 | 栏目名关联正确，批量与原有操作入口保留 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **289 项**（新增搜索、栏目筛选、隐藏筛选、删除确认四条用例） | **289/289 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v22 栏目管理增强（筛选 / 搜索 / 父栏目校验 / 删除确认）
 

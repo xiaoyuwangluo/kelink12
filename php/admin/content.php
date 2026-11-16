@@ -6,6 +6,7 @@
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once KL_ROOT . '/includes/Upload.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class AdminContentPage extends WapPage {
     /** 模块 => 数据表 白名单（内容型模块 + 扩展模块） */
@@ -50,6 +51,15 @@ class AdminContentPage extends WapPage {
             }
         }
         return '(无标题)';
+    }
+
+    /** 列表回跳地址（保留模块/关键词/栏目/状态） */
+    private function backUrl($module, $q, $classid, $status) {
+        $url = 'content.php?module=' . urlencode((string)$module)
+            . '&status=' . urlencode((string)$status)
+            . '&classid=' . (int)$classid;
+        if ($q !== '') $url .= '&q=' . urlencode($q);
+        return $url;
     }
 
     /** 处理附件上传并写入对应附件表 */
@@ -100,6 +110,27 @@ class AdminContentPage extends WapPage {
         $this->showDown();
     }
 
+    /** 单条删除二次确认页 */
+    private function showDeleteConfirm($module, $table, $cols, $id, $back) {
+        $row = $id > 0 ? $this->db->getOne("SELECT * FROM " . $table . " WHERE id=?", [$id]) : null;
+        if (!$row) $this->showError('内容不存在', $back);
+
+        $this->strTitle = '删除内容确认';
+        $this->showTop($this->strTitle);
+        echo '<div class="subtitle">删除内容确认</div>';
+        echo '<div><a href="' . $back . '">返回内容列表</a></div>';
+        echo '<div class="content">模块：' . $this->ToHtm($module) . '　ID：' . (int)$row['id'] . '<br/>'
+            . '标题：' . $this->ToHtm($this->displayTitle($row, $cols)) . '<br/>'
+            . '删除后不可恢复，请谨慎操作。';
+        echo '<div class="error">确认删除该内容？</div>';
+        echo '<form method="post" action="' . $back . '">'
+            . '<input type="hidden" name="action" value="deldone"/>'
+            . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
+            . '<input type="submit" value="确认删除"/></form></div>';
+        $this->showDown();
+        exit;
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
@@ -109,7 +140,18 @@ class AdminContentPage extends WapPage {
         $cols = $this->getColumns($table);
         $hasShow = in_array('isshow', $cols, true);
         $hasTop = in_array('istop', $cols, true);
-        $back = 'content.php?module=' . $module;
+        $hasClassid = in_array('classid', $cols, true);
+        // 关键词搜索列（优先标题，其次名称/正文）
+        $titleCol = '';
+        foreach (['title', 'name', 'content', 'data'] as $c) {
+            if (in_array($c, $cols, true)) { $titleCol = $c; break; }
+        }
+        $q = trim($_GET['q'] ?? '');
+        $classid = max(0, (int)($_GET['classid'] ?? 0));
+        $status = $_GET['status'] ?? 'all';
+        if (!in_array($status, ['all', 'show', 'hidden'], true)) $status = 'all';
+        if (!$hasShow) $status = 'all';
+        $back = $this->backUrl($module, $q, $classid, $status);
 
         // POST 操作（批量删除，对应原 admin_WAPdelALL）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -122,12 +164,26 @@ class AdminContentPage extends WapPage {
                 if (!$ids) $this->showError('未选择内容', $back);
                 $ph = '(' . rtrim(str_repeat('?,', count($ids)), ',') . ')';
                 $db->execute("DELETE FROM " . $table . " WHERE id IN" . $ph, $ids);
+                kl_cache_clear_site();
                 $this->showSuccess('已批量删除 ' . count($ids) . ' 条', $back);
+            } elseif ($action === 'deldone') {
+                $did = (int)($_POST['id'] ?? 0);
+                $row = $did > 0 ? $db->getOne("SELECT id FROM " . $table . " WHERE id=?", [$did]) : null;
+                if (!$row) $this->showError('内容不存在', $back);
+                $db->execute("DELETE FROM " . $table . " WHERE id=?", [$did]);
+                kl_cache_clear_site();
+                $this->showSuccess('内容已删除', $back);
             } elseif ($action === 'upload_file' && isset($this->attachTable[$module])) {
                 $this->doUploadFile($module, $table, (int)($_POST['id'] ?? 0));
             } else {
                 $this->showError('非法操作', $back);
             }
+        }
+
+        // 单条删除二次确认页
+        if (($_GET['act'] ?? '') === 'del') {
+            $this->showDeleteConfirm($module, $table, $cols, (int)($_GET['id'] ?? 0), $back);
+            return;
         }
 
         // GET 单条操作（对应原 admin_WAPmodify/del 链接风格）
@@ -136,12 +192,15 @@ class AdminContentPage extends WapPage {
         if ($gact !== '' && $gid > 0) {
             if ($gact === 'tshow' && $hasShow) {
                 $db->execute("UPDATE " . $table . " SET isshow=CASE WHEN isshow=1 THEN 0 ELSE 1 END WHERE id=?",[$gid]);
+                kl_cache_clear_site();
                 $this->showSuccess('显示状态已切换', $back);
             } elseif ($gact === 'ttop' && $hasTop) {
                 $db->execute("UPDATE " . $table . " SET istop=CASE WHEN istop=1 THEN 0 ELSE 1 END WHERE id=?",[$gid]);
+                kl_cache_clear_site();
                 $this->showSuccess('置顶状态已切换', $back);
             } elseif ($gact === 'del') {
                 $db->execute("DELETE FROM " . $table . " WHERE id=?",[$gid]);
+                kl_cache_clear_site();
                 $this->showSuccess('内容已删除', $back);
             }
         }
@@ -165,9 +224,88 @@ class AdminContentPage extends WapPage {
         }
         echo '</select> <input type="submit" value="切换"/></form></div>';
 
+        // 统计（模块 + 搜索 + 栏目，不含状态）
+        $baseWhere = '1=1';
+        $baseParams = [];
+        if ($hasClassid && $classid > 0) {
+            $baseWhere .= ' AND classid=?';
+            $baseParams[] = $classid;
+        }
+        if ($q !== '' && $titleCol !== '') {
+            $baseWhere .= " AND (id=? OR $titleCol LIKE ?)";
+            $baseParams[] = (int)$q;
+            $baseParams[] = '%' . $q . '%';
+        }
+        $total = (int)$db->getScalar("SELECT COUNT(*) FROM $table WHERE $baseWhere", $baseParams);
+        $showCount = 0;
+        $hiddenCount = 0;
+        if ($hasShow) {
+            $showCount = (int)$db->getScalar("SELECT COUNT(*) FROM $table WHERE $baseWhere AND isshow=1", $baseParams);
+            $hiddenCount = (int)$db->getScalar("SELECT COUNT(*) FROM $table WHERE $baseWhere AND isshow<>1", $baseParams);
+        }
+
+        // 状态筛选
+        if ($hasShow) {
+            echo '<div class="content">筛选：';
+            $filters = [
+                'all' => '全部(' . $total . ')',
+                'show' => '已显示(' . $showCount . ')',
+                'hidden' => '已隐藏(' . $hiddenCount . ')',
+            ];
+            foreach ($filters as $k => $label) {
+                echo ($status === $k)
+                    ? '<strong>[' . $label . ']</strong> '
+                    : '<a href="' . $this->backUrl($module, $q, $classid, $k) . '">' . $label . '</a> ';
+            }
+            echo '</div>';
+        }
+
+        // 栏目筛选（仅含 classid 列的表）
+        if ($hasClassid) {
+            $classList = $db->getAll("SELECT id,classname FROM WapClass WHERE module=? ORDER BY orderid ASC, id ASC", [$module]);
+            if ($classList) {
+                echo '<div class="content"><form method="get" action="content.php">栏目：<select name="classid">'
+                    . '<option value="0">全部栏目</option>';
+                foreach ($classList as $c) {
+                    $sel = ($classid === (int)$c['id']) ? ' selected="selected"' : '';
+                    echo '<option value="' . (int)$c['id'] . '"' . $sel . '>' . $this->ToHtm($c['classname']) . '</option>';
+                }
+                echo '</select>'
+                    . '<input type="hidden" name="module" value="' . $this->ToHtm($module) . '"/>'
+                    . '<input type="hidden" name="q" value="' . $this->ToHtm($q) . '"/>'
+                    . '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>'
+                    . '<input type="submit" value="筛选"/></form></div>';
+            }
+        }
+
+        // 关键词搜索
+        if ($titleCol !== '') {
+            echo '<div class="content"><form method="get" action="content.php">'
+                . '搜索：<input type="text" name="q" value="' . $this->ToHtm($q) . '" placeholder="内容ID/关键词"/>'
+                . '<input type="hidden" name="module" value="' . $this->ToHtm($module) . '"/>'
+                . '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>'
+                . '<input type="hidden" name="classid" value="' . $classid . '"/>'
+                . '<input type="submit" value="查询"/></form></div>';
+        }
+
         // 分页列表（勾选 + 批量删除表单）
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage($table, '*','', 'id DESC', $page, 20,[]);
+        $where = $baseWhere;
+        $params = $baseParams;
+        if ($hasShow && $status === 'show') {
+            $where .= ' AND isshow=1';
+        } elseif ($hasShow && $status === 'hidden') {
+            $where .= ' AND isshow<>1';
+        }
+        $result = $db->getPage($table, '*', $where, 'id DESC', $page, 20, $params);
+
+        // 栏目名称映射
+        $classNames = [];
+        if ($hasClassid) {
+            foreach ($db->getAll("SELECT id,classname FROM WapClass") as $c) {
+                $classNames[(int)$c['id']] = $c['classname'];
+            }
+        }
         echo '<form method="post" action="' . $back . '"><input type="hidden" name="action" value="delall"/>';
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $row) {
@@ -175,12 +313,17 @@ class AdminContentPage extends WapPage {
             $showFlag = $hasShow ? (empty($row['isshow']) ? '<span style="color:red">[隐藏]</span>' : '') : '';
             $topFlag = $hasTop && !empty($row['istop']) ? '<span style="color:orange">[顶]</span>' : '';
             $time = !empty($row['addtime']) ? date('m-d H:i', strtotime($row['addtime'])) : '';
+            $classTxt = '';
+            if ($hasClassid) {
+                $rowClassid = (int)($row['classid'] ?? 0);
+                $classTxt = ' 栏目:' . $this->ToHtm($classNames[$rowClassid] ?? ($rowClassid > 0 ? '#' . $rowClassid : '未分类'));
+            }
             echo '<li><input type="checkbox" name="ids[]" value="' . $rid . '"/>'
-                . $topFlag . $showFlag . 'ID:' . $rid . ' ' . $this->ToHtm($this->displayTitle($row, $cols))
+                . $topFlag . $showFlag . 'ID:' . $rid . ' ' . $this->ToHtm($this->displayTitle($row, $cols)) . $classTxt
                 . ' <span class="time">' . $time . '</span><br/>';
             if ($hasShow) echo '<a href="' . $back . '&gact=tshow&gid=' . $rid . '">' . (empty($row['isshow']) ? '显示' : '隐藏') . '</a> ';
             if ($hasTop) echo '<a href="' . $back . '&gact=ttop&gid=' . $rid . '">' . (empty($row['istop']) ? '置顶' : '取消置顶') . '</a> ';
-            echo '<a href="' . $back . '&gact=del&gid=' . $rid . '" onclick="return confirm(\'删除?\')">删除</a>';
+            echo '<a href="' . $back . '&act=del&id=' . $rid . '">删除</a>';
             if (isset($this->attachTable[$module])) {
                 echo ' <a href="' . $back . '&act=files&id=' . $rid . '">附件</a>';
             }

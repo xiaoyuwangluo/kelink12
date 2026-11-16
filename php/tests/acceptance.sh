@@ -90,6 +90,11 @@ check_admin "admin:user del confirm" "$BASE/admin/user.php?act=del&id=1"
 check_admin "admin:class module filter" "$BASE/admin/class.php?module=shop"
 check_admin "admin:class search" "$BASE/admin/class.php?q=%E6%96%87%E7%AB%A0"
 check_admin "admin:class del confirm" "$BASE/admin/class.php?act=del&id=2"
+# 内容管理增强
+check_admin "admin:content search" "$BASE/admin/content.php?module=shop&q=%E6%B5%8B%E8%AF%95%E5%95%86%E5%93%81"
+check_admin "admin:content class" "$BASE/admin/content.php?module=shop&classid=1"
+check_admin "admin:content hidden" "$BASE/admin/content.php?module=shop&status=hidden"
+check_admin "admin:content del confirm" "$BASE/admin/content.php?module=shop&act=del&id=1"
 # 运营数据导出 CSV
 check_admin "admin:export orders" "$BASE/admin/export.php?type=order"
 check_admin "admin:export orders status" "$BASE/admin/export.php?type=order&status=1"
