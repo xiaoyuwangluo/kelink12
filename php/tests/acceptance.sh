@@ -104,6 +104,10 @@ check_admin "admin:reply del confirm" "$BASE/admin/reply.php?tab=wap&act=del&id=
 check_admin "admin:online search" "$BASE/admin/online.php?q=127.0.0.1"
 check_admin "admin:online member" "$BASE/admin/online.php?type=member"
 check_admin "admin:online kick confirm" "$BASE/admin/online.php?act=kick&id=1"
+# 系统公告增强
+check_admin "admin:sysmsg search" "$BASE/admin/sysmsg.php?q=%E5%85%AC%E5%91%8A"
+check_admin "admin:sysmsg page" "$BASE/admin/sysmsg.php?page=1"
+check_admin "admin:sysmsg del confirm" "$BASE/admin/sysmsg.php?act=del&id=1"
 # 运营数据导出 CSV
 check_admin "admin:export orders" "$BASE/admin/export.php?type=order"
 check_admin "admin:export orders status" "$BASE/admin/export.php?type=order&status=1"

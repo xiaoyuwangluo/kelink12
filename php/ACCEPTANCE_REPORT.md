@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 296/296；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 299/299；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **296/296 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/在线管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **299/299 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/在线/公告管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v26 系统公告增强（搜索 / 分页 / 删除确认 / 缓存清理）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 搜索与分页 | [sysmsg.php](file:///workspace/php/admin/sysmsg.php)：关键词 `q` 支持公告 ID 精确与标题/内容模糊；列表分页并显示总条数，编辑/删除/翻页均保留搜索条件 | `q=公告测试二` 由 2 条收窄为 1 条；列表显示“共 2 条公告”，链接自动携带搜索参数 |
+| 新增与编辑 | 新增/编辑同一表单，标题非空校验；编辑不存在的公告给出提示并回落为新增；新增时间按站点本地时区写入 | 新增公告返回 ID=3 且时间正确；编辑 ID=2 后标题与内容落库 |
+| 删除二次确认 | 列表删除改为 `act=del&id=N` 确认页，展示 ID、标题与内容摘要；POST `deldone` 校验存在后删除 | 确认页信息正确；提交后公告 2→1 |
+| 缓存清理 | 新增、编辑、删除公告后清站点缓存 | 三类操作均调用缓存清理，前台公告随即更新 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **299 项**（新增搜索、分页、删除确认三条用例） | **299/299 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v25 在线用户增强（搜索 / 类型筛选 / 踢下线 / 超时清理）
 
