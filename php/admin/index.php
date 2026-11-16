@@ -171,6 +171,7 @@ body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
 <a href="filter.php">敏感词库</a>
 <a href="upload.php">文件管理</a>
 <a href="setting.php">系统设置</a>
+<a href="backup.php">数据库维护</a>
 </div>
 </div>
 </body>

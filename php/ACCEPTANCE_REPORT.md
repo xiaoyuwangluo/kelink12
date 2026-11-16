@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 314/314；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 317/317；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,19 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **314/314 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **317/317 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v34 数据库维护（备份下载 / 完整性检查 / 空间优化）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 运行信息 | 新增 [backup.php](file:///workspace/php/admin/backup.php)：展示数据库类型、库文件名、主库大小、WAL 日志大小、最后修改时间、数据表数量 | 页面显示 SQLITE、352.00 KB、数据表 79、时间正确 |
+| 备份下载 | `action=download` 先执行 `PRAGMA wal_checkpoint(TRUNCATE)` 合并 WAL，再以 `application/octet-stream` 附件下载，文件名`库名_时间戳.db`；仅 SQLite 可用 | 下载文件 360,448 字节，内含 5 个会员、80 张表，响应头正确 |
+| 完整性检查 | `action=check` 执行 `PRAGMA integrity_check`，通过显示 ok，异常时输出具体问题 | 返回“完整性检查通过（integrity_check = ok）” |
+| 空间优化 | `action=vacuum` 执行 VACUUM 并展示优化前后大小，失败给出错误信息 | 优化完成，前后大小 352.00 KB，库仍可正常读取 |
+| 入口与安全 | 后台首页新增“数据库维护”入口；所有操作先 `checkAdminLogin`，非 SQLite 类型明确提示不支持 | 首页链接可直达；未登录访问跳转登录页 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **317 项**（新增页面、完整性检查、备份下载三条用例） | **317/317 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v33 采集管理增强（搜索 / 校验 / 删除确认 / 批量导入文章）
 
