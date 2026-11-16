@@ -38,10 +38,29 @@ class ShopMyOrderPage extends WapPage {
             return;
         }
 
-        // 订单列表
+        // 订单列表（状态筛选 + 分页）
+        $status = (string)($_GET['status'] ?? 'all');
+        if (!in_array($status, ['all', '0', '1', '2', '3', '-1', '-2'], true)) $status = 'all';
+        $where = 'userid=?';
+        $params = [$uid];
+        if ($status !== 'all') {
+            $where .= ' AND status=?';
+            $params[] = (int)$status;
+        }
         $page = max(1, (int)($_GET['page'] ?? 1));
         $result = $db->getPage('WapShopOrder',
-            'WapShopOrder.*, (SELECT title FROM WapShop WHERE WapShop.id=WapShopOrder.shopid) AS shoptitle','userid=?', 'id DESC', $page, 20,[$uid]);
+            'WapShopOrder.*, (SELECT title FROM WapShop WHERE WapShop.id=WapShopOrder.shopid) AS shoptitle',
+            $where, 'id DESC', $page, 20, $params);
+
+        // 各状态数量
+        $statusCounts = [];
+        foreach ($db->getAll("SELECT status, COUNT(*) AS c FROM WapShopOrder WHERE userid=? GROUP BY status", [$uid]) as $r) {
+            $statusCounts[(int)$r['status']] = (int)$r['c'];
+        }
+        $totalCount = array_sum($statusCounts);
+        $tabUrl = function ($st) {
+            return 'myorder.php?classid=' . $this->classid . ($st === 'all' ? '' : '&status=' . $st);
+        };
 
         $this->strTitle = '我的订单';
         $this->showTop($this->strTitle);
@@ -49,14 +68,26 @@ class ShopMyOrderPage extends WapPage {
         if (($_GET['confirmed'] ?? '') === '1') echo '<div class="success">已确认收货，交易完成</div>';
         if (($_GET['err'] ?? '') === '1') echo '<div class="error">操作失败：订单不存在或状态不允许该操作</div>';
         echo '<div class="subtitle">我的订单</div><div class="content">';
+        $tabs = ['all' => '全部'] + self::STATUS_MAP;
+        foreach ($tabs as $st => $label) {
+            $cnt = ($st === 'all') ? $totalCount : ($statusCounts[(int)$st] ?? 0);
+            $txt = $label . '(' . $cnt . ')';
+            echo ((string)$status === (string)$st)
+                ? '<strong>[' . $txt . ']</strong> '
+                : '<a href="' . $tabUrl((string)$st) . '">' . $txt . '</a> ';
+        }
+        echo '<div class="time">共 ' . $totalCount . ' 单，当前显示 ' . count($result['list']) . ' 单</div>';
         if (!$result['list']) {
-            echo '暂无订单。<a href="list.php?classid=' . $this->classid . '">去购物</a>';
+            echo $status === 'all' ? '暂无订单。' : '该状态下暂无订单。';
+            echo '<a href="list.php?classid=' . $this->classid . '">去购物</a>';
         } else {
             echo '<ul class="orderlist">';
             foreach ($result['list'] as $o) {
                 $st = (int)$o['status'];
                 $stName = self::STATUS_MAP[$st] ?? '未知';
-                echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['shoptitle'] ?? '') . ' ￥' . (int)round($o['totalprice']) . ' [' . $stName . ']';
+                echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['shoptitle'] ?? '') . ' ￥' . (int)round($o['totalprice'])
+                    . ' ×' . (int)$o['num'] . ' [' . $stName . ']'
+                    . '<br/><span class="time">' . $this->ToHtm($o['addtime'] ?? '') . '</span>';
                 echo ' <a href="myorder.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">详情</a>';
                 if ($st === 0) {
                     echo ' <a href="pay.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">支付</a>';
@@ -67,10 +98,13 @@ class ShopMyOrderPage extends WapPage {
         }
         echo '</div>';
         if ($result['pageCount'] > 1) {
+            $pageUrl = function ($p) use ($status) {
+                return '?classid=' . $this->classid . ($status === 'all' ? '' : '&status=' . $status) . '&page=' . $p;
+            };
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="' . $pageUrl($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="' . $pageUrl($page + 1) . '">下一页</a>';
             echo '</div>';
         }
         echo '<div><a href="cart.php?classid=' . $this->classid . '">购物车</a> ';

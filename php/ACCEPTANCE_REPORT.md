@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 317/317；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 319/319；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **317/317 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **319/319 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v35 我的订单增强（状态筛选 / 各状态计数 / 分页保留筛选）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 状态筛选 | [myorder.php](file:///workspace/php/shop/myorder.php)：新增全部/待付款/已付款(待发货)/已发货/已完成/已取消/已退款七个状态页签，非法值回落“全部” | `status=0` 仅显示 #1，`status=1` 仅显示 #2，`status=-1` 提示“该状态下暂无订单” |
+| 数量统计 | 一次 GROUP BY 统计各状态数量，页签展示「名称(数量)」，顶部显示“共 X 单，当前显示 Y 单” | user2 显示 全部(2)/待付款(1)/已付款(待发货)(1)/其余 0；共 2 单 |
+| 列表信息 | 订单行补充购买数量与下单时间，仍保留详情/待付款支付入口 | #2、#1 均展示数量、时间与操作链接 |
+| 分页 | 分页链接保留 `status` 筛选参数，避免翻页丢失筛选条件 | 构造多页时翻页地址携带 status |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **319 项**（新增 status=0、status=1 两条用例） | **319/319 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v34 数据库维护（备份下载 / 完整性检查 / 空间优化）
 

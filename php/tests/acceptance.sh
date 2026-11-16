@@ -58,7 +58,7 @@ for p in "bbs/mod.php?id=1" "bbs/vote.php?id=1" "bbs/fav.php?module=bbs&contenti
 done
 
 # 商城/支付/账户
-for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?orderid=1" "paimai/bid.php?id=1" "myaccount/index.php"; do
+for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?status=0" "shop/myorder.php?status=1" "shop/myorder.php?orderid=1" "paimai/bid.php?id=1" "myaccount/index.php"; do
   check "shop:$p" "$BASE/$p"
 done
 
