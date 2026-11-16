@@ -134,7 +134,9 @@ done
 
 # v5 长尾补齐页面
 check_admin "admin:setting" "$BASE/admin/setting.php"
-check_admin "admin:report" "$BASE/admin/report.php"
+check_admin "admin:report search" "$BASE/admin/report.php?q=%E5%B9%BF%E5%91%8A"
+check_admin "admin:report handled" "$BASE/admin/report.php?status=handled"
+check_admin "admin:report del confirm" "$BASE/admin/report.php?act=del&id=1"
 check_admin "novel:chapter_add" "$BASE/novel/chapter_add.php?novelid=1"
 check_admin "novel:import" "$BASE/novel/import.php?novelid=1"
 check "novel:chapter_mod" "$BASE/novel/chapter_mod.php?id=1"

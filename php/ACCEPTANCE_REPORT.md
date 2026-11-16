@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 302/302；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 304/304；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **302/302 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **304/304 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v29 举报管理增强（搜索 / 状态筛选 / 处理标记 / 删除确认）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 搜索与状态筛选 | [report.php](file:///workspace/php/admin/report.php)：全部/待处理/已处理三态筛选并显示计数（随搜索联动）；关键词 `q` 支持 ID 与帖子 ID 精确、理由/备注模糊；分页保留条件 | 全部(3)/待处理(2)/已处理(1)；`q=广告` 命中 ID:3、ID:1；`status=handled` 仅显示 ID:2 |
+| 处理标记 | 待处理记录一键“标记已处理”，已处理记录可“恢复待处理”，状态切换即时生效 | 标记 ID:3 后待处理 2→0、已处理 1→2；恢复 ID:2 后 ID:2 回到待处理 |
+| 删除确认 | 删除改为 `act=del&id=N` 二次确认页，展示帖子 ID、举报理由与风险提示；POST `deldone` 校验存在后删除 | 确认页理由显示正确；提交后举报 3→2 |
+| 关联信息 | 列表展示举报人（关联 WapUser，缺失回退 #ID）、帖子外链（新窗口打开前台帖子）、备注与时间 | 举报人 user2/user1、帖子 #1 外链正常 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **304 项**（原单条用例替换为搜索、已处理筛选、删除确认三条） | **304/304 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v28 后台首页仪表盘（今日数据 / 最近订单 / 最新会员）
 
