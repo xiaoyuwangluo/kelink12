@@ -73,6 +73,12 @@ check_admin "admin:shoporder status=1" "$BASE/admin/shoporder.php?status=1"
 check_admin "admin:shoporder status=2" "$BASE/admin/shoporder.php?status=2"
 check_admin "admin:shoporder status=-2" "$BASE/admin/shoporder.php?status=-2"
 check_admin "admin:shoporder search" "$BASE/admin/shoporder.php?q=13800001111"
+# 商品库存后台
+check_admin "admin:goods" "$BASE/admin/goods.php"
+check_admin "admin:goods low" "$BASE/admin/goods.php?low=1"
+check_admin "admin:goods offshelf" "$BASE/admin/goods.php?status=offshelf"
+check_admin "admin:goods search" "$BASE/admin/goods.php?q=test"
+check_admin "admin:goods page" "$BASE/admin/goods.php?page=2"
 
 # OAuth / 模板
 check "oauth" "$BASE/oauth/index.php"

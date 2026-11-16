@@ -89,6 +89,7 @@
 │   ├── class.php user.php                       # 栏目/会员管理
 │   ├── content.php reply.php                    # 内容审核/评论管理
 │   ├── shoporder.php                           # 商城订单（发货/完成/取消/退款）
+│   ├── goods.php                               # 商品库存（预警/改价改库存/上下架）
 │   └── online.php sysmsg.php card.php           # 在线/公告/点卡
 │
 ├── install/                    # 安装向导

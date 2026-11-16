@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 267/267；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 272/272；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **267/267 PASS**（移除 4 个已删除页面用例，新增商城订单用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **272/272 PASS**（移除 4 个已删除页面用例，新增商城订单与商品库存用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v18 商品库存后台（列表 / 预警 / 快捷维护）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 商品列表 | [goods.php](file:///workspace/php/admin/goods.php)：展示 ID/标题/栏目/价格/库存/点击/状态/时间，分页 20 条 | 后台登录后列表 200，栏目名与商品数据正确 |
+| 筛选与搜索 | 全部/在售/已下架三态 + 各态计数；库存预警（stock<5）筛选并按库存升序；商品 ID/标题关键词搜索 | 预警筛选显示计数 1 且命中低库存商品；中文标题搜索与 ID 搜索均命中 |
+| 快捷维护 | 行内 POST 改价（非负、最多两位小数）与改库存（非负整数），保存后清缓存并回跳保留筛选；上下架切换 | 改价 88.50、库存 3 落库正确；库存 -5 与价格 abc 均被校验拒绝且数据不变；切换后进入“已下架”列表 |
+| 后台首页 | 新增“库存预警”统计卡片与“商品库存（预警 N）”入口 | 卡片与入口数值随库存变化一致 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **272 项** | **272/272 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v17 商城订单闭环（后台管理 + 用户收货 + 订单通知）
 
