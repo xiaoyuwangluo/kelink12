@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（SQLite 254/254；交付包独立环境 254/254；首次安装全流程通过）**
+验收结论：**通过（SQLite 263/263；交付包独立环境 263/263；首次安装全流程通过）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 〇〇〇〇〇〇〇、v16 二次开发增量（积分商城 / 敏感词库 / 社区运营）
@@ -17,7 +17,10 @@
 | 私信会话 | [sessions.php](file:///workspace/php/message/sessions.php) 按往来用户聚合会话（未读数、最后一条预览）；[chat.php](file:///workspace/php/message/chat.php) 一对一聊天（发送、进入即已读、最近 50 条）；[send.php](file:///workspace/php/message/send.php) 支持 `back=chat` 回跳 | 发送后消息入库并回跳会话；对方来信显示未读，打开会话后 `isread=1`；短信发送成功页正确回跳聊天页 |
 | 用户拉黑 | `WapBlock` 表 + [block.php](file:///workspace/php/zone/block.php) 切换拉黑/取消与黑名单列表；[chat.php](file:///workspace/php/message/chat.php)、[send.php](file:///workspace/php/message/send.php)、[follow.php](file:///workspace/php/zone/follow.php) 双向拦截私信与关注，[book_re.php](file:///workspace/php/bbs/book_re.php) 拦截被拉黑者的 `@` 通知 | 拉黑后双方会话/私信/关注均被拦截；黑名单列表可取消拉黑，取消后会话恢复；被拉黑者 `@` 不产生通知 |
 | 社区报表 | [community.php](file:///workspace/php/admin/community.php) 近 7 天/近 30 天/全部三档；新增会员、帖子、回复、文章、关注、点赞、私信、待审核、拉黑关系；每日趋势与发帖 Top10、热门标签 Top10 | 三种周期均 200 且数值与库内一致；趋势 7/30 天逐日列出；Top10 用户名与标签正确关联 |
-| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **254 项** | **254/254 PASS**，跑批后 WapAudit/WapAuditLog/WapBbsTag/WapBlock/WapMessage/WapFollow/WapLike/WapNotice 均为 0（零副作用）；改动文件 `php -l` 零错误；MariaDB 双脚本重建 **79 表零错误** |
+| 通知中心增强 | `kl_notice_label_ext` 补充“审核”标签；[notice.php](file:///workspace/php/message/notice.php) 支持按回复/@提及/点赞/关注/好友/审核筛选（非法 type 兜底为全部），未读条目点击即标记已读并跳转来源（帖子/文章/用户空间/私信会话），分页保留筛选条件 | 类型筛选与非法 type 均 200；审核通知显示“审核”标签；未读点击后回跳对应帖子；仅未读与类型筛选可组合 |
+| 作者自助中心 | [my.php](file:///workspace/php/bbs/my.php) 我的帖子/回复列表（待审/已发布/已隐藏状态、计数、分页），作者可自助隐藏（软删除）/恢复帖子、隐藏自己的回复；[admin_WAPmodify.php](file:///workspace/php/bbs/admin_WAPmodify.php) 与 [mod.php](file:///workspace/php/bbs/mod.php) 收紧越权：非作者不可编辑他人帖子，非管理员不可置顶/加精/锁帖；写操作清理站点缓存 | 发帖→我的帖子可见→隐藏后 `isshow=0`→恢复正常；回复隐藏后 `isshow=0`；user2 访问他人帖子返回“无权限修改此帖子”；作者触发置顶返回“仅管理员可执行该操作”；测试数据清理后归零 |
+| 标签后台管理 | [tag.php](file:///workspace/php/admin/tag.php) 标签聚合列表（帖子数/可见数/最近时间）、搜索、分页；改名/合并（同帖已有目标标签时去重删除，事务提交）与删除；后台首页入口 | 2 个“临时甲”+1 个“临时乙”改名为“临时乙”后合并为 2 条（迁移 1、去重 1）；删除后 0 条；列表/搜索/分页均 200，测试数据清零 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **263 项** | **263/263 PASS**，跑批后 WapAudit/WapAuditLog/WapBbsTag/WapBlock/WapMessage/WapFollow/WapLike/WapNotice 均为 0（零副作用）；全部 PHP 文件 `php -l` 零错误；MariaDB 双脚本重建 **79 表零错误** |
 
 ## 〇〇〇〇〇〇、v8 交付包完整性与首次安装验收
 

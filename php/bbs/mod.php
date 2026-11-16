@@ -5,6 +5,7 @@
  * 帖子作者或管理员(session kl_adminid)可编辑/删除/置顶/加精/锁帖
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
+require_once KL_ROOT . '/includes/Community.php';
 
 class BbsModPage extends WapPage {
     public function run() {
@@ -27,6 +28,11 @@ class BbsModPage extends WapPage {
 
         $backUrl = 'view.php?siteid=' . $this->siteid . '&classid=' . $thread['classid'] . '&id=' . $id;
 
+        // 置顶/加精/锁帖属于管理操作，仅管理员可用
+        if (!$isAdmin && in_array($act, ['top', 'good', 'lock'], true)) {
+            $this->showError('仅管理员可执行该操作', $backUrl);
+        }
+
         switch ($act) {
             case 'edit':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,21 +43,25 @@ class BbsModPage extends WapPage {
             case 'del':
                 $db->execute("DELETE FROM WapBbs WHERE id=?", [$id]);
                 $db->execute("DELETE FROM WapBbsReply WHERE bbsid=?", [$id]);
+                kl_cache_clear_site($this->siteid);
                 $this->showSuccess('帖子已删除', $backUrl);
                 break;
             case 'top':
                 $new = $thread['istop'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET istop=? WHERE id=?", [$new, $id]);
+                kl_cache_clear_site($this->siteid);
                 $this->showSuccess($new ? '已置顶' : '已取消置顶', $backUrl);
                 break;
             case 'good':
                 $new = $thread['isgood'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET isgood=? WHERE id=?", [$new, $id]);
+                kl_cache_clear_site($this->siteid);
                 $this->showSuccess($new ? '已加精' : '已取消精华', $backUrl);
                 break;
             case 'lock':
                 $new = $thread['islock'] ? 0 : 1;
                 $db->execute("UPDATE WapBbs SET islock=? WHERE id=?", [$new, $id]);
+                kl_cache_clear_site($this->siteid);
                 $this->showSuccess($new ? '已锁帖' : '已解锁', $backUrl);
                 break;
             default:
@@ -79,6 +89,7 @@ class BbsModPage extends WapPage {
         if (WapTool::checkSqlInject($title) || WapTool::checkSqlInject($content)) $this->showError('含非法字符');
         if (!$this->userSession->checkSubmitLimit()) $this->showError('操作过于频繁，请稍后再试');
         $this->db->execute("UPDATE WapBbs SET title=?, content=? WHERE id=?", [$title, $content, $id]);
+        kl_cache_clear_site($this->siteid);
         $this->showSuccess('修改成功', $backUrl);
     }
 }

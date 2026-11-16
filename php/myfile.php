@@ -34,6 +34,7 @@ class MyFilePage extends WapPage {
         echo '<a href="message/index.php?siteid=' . $this->siteid . '">站内消息' . ($unread > 0 ? '(' . $unread . '未读)' : '') . '</a><br/>';
         echo '<a href="friend/index.php?siteid=' . $this->siteid . '">我的好友(' . $friendNum . ')</a><br/>';
         echo '<a href="bbs/favlist.php?siteid=' . $this->siteid . '">我的收藏(' . $favNum . ')</a><br/>';
+        echo '<a href="bbs/my.php?siteid=' . $this->siteid . '">我的帖子/回复</a><br/>';
         echo '<a href="zone/index.php?siteid=' . $this->siteid . '&uid=' . $uid . '">我的空间</a><br/>';
 
         // 第三方账号绑定状态 (微信 wx_openid / QQ qq_openid)

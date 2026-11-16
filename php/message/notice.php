@@ -2,12 +2,15 @@
 /**
  * 小宇网络 WAP建站系统 PHP版
  * 站内消息 - 通知中心
- * 支持 only=unread；act=read&id=X 标记已读；act=readall 全部已读
+ * 支持 only=unread；type=回复/提及/点赞/关注/好友/审核 筛选；act=read&id=X 标记已读并跳转来源；act=readall 全部已读
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once KL_ROOT . '/includes/Community.php';
 
 class MessageNoticePage extends WapPage {
+    /** 支持的筛选类型 */
+    private $types = ['', 'reply', 'mention', 'like', 'follow', 'friend', 'audit'];
+
     public function run() {
         $db = $this->db;
         $this->checkLogin();
@@ -15,7 +18,7 @@ class MessageNoticePage extends WapPage {
 
         $act = trim((string)($_GET['act'] ?? ''));
 
-        // 单条标记已读
+        // 单条标记已读并跳转来源
         if ($act === 'read') {
             $nid = (int)($_GET['id'] ?? 0);
             $notice = $nid > 0
@@ -23,10 +26,8 @@ class MessageNoticePage extends WapPage {
                 : null;
             if ($notice) {
                 $db->execute("UPDATE WapNotice SET isread=1 WHERE id=? AND uid=?", [$nid, $uid]);
-                if ($notice['module'] === 'bbs' && (int)$notice['contentid'] > 0) {
-                    header('Location: ../bbs/view.php?siteid=' . $this->siteid . '&id=' . (int)$notice['contentid']);
-                    exit;
-                }
+                header('Location: ' . $this->noticeUrl($notice));
+                exit;
             }
             header('Location: notice.php?siteid=' . $this->siteid);
             exit;
@@ -40,16 +41,25 @@ class MessageNoticePage extends WapPage {
         }
 
         $onlyUnread = (($_GET['only'] ?? '') === 'unread');
+        $type = trim((string)($_GET['type'] ?? ''));
+        if (!in_array($type, $this->types, true)) $type = '';
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE siteid=? AND uid=? AND isread=0",
-            [$this->siteid, $uid]);
 
         $where = 'siteid=? AND uid=?';
         $params = [$this->siteid, $uid];
         if ($onlyUnread) {
             $where .= ' AND isread=0';
         }
+        if ($type !== '') {
+            $where .= ' AND ntype=?';
+            $params[] = $type;
+        }
         $result = $db->getPage('WapNotice', '*', $where, 'id DESC', $page, 20, $params);
+
+        $unread = (int)$db->getScalar("SELECT COUNT(*) FROM WapNotice WHERE siteid=? AND uid=? AND isread=0",
+            [$this->siteid, $uid]);
+
+        $suffix = ($onlyUnread ? '&only=unread' : '') . ($type !== '' ? '&type=' . urlencode($type) : '');
 
         $this->strTitle = '通知中心';
         $this->showTop($this->strTitle);
@@ -59,6 +69,22 @@ class MessageNoticePage extends WapPage {
         echo '<a href="notice.php?siteid=' . $this->siteid . '&only=unread">仅未读(' . $unread . ')</a> | ';
         echo '<a href="notice.php?siteid=' . $this->siteid . '&act=readall">全部标为已读</a> | ';
         echo '<a href="index.php?siteid=' . $this->siteid . '">返回消息</a>';
+        echo '</div>';
+
+        // 类型筛选
+        echo '<div class="menu">筛选: ';
+        $labels = ['' => '全部', 'reply' => '回复', 'mention' => '@提及', 'like' => '点赞',
+            'follow' => '关注', 'friend' => '好友', 'audit' => '审核'];
+        $links = [];
+        foreach ($labels as $k => $label) {
+            $url = 'notice.php?siteid=' . $this->siteid
+                . ($onlyUnread ? '&only=unread' : '')
+                . ($k !== '' ? '&type=' . urlencode($k) : '');
+            $links[] = $k === $type
+                ? '<strong>' . $label . '</strong>'
+                : '<a href="' . $url . '">' . $label . '</a>';
+        }
+        echo implode(' | ', $links);
         echo '</div>';
 
         if (empty($result['list'])) {
@@ -83,11 +109,14 @@ class MessageNoticePage extends WapPage {
                 $from = (int)$n['fromuid'] > 0
                     ? ($nameMap[(int)$n['fromuid']] ?? '已注销用户')
                     : '系统';
-                $line = '[' . kl_notice_label($n['ntype']) . '] ' . $from . ' ' . $n['content'];
+                $line = '[' . kl_notice_label_ext($n['ntype']) . '] ' . $from . ' ' . $n['content'];
                 $time = '<span class="time">' . $this->ToHtm($n['addtime']) . '</span>';
+                $target = $this->noticeUrl($n);
                 if (!$n['isread']) {
-                    echo '<li><strong><a href="notice.php?siteid=' . $this->siteid . '&act=read&id=' . (int)$n['id'] . '">'
-                        . $this->ToHtm($line) . '</a></strong> ' . $time . '</li>';
+                    $href = 'notice.php?siteid=' . $this->siteid . '&act=read&id=' . (int)$n['id'];
+                    echo '<li><strong><a href="' . $href . '">' . $this->ToHtm($line) . '</a></strong> ' . $time . '</li>';
+                } elseif ($target !== 'notice.php?siteid=' . $this->siteid) {
+                    echo '<li><a href="' . $this->ToHtm($target) . '">' . $this->ToHtm($line) . '</a> ' . $time . '</li>';
                 } else {
                     echo '<li>' . $this->ToHtm($line) . ' ' . $time . '</li>';
                 }
@@ -97,7 +126,6 @@ class MessageNoticePage extends WapPage {
 
         if ($result['pageCount'] > 1) {
             echo '<div class="pager">';
-            $suffix = $onlyUnread ? '&only=unread' : '';
             if ($page > 1) echo '<a href="?siteid=' . $this->siteid . $suffix . '&page=' . ($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
             if ($page < $result['pageCount']) echo '<a href="?siteid=' . $this->siteid . $suffix . '&page=' . ($page + 1) . '">下一页</a>';
@@ -106,6 +134,31 @@ class MessageNoticePage extends WapPage {
 
         echo '<div><a href="index.php?siteid=' . $this->siteid . '">返回消息中心</a></div>';
         $this->showDown();
+    }
+
+    /**
+     * 通知跳转地址：帖子/文章详情、关注与好友对象空间、其余回私信会话
+     */
+    private function noticeUrl($n) {
+        $sid = (int)$this->siteid;
+        $ntype = (string)($n['ntype'] ?? '');
+        $module = (string)($n['module'] ?? '');
+        $cid = (int)($n['contentid'] ?? 0);
+        $fid = (int)($n['fromuid'] ?? 0);
+
+        if ($cid > 0 && $module === 'bbs') {
+            return '../bbs/view.php?siteid=' . $sid . '&id=' . $cid;
+        }
+        if ($cid > 0 && $module === 'article') {
+            return '../article/view.php?siteid=' . $sid . '&id=' . $cid;
+        }
+        if (($ntype === 'follow' || $ntype === 'friend') && $fid > 0) {
+            return '../zone/index.php?siteid=' . $sid . '&uid=' . $fid;
+        }
+        if ($fid > 0) {
+            return 'chat.php?siteid=' . $sid . '&uid=' . $fid;
+        }
+        return 'notice.php?siteid=' . $sid;
     }
 }
 

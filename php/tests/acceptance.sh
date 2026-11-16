@@ -53,7 +53,7 @@ for p in "clan/view.php?siteid=1&id=1" "clan/chat.php?siteid=1&id=1" "games/rank
 done
 
 # 用户深度功能
-for p in "bbs/mod.php?siteid=1&id=1" "bbs/vote.php?siteid=1&id=1" "bbs/fav.php?siteid=1&module=bbs&contentid=1" "bbs/favlist.php?siteid=1" "message/index.php?siteid=1" "message/send.php?siteid=1" "message/view.php?siteid=1&id=1" "friend/index.php?siteid=1" "friend/add.php?siteid=1&fid=1" "zone/index.php?siteid=1&uid=1" "zone/msg.php?siteid=1&uid=1"; do
+for p in "bbs/mod.php?siteid=1&id=1" "bbs/vote.php?siteid=1&id=1" "bbs/fav.php?siteid=1&module=bbs&contentid=1" "bbs/favlist.php?siteid=1" "bbs/my.php?siteid=1" "bbs/my.php?siteid=1&type=replies" "message/index.php?siteid=1" "message/send.php?siteid=1" "message/view.php?siteid=1&id=1" "friend/index.php?siteid=1" "friend/add.php?siteid=1&fid=1" "zone/index.php?siteid=1&uid=1" "zone/msg.php?siteid=1&uid=1"; do
   check "user:$p" "$BASE/$p"
 done
 
@@ -120,11 +120,18 @@ check_admin "admin:audit-all" "$BASE/admin/audit.php?siteid=1&status=all"
 check_admin "admin:community7" "$BASE/admin/community.php?siteid=1&days=7"
 check_admin "admin:community30" "$BASE/admin/community.php?siteid=1&days=30"
 check_admin "admin:communityAll" "$BASE/admin/community.php?siteid=1&days=all"
+check_admin "admin:tag" "$BASE/admin/tag.php?siteid=1"
+check_admin "admin:tag search" "$BASE/admin/tag.php?siteid=1&q=test"
+check_admin "admin:tag page" "$BASE/admin/tag.php?siteid=1&page=2"
 
 # v7 社区基础能力（只读检查，不写数据）
 check "zone:following" "$BASE/zone/following.php?siteid=1"
 check "zone:fans" "$BASE/zone/fans.php?siteid=1&uid=1"
 check "message:notice" "$BASE/message/notice.php?siteid=1"
+check "message:notice unread" "$BASE/message/notice.php?siteid=1&only=unread"
+check "message:notice type reply" "$BASE/message/notice.php?siteid=1&type=reply"
+check "message:notice type audit" "$BASE/message/notice.php?siteid=1&type=audit"
+check "message:notice type guard" "$BASE/message/notice.php?siteid=1&type=bad%20type"
 check "message:sessions" "$BASE/message/sessions.php?siteid=1"
 check "message:chat" "$BASE/message/chat.php?siteid=1&uid=1"
 check "bbs:active" "$BASE/bbs/active.php?siteid=1"

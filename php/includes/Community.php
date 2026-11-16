@@ -121,6 +121,17 @@ if (!function_exists('kl_notice_label')) {
 }
 
 /**
+ * 通知类型标签 (扩展版：在原有标签基础上补充审核类型)
+ * 包装原 kl_notice_label，不改变原有行为
+ */
+if (!function_exists('kl_notice_label_ext')) {
+    function kl_notice_label_ext($ntype) {
+        if ((string)$ntype === 'audit') return '审核';
+        return kl_notice_label($ntype);
+    }
+}
+
+/**
  * 点赞数 (replyid=0 表示主帖)
  */
 if (!function_exists('kl_like_count')) {

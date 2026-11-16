@@ -192,9 +192,11 @@ class BbsViewPage extends WapPage {
         $isAdmin = !empty($_SESSION['kl_adminid']);
         if ($isOwner || $isAdmin) {
             echo '<a href="mod.php?siteid=' . $this->siteid . '&act=edit&id=' . $id . '">编辑</a> ';
-            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=top&id=' . $id . '">置顶</a> ';
-            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=good&id=' . $id . '">加精</a> ';
-            echo '<a href="mod.php?siteid=' . $this->siteid . '&act=lock&id=' . $id . '">锁帖</a> ';
+            if ($isAdmin) {
+                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=top&id=' . $id . '">置顶</a> ';
+                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=good&id=' . $id . '">加精</a> ';
+                echo '<a href="mod.php?siteid=' . $this->siteid . '&act=lock&id=' . $id . '">锁帖</a> ';
+            }
             echo '<a href="mod.php?siteid=' . $this->siteid . '&act=del&id=' . $id . '">删除</a> ';
         }
         echo '<a href="list.php?siteid=' . $this->siteid . '&classid=' . $this->classid . '">返回列表</a>';
