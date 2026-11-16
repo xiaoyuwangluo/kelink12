@@ -113,6 +113,15 @@ foreach ($caijis as $c) {
       ->execute($c);
 }
 
+$logs = [
+    [1, 2, 'in', 600, 600, '测试充值'],
+    [2, 2, 'out', 100, 500, '测试消费'],
+];
+foreach ($logs as $l) {
+    $d->prepare("INSERT INTO WapAccountLog (id,userid,type,num,balance,remark,addtime) VALUES (?,?,?,?,?,?,NOW())")
+      ->execute($l);
+}
+
 echo "seeded: users=" . $d->query("SELECT COUNT(*) FROM WapUser")->fetchColumn()
    . " shops=" . $d->query("SELECT COUNT(*) FROM WapShop")->fetchColumn()
    . " orders=" . $d->query("SELECT COUNT(*) FROM WapShopOrder")->fetchColumn()

@@ -36,28 +36,60 @@ class MyAccountPage extends WapPage {
         echo '<input type="submit" value="卡号充值"/></form>';
         echo '</div>';
 
-        // 收支明细
+        // 收支明细（类型筛选 + 分页）
+        $type = (string)($_GET['type'] ?? 'all');
+        if (!in_array($type, ['all', 'in', 'out'], true)) $type = 'all';
+        $where = 'userid=?';
+        $params = [$uid];
+        if ($type !== 'all') {
+            $where .= ' AND type=?';
+            $params[] = $type;
+        }
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapAccountLog', '*','userid=?', 'id DESC', $page, 20,[$uid]);
+        $result = $db->getPage('WapAccountLog', '*', $where, 'id DESC', $page, 20, $params);
+
+        // 各类型累计
+        $sums = ['in' => [0, 0], 'out' => [0, 0]];
+        foreach ($db->getAll("SELECT type, COUNT(*) AS c, SUM(num) AS s FROM WapAccountLog WHERE userid=? GROUP BY type", [$uid]) as $r) {
+            $t = ($r['type'] === 'in') ? 'in' : 'out';
+            $sums[$t] = [(int)$r['c'], (int)$r['s']];
+        }
+        $typeUrl = function ($t) {
+            return 'index.php' . ($t === 'all' ? '' : '?type=' . $t);
+        };
+
         echo '<div class="subtitle">收支明细</div><div class="content">';
+        echo '筛选：';
+        $tabs = ['all' => '全部', 'in' => '收入', 'out' => '支出'];
+        foreach ($tabs as $t => $label) {
+            $cnt = ($t === 'all') ? ($sums['in'][0] + $sums['out'][0]) : $sums[$t][0];
+            $txt = $label . '(' . $cnt . ')';
+            echo ($type === $t) ? '<strong>[' . $txt . ']</strong> ' : '<a href="' . $typeUrl($t) . '">' . $txt . '</a> ';
+        }
+        echo '<div class="time">累计收入￥' . $sums['in'][1] . '　累计支出￥' . $sums['out'][1]
+            . '　当前显示 ' . count($result['list']) . ' 条</div>';
         if (!$result['list']) {
-            echo '暂无收支记录。';
+            echo $type === 'all' ? '暂无收支记录。' : '该类型下暂无收支记录。';
         } else {
             echo '<ul class="loglist">';
             foreach ($result['list'] as $log) {
-                $type = $log['type'] === 'in' ? '收入' : '支出';
-                $sign = $log['type'] === 'in' ? '+' : '-';
-                echo '<li>' . $this->ToHtm($log['remark']) . ' [' . $type . ' ' . $sign . (int)$log['num'] . '] 余额￥' . (int)$log['balance']
+                $isIn = $log['type'] === 'in';
+                $typeName = $isIn ? '收入' : '支出';
+                $sign = $isIn ? '+' : '-';
+                echo '<li>' . $this->ToHtm($log['remark']) . ' [' . $typeName . ' ' . $sign . (int)$log['num'] . '] 余额￥' . (int)$log['balance']
                    . ' ' . date('m-d H:i', strtotime($log['addtime'])) . '</li>';
             }
             echo '</ul>';
         }
         echo '</div>';
         if ($result['pageCount'] > 1) {
+            $pageUrl = function ($p) use ($type) {
+                return '?' . ($type === 'all' ? '' : 'type=' . $type . '&') . 'page=' . $p;
+            };
             echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?page=' . ($page-1) . '">上一页</a> ';
+            if ($page > 1) echo '<a href="' . $pageUrl($page - 1) . '">上一页</a> ';
             echo '第' . $page . '/' . $result['pageCount'] . '页 ';
-            if ($page < $result['pageCount']) echo '<a href="?page=' . ($page+1) . '">下一页</a>';
+            if ($page < $result['pageCount']) echo '<a href="' . $pageUrl($page + 1) . '">下一页</a>';
             echo '</div>';
         }
         echo '<div><a href="../shop/cart.php?classid=3">购物车</a> ';

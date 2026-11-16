@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 319/319；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 321/321；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **319/319 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **321/321 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v36 我的钱包增强（收支筛选 / 类型统计 / 分页保留筛选）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 收支筛选 | [myaccount/index.php](file:///workspace/php/myaccount/index.php)：新增全部/收入/支出三个筛选页签，非法值回落“全部”，无记录时区分“暂无收支记录”与“该类型下暂无收支记录” | 全部(2)/收入(1)/支出(1)；`type=in` 仅“测试充值”，`type=out` 仅“测试消费”，`type=bad` 回落全部 |
+| 汇总统计 | 一次 `GROUP BY type` 统计各类型条数与金额，顶部展示累计收入、累计支出与当前显示条数 | 累计收入￥600、累计支出￥100、当前显示 2 条 |
+| 列表可读性 | 明细保留收支类型、金额符号、变动后余额与时间 | 收入 +600、支出 -100 与余额展示正确 |
+| 分页 | 分页链接保留 `type` 筛选参数 | 翻页地址携带 type，筛选不丢失 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **321 项**（新增 type=in、type=out 两条用例）；种子补充 user2 两条收支流水 | **321/321 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v35 我的订单增强（状态筛选 / 各状态计数 / 分页保留筛选）
 
