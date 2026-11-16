@@ -91,6 +91,9 @@ class AdminShopOrderPage extends WapPage {
             . '<input type="hidden" name="status" value="' . $this->ToHtm((string)$status) . '"/>'
             . '<input type="submit" value="查询"/></form></div>';
 
+        echo '<div class="content"><a href="export.php?type=order&status=' . urlencode((string)$status)
+            . ($q !== '' ? '&q=' . urlencode($q) : '') . '">导出当前筛选订单 CSV</a></div>';
+
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $o) {
             $id = (int)$o['id'];

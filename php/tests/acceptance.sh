@@ -79,6 +79,11 @@ check_admin "admin:goods low" "$BASE/admin/goods.php?low=1"
 check_admin "admin:goods offshelf" "$BASE/admin/goods.php?status=offshelf"
 check_admin "admin:goods search" "$BASE/admin/goods.php?q=test"
 check_admin "admin:goods page" "$BASE/admin/goods.php?page=2"
+# 运营数据导出 CSV
+check_admin "admin:export orders" "$BASE/admin/export.php?type=order"
+check_admin "admin:export orders status" "$BASE/admin/export.php?type=order&status=1"
+check_admin "admin:export goods" "$BASE/admin/export.php?type=goods"
+check_admin "admin:export goods low" "$BASE/admin/export.php?type=goods&low=1"
 
 # OAuth / 模板
 check "oauth" "$BASE/oauth/index.php"

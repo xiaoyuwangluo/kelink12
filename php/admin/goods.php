@@ -91,6 +91,9 @@ class AdminGoodsPage extends WapPage {
             . '<input type="hidden" name="low" value="' . $low . '"/>'
             . '<input type="submit" value="查询"/></form></div>';
 
+        echo '<div class="content"><a href="export.php?type=goods&status=' . urlencode((string)$status)
+            . '&low=' . $low . ($q !== '' ? '&q=' . urlencode($q) : '') . '">导出当前筛选商品 CSV</a></div>';
+
         echo '<div class="content"><ul class="list">';
         foreach ($result['list'] as $g) {
             $id = (int)$g['id'];
