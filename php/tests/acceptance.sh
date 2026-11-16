@@ -136,6 +136,8 @@ done
 check_admin "admin:user export normal" "$BASE/admin/user.php?status=normal&action=export"
 check_admin "admin:user export locked" "$BASE/admin/user.php?status=locked&action=export"
 check_admin "admin:user export search" "$BASE/admin/user.php?action=export&q=user2"
+check_admin "admin:setting group" "$BASE/admin/setting.php?group=%E5%AE%89%E5%85%A8"
+check_admin "admin:setting search" "$BASE/admin/setting.php?q=KL_OpenCache"
 check_admin "admin:setting" "$BASE/admin/setting.php"
 check_admin "admin:report search" "$BASE/admin/report.php?q=%E5%B9%BF%E5%91%8A"
 check_admin "admin:report handled" "$BASE/admin/report.php?status=handled"

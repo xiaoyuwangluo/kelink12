@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 310/310；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 312/312；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **310/310 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **312/312 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v32 系统设置增强（可编辑项扩展 / 校验 / 清缓存 / 常量检索）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 可编辑项扩展 | [setting.php](file:///workspace/php/admin/setting.php)：新增站点名称、关闭站点开关、绑定域名、Logo 地址，保留版权/关闭提示/站点信息；当前模板只读展示 | 保存后库内 sitename=测试站点、domain=test.example.com、logourl=/logo.png、isclose=1 全部落库 |
+| 输入校验 | 站点名称必填且 ≤50 字；版权/关闭提示 ≤255 字；站点信息 ≤2000 字；Logo 仅允许 `http(s)://` 或 `/` 开头；域名仅允许字母数字点与短横线 | `domain=bad_domain` 与 `logourl=ftp://x` 均被拦截并给出明确提示 |
+| 保存与缓存 | 保存成功后清理站点缓存，提示“缓存已清理”，避免前台读取旧配置 | 提示正确，前台缓存键被清除 |
+| 常量检索 | 配置常量支持分组筛选（全部/数据库/开关/安全/模块限制/下载）与关键词搜索（常量名或说明），显示各组命中数 | `group=安全` 仅显示安全组 12 项；`q=KL_OpenCache` 命中 KL_OpenCache 与 KL_OpenCacheTime 共 2 项 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **312 项**（新增分组筛选与常量搜索两条用例）；新增可复用种子脚本 [seed.php](file:///workspace/php/tests/seed.php) | **312/312 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v31 文件管理器增强（搜索 / 类型筛选 / 排序 / 删除确认）
 
