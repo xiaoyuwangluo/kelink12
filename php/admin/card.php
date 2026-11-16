@@ -2,7 +2,7 @@
 /**
  * 小宇网络 WAP建站系统 PHP版
  * 管理后台 - 充值卡管理 (对应原 WapCard 点卡管理)
- * 批量生成(随机卡号/密码md5存储) / 列表 / 作废(删除未使用卡)
+ * 批量生成(随机卡号/密码md5存储) / 搜索 / 状态筛选 / 列表 / 作废二次确认
  */
 require_once __DIR__ . '/../includes/bootstrap.php';
 
@@ -23,11 +23,28 @@ class AdminCardPage extends WapPage {
         return $pwd;
     }
 
+    /** 列表回跳地址（保留状态/关键词） */
+    private function backUrl($status, $q) {
+        $url = 'card.php?status=' . urlencode((string)$status);
+        if ($q !== '') $url .= '&q=' . urlencode($q);
+        return $url;
+    }
+
     public function run() {
         $this->checkAdminLogin();
         $db = $this->db;
-        $back = 'card.php';
+
+        $q = trim($_GET['q'] ?? '');
+        $status = $_GET['status'] ?? 'all';
+        if (!in_array($status, ['all', 'unused', 'used'], true)) $status = 'all';
+        $back = $this->backUrl($status, $q);
         $generated = [];
+
+        // 作废二次确认页
+        if (($_GET['act'] ?? '') === 'void') {
+            $this->showVoidConfirm((int)($_GET['id'] ?? 0), $back);
+            return;
+        }
 
         // POST 操作：批量生成 / 作废（防重复提交）
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -48,12 +65,13 @@ class AdminCardPage extends WapPage {
                         $try++;
                     }
                     $plain = $this->makeCardPwd();
-                    $db->insert("INSERT INTO WapCard (cardno,cardpwd,cardtype,money,isused,addtime) VALUES (?,?,?,?,0,datetime('now','localtime'))",[$cardno,md5($plain),$cardtype,$money]);
+                    $db->insert("INSERT INTO WapCard (cardno,cardpwd,cardtype,money,isused,addtime) VALUES (?,?,?,?,0,?)",
+                        [$cardno, md5($plain), $cardtype, $money, date('Y-m-d H:i:s')]);
                     $generated[] = [$cardno, $plain];
                 }
-            } elseif ($action === 'void') {
+            } elseif ($action === 'voiddone' || $action === 'void') {
                 $id = (int)($_POST['id'] ?? 0);
-                $row = $db->getOne("SELECT * FROM WapCard WHERE id=?",[$id]);
+                $row = $id > 0 ? $db->getOne("SELECT * FROM WapCard WHERE id=?",[$id]) : null;
                 if (!$row) {
                     $this->showError('充值卡不存在', $back);
                 }
@@ -89,20 +107,71 @@ class AdminCardPage extends WapPage {
             echo '</div>';
         }
 
-        // 列表（分页）
+        // 统计（随搜索条件联动）
+        $baseWhere = '1=1';
+        $params = [];
+        if ($q !== '') {
+            $baseWhere .= ' AND (id=? OR cardno LIKE ? OR cardtype LIKE ?)';
+            $params[] = (int)$q;
+            $params[] = '%' . $q . '%';
+            $params[] = '%' . $q . '%';
+        }
+        $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapCard WHERE " . $baseWhere, $params);
+        $unusedCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapCard WHERE " . $baseWhere . " AND isused=0", $params);
+        $usedCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapCard WHERE " . $baseWhere . " AND isused<>0", $params);
+
+        // 状态筛选
+        echo '<div class="content">筛选：';
+        $filters = [
+            'all' => '全部(' . $total . ')',
+            'unused' => '未使用(' . $unusedCount . ')',
+            'used' => '已使用(' . $usedCount . ')',
+        ];
+        foreach ($filters as $k => $label) {
+            echo ($status === $k)
+                ? '<strong>[' . $label . ']</strong> '
+                : '<a href="' . $this->backUrl($k, $q) . '">' . $label . '</a> ';
+        }
+        echo '</div>';
+
+        // 搜索
+        echo '<div class="content"><form method="get" action="card.php">'
+            . '搜索：<input type="text" name="q" value="' . $this->ToHtm($q) . '" placeholder="ID/卡号/类型"/>'
+            . '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>'
+            . '<input type="submit" value="查询"/></form>';
+        if ($q !== '') echo ' <a href="card.php">清除搜索</a>';
+        echo '</div>';
+
+        // 列表条件
+        $where = $baseWhere;
+        if ($status === 'unused') {
+            $where .= ' AND isused=0';
+        } elseif ($status === 'used') {
+            $where .= ' AND isused<>0';
+        }
         $page = max(1, (int)($_GET['page'] ?? 1));
-        $result = $db->getPage('WapCard', '*','', 'id DESC', $page, 20,[]);
+        $result = $db->getPage('WapCard', '*', $where, 'id DESC', $page, 20, $params);
+
+        // 使用人名称映射
+        $users = [];
+        foreach ($db->getAll("SELECT id,username FROM WapUser") as $u) {
+            $users[(int)$u['id']] = $u['username'];
+        }
+
         echo '<div class="content">共' . $result['total'] . '张<br/><ul class="list">';
         foreach ($result['list'] as $c) {
             $cid = (int)$c['id'];
-            $status = empty($c['isused']) ? '<span style="color:green">未使用</span>' : '<span style="color:gray">已使用</span>';
+            $statusTxt = empty($c['isused']) ? '<span style="color:green">未使用</span>' : '<span style="color:gray">已使用</span>';
             $time = !empty($c['addtime']) ? date('m-d H:i', strtotime($c['addtime'])) : '';
-            echo '<li>' . $this->ToHtm($c['cardno']) . ' 类型:' . $this->ToHtm($c['cardtype'] ?? '')
-                . ' 面值:' . (int)$c['money'] . ' ' . $status . ' <span class="time">' . $time . '</span>';
-            if (empty($c['isused'])) {
-                echo ' <form method="post" action="' . $back . '" style="display:inline">'
-                    . '<input type="hidden" name="action" value="void"/><input type="hidden" name="id" value="' . $cid . '"/>'
-                    . '<input type="submit" value="作废"/></form>';
+            echo '<li>ID:' . $cid . ' ' . $this->ToHtm($c['cardno']) . ' 类型:' . $this->ToHtm($c['cardtype'] ?? '')
+                . ' 面值:' . (int)$c['money'] . ' ' . $statusTxt . ' <span class="time">' . $time . '</span>';
+            if (!empty($c['isused'])) {
+                $uid = (int)($c['userid'] ?? 0);
+                $userTxt = $uid > 0 ? $this->ToHtm($users[$uid] ?? ('#' . $uid)) : '未知会员';
+                $usedTime = !empty($c['usetime']) ? date('m-d H:i', strtotime($c['usetime'])) : '未记录';
+                echo ' 使用人:' . $userTxt . ' 时间:' . $usedTime;
+            } else {
+                echo ' <a href="' . $back . ($q !== '' ? '&' : '?') . 'act=void&id=' . $cid . '">作废</a>';
             }
             echo '</li>';
         }
@@ -119,6 +188,28 @@ class AdminCardPage extends WapPage {
         }
 
         $this->showDown();
+    }
+
+    /** 作废二次确认页 */
+    private function showVoidConfirm($id, $back) {
+        $row = $id > 0 ? $this->db->getOne("SELECT * FROM WapCard WHERE id=?", [$id]) : null;
+        if (!$row) $this->showError('充值卡不存在', $back);
+        if (!empty($row['isused'])) $this->showError('该卡已被使用，不能作废', $back);
+
+        $this->strTitle = '作废充值卡确认';
+        $this->showTop($this->strTitle);
+        echo '<div class="subtitle">作废充值卡确认</div>';
+        echo '<div><a href="' . $back . '">返回充值卡列表</a></div>';
+        echo '<div class="content">卡号：' . $this->ToHtm($row['cardno']) . '<br/>'
+            . '类型：' . $this->ToHtm($row['cardtype'] ?? '') . '　面值：' . (int)$row['money'] . '<br/>'
+            . '作废后该卡将无法充值，请谨慎操作。';
+        echo '<div class="error">确认作废该充值卡？</div>';
+        echo '<form method="post" action="' . $back . '">'
+            . '<input type="hidden" name="action" value="voiddone"/>'
+            . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
+            . '<input type="submit" value="确认作废"/></form></div>';
+        $this->showDown();
+        exit;
     }
 }
 

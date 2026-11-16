@@ -91,7 +91,7 @@
 │   ├── shoporder.php                           # 商城订单（发货/完成/取消/退款）
 │   ├── goods.php                               # 商品管理（新增/编辑/删除/预警/改价改库存/上下架）
 │   ├── export.php                              # 运营数据导出（订单/商品 CSV）
-│   └── online.php sysmsg.php card.php           # 在线（筛选/搜索/踢下线/超时清理）/公告（搜索/分页/删除确认）/点卡
+│   └── online.php sysmsg.php card.php           # 在线（筛选/搜索/踢下线/超时清理）/公告（搜索/分页/删除确认）/充值卡（搜索/状态/作废确认/使用信息）
 │
 ├── install/                    # 安装向导
 │   ├── index.php               # 安装页面

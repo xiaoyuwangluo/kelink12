@@ -100,6 +100,10 @@ check_admin "admin:reply search" "$BASE/admin/reply.php?q=%E8%AF%84%E8%AE%BA"
 check_admin "admin:reply hidden" "$BASE/admin/reply.php?status=hidden"
 check_admin "admin:reply bbs hidden" "$BASE/admin/reply.php?tab=bbs&status=hidden"
 check_admin "admin:reply del confirm" "$BASE/admin/reply.php?tab=wap&act=del&id=1"
+# 充值卡管理增强
+check_admin "admin:card search" "$BASE/admin/card.php?q=123456"
+check_admin "admin:card used" "$BASE/admin/card.php?status=used"
+check_admin "admin:card void confirm" "$BASE/admin/card.php?act=void&id=1"
 # 在线用户增强
 check_admin "admin:online search" "$BASE/admin/online.php?q=127.0.0.1"
 check_admin "admin:online member" "$BASE/admin/online.php?type=member"

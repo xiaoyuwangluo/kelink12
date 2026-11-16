@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 299/299；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 302/302；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **299/299 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/在线/公告管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **302/302 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v27 充值卡管理增强（搜索 / 状态筛选 / 作废确认 / 使用信息）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 搜索与状态筛选 | [card.php](file:///workspace/php/admin/card.php)：关键词 `q` 支持 ID 精确与卡号/类型模糊；全部/未使用/已使用三态筛选及计数（随搜索联动）；分页与筛选条件联动保留 | 全部(3)/未使用(2)/已使用(1)；`q=123456` 命中 3 张；`status=used` 仅显示已使用卡 |
+| 作废二次确认 | 列表作废改为 `act=void&id=N` 确认页，展示卡号/类型/面值；POST `voiddone` 重新校验后删除；已使用卡在确认页与提交时均被拦截 | 未使用卡确认页信息正确，提交后总数 3→2；已使用卡提示“该卡已被使用，不能作废” |
+| 使用信息展示 | 已使用卡显示使用人（关联 WapUser，缺失显示 #ID）与使用时间；未使用卡保留作废入口 | 卡号 123456789013 显示“使用人:user2 时间:11-16 16:38” |
+| 生成 | 批量生成保留数量/类型/面值校验与卡号查重；新增时间改为站点本地时区写入，避免 SQLite localtime 时区偏差 | 生成结果正常，卡号密码明文仅本次展示 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **302 项**（新增搜索、已使用筛选、作废确认三条用例） | **302/302 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v26 系统公告增强（搜索 / 分页 / 删除确认 / 缓存清理）
 
