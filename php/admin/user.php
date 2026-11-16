@@ -22,24 +22,51 @@ class AdminUserPage extends WapPage {
         return $url;
     }
 
-    /** 导出全部会员 CSV (在任何 HTML 输出前调用) */
-    private function exportCsv($db) {
-        $rows = $db->getAll("SELECT id, username, email, money, point, usergroup, regtime AS addtime FROM WapUser ORDER BY id ASC");
+    /** 导出当前筛选会员 CSV (在任何 HTML 输出前调用) */
+    private function exportCsv($db, $status = 'all', $q = '') {
+        $where = '1=1';
+        $params = [];
+        if ($status === 'normal') {
+            $where .= ' AND islock=0';
+        } elseif ($status === 'locked') {
+            $where .= ' AND islock<>0';
+        }
+        if ($q !== '') {
+            $where .= ' AND (id=? OR username LIKE ? OR email LIKE ? OR nickname LIKE ?)';
+            $params[] = (int)$q;
+            $like = '%' . $q . '%';
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+        $rows = $db->getAll("SELECT id, username, nickname, email, money, point, usergroup, islock, regtime, lastlogintime, lastloginip"
+            . " FROM WapUser WHERE " . $where . " ORDER BY id ASC", $params);
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="users_' . date('Ymd') . '.csv"');
+        header('Content-Disposition: attachment; filename="users_' . date('Ymd_His') . '.csv"');
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF"); // BOM，兼容 Excel 中文
-        fputcsv($out, ['id', 'username', 'email', 'money', 'point', 'usergroup', 'addtime'], ',', '"', '');
+        fputcsv($out, ['会员ID', '用户名', '昵称', '邮箱', '余额', '积分', '分组', '状态', '注册时间', '最后登录时间', '最后登录IP'], ',', '"', '');
         foreach ($rows as $r) {
-            fputcsv($out, [
+            $line = [
                 (int)$r['id'],
                 (string)($r['username'] ?? ''),
+                (string)($r['nickname'] ?? ''),
                 (string)($r['email'] ?? ''),
                 (int)($r['money'] ?? 0),
                 (int)($r['point'] ?? 0),
-                (int)($r['usergroup'] ?? 1),
-                (string)($r['addtime'] ?? ''),
-            ], ',', '"', '');
+                $this->groupName($r['usergroup'] ?? 1),
+                empty($r['islock']) ? '正常' : '已锁定',
+                (string)($r['regtime'] ?? ''),
+                (string)($r['lastlogintime'] ?? ''),
+                (string)($r['lastloginip'] ?? ''),
+            ];
+            // 防止 CSV 公式注入
+            foreach ($line as $i => $v) {
+                $v = (string)$v;
+                if ($v !== '' && strpos('=+-@', $v[0]) !== false) $v = "'" . $v;
+                $line[$i] = $v;
+            }
+            fputcsv($out, $line, ',', '"', '');
         }
         fclose($out);
         exit;
@@ -58,7 +85,7 @@ class AdminUserPage extends WapPage {
 
         // CSV 导出 (GET，需在输出前处理)
         if (($_GET['action'] ?? '') === 'export') {
-            $this->exportCsv($db);
+            $this->exportCsv($db, $status, $q);
         }
 
         // 删除二次确认页
@@ -144,10 +171,12 @@ class AdminUserPage extends WapPage {
             . '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>'
             . '<input type="submit" value="查询"/></form></div>';
 
-        // 导出
+        // 导出（按当前筛选与搜索）
         echo '<form method="get" action="user.php" style="display:inline">'
             . '<input type="hidden" name="action" value="export"/>'
-            . '<input type="submit" value="导出CSV"/></form>';
+            . '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>'
+            . '<input type="hidden" name="q" value="' . $this->ToHtm($q) . '"/>'
+            . '<input type="submit" value="导出当前筛选会员CSV"/></form>';
 
         // 列表（分页，保留筛选/搜索）
         $where = '1=1';

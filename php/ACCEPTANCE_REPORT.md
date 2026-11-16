@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 304/304；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 307/307；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,17 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **304/304 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **307/307 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报管理用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v30 会员导出增强（按筛选导出 / 字段补全 / 防公式注入）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 按当前筛选导出 | [user.php](file:///workspace/php/admin/user.php)：导出按钮改为“导出当前筛选会员CSV”，携带当前 `status`（全部/正常/已锁定）与 `q`（ID/用户名/邮箱/昵称）；导出条件与列表查询完全一致 | `status=locked` 仅导出 user5；`q=user2` 仅导出 user2；全部导出 5 行 |
+| 字段补全 | 表头改为中文并补全昵称、分组名称、账号状态、最后登录时间、最后登录 IP，时间戳文件名精确到秒 | 5 列数据完整，已锁定账号显示“已锁定” |
+| 安全 | CSV 统一 UTF-8 BOM；对以 `= + - @` 开头的单元格前置单引号，防止 Excel 公式注入 | 导出响应 `text/csv; charset=utf-8`，文件名 `users_20261116_185448.csv` |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **307 项**（新增正常、已锁定、关键词导出三条用例） | **307/307 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v29 举报管理增强（搜索 / 状态筛选 / 处理标记 / 删除确认）
 

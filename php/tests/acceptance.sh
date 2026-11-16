@@ -133,6 +133,9 @@ for m in bbs shop novel video picture download ring link guessbook gongqiu paima
 done
 
 # v5 长尾补齐页面
+check_admin "admin:user export normal" "$BASE/admin/user.php?status=normal&action=export"
+check_admin "admin:user export locked" "$BASE/admin/user.php?status=locked&action=export"
+check_admin "admin:user export search" "$BASE/admin/user.php?action=export&q=user2"
 check_admin "admin:setting" "$BASE/admin/setting.php"
 check_admin "admin:report search" "$BASE/admin/report.php?q=%E5%B9%BF%E5%91%8A"
 check_admin "admin:report handled" "$BASE/admin/report.php?status=handled"
