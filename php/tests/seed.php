@@ -104,6 +104,15 @@ foreach ($reports as $r) {
       ->execute($r);
 }
 
+$caijis = [
+    [1, '测试采集源', 'http://example.com/feed', 2],
+    [2, '备用采集', 'http://example.org/rss', 2],
+];
+foreach ($caijis as $c) {
+    $d->prepare("INSERT INTO WapCaiji (id,name,url,classid,lastrun,addtime) VALUES (?,?,?,?,NULL,NOW())")
+      ->execute($c);
+}
+
 echo "seeded: users=" . $d->query("SELECT COUNT(*) FROM WapUser")->fetchColumn()
    . " shops=" . $d->query("SELECT COUNT(*) FROM WapShop")->fetchColumn()
    . " orders=" . $d->query("SELECT COUNT(*) FROM WapShopOrder")->fetchColumn()

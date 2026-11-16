@@ -157,6 +157,8 @@ check_admin "admin:upload image" "$BASE/admin/upload.php?type=image"
 check_admin "admin:upload search" "$BASE/admin/upload.php?q=test_b"
 check_admin "admin:upload del confirm" "$BASE/admin/upload.php?act=del&file=test_c.zip"
 check_admin "admin:caiji" "$BASE/admin/caiji.php"
+check_admin "admin:caiji search" "$BASE/admin/caiji.php?q=%E6%B5%8B%E8%AF%95"
+check_admin "admin:caiji del confirm" "$BASE/admin/caiji.php?act=del&id=1"
 check "utility" "$BASE/utility/index.php"
 for n in notify_ali notify_wx; do
   b=$(curl -s "$BASE/shop/$n.php"); e=$(echo "$b" | grep -c 'Fatal error\|Warning:\|Notice:')
