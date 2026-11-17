@@ -87,7 +87,9 @@ class AdminCardPage extends WapPage {
         }
 
         $this->strTitle = '充值卡管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '充值卡管理';
+        $activeNav = 'card';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">充值卡管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 批量生成表单
@@ -187,7 +189,7 @@ class AdminCardPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 作废二次确认页 */
@@ -197,7 +199,9 @@ class AdminCardPage extends WapPage {
         if (!empty($row['isused'])) $this->showError('该卡已被使用，不能作废', $back);
 
         $this->strTitle = '作废充值卡确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '作废充值卡确认';
+        $activeNav = 'card';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">作废充值卡确认</div>';
         echo '<div><a href="' . $back . '">返回充值卡列表</a></div>';
         echo '<div class="content">卡号：' . $this->ToHtm($row['cardno']) . '<br/>'
@@ -208,7 +212,7 @@ class AdminCardPage extends WapPage {
             . '<input type="hidden" name="action" value="voiddone"/>'
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="submit" value="确认作废"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 }

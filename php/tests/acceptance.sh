@@ -349,6 +349,18 @@ if echo "$ui_po" | grep -q 'class="admin-shell"' && echo "$ui_po" | grep -q 'cla
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v58:admin pointorder shell"
 fi
+ui_card=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/card.php")
+if echo "$ui_card" | grep -q 'class="admin-shell"' && echo "$ui_card" | grep -q 'class="subtitle">充值卡管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v59:admin card shell"
+fi
+ui_report=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/report.php")
+if echo "$ui_report" | grep -q 'class="admin-shell"' && echo "$ui_report" | grep -q 'class="subtitle">举报管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v59:admin report shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

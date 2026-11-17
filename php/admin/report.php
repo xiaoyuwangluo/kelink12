@@ -22,7 +22,9 @@ class AdminReportPage extends WapPage {
         $reason = mb_substr(trim(preg_replace('/\s+/', ' ', (string)($row['reason'] ?? ''))), 0, 60);
 
         $this->strTitle = '删除举报确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除举报确认';
+        $activeNav = 'report';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除举报确认</div>';
         echo '<div><a href="' . $back . '">返回举报列表</a></div>';
         echo '<div class="content">ID：' . (int)$row['id'] . '　帖子ID：' . (int)($row['bbsid'] ?? 0) . '<br/>'
@@ -33,7 +35,7 @@ class AdminReportPage extends WapPage {
             . '<input type="hidden" name="action" value="deldone"/>'
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="submit" value="确认删除"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
@@ -75,7 +77,9 @@ class AdminReportPage extends WapPage {
         }
 
         $this->strTitle = '举报管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '举报管理';
+        $activeNav = 'report';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">举报管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 统计（随搜索条件联动）
@@ -162,7 +166,7 @@ class AdminReportPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 
