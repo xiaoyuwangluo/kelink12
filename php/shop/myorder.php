@@ -124,26 +124,52 @@ class ShopMyOrderPage extends WapPage {
         $this->strTitle = '订单详情';
         $this->showTop($this->strTitle);
         echo '<div class="subtitle">订单详情 #' . $orderid . '</div><div class="content">';
-        echo '商品:' . $this->ToHtm($shop['title'] ?? '已删除商品') . '<br/>';
-        echo '数量:' . (int)$o['num'] . '<br/>';
-        echo '金额:￥' . (int)round($o['totalprice']) . '<br/>';
-        echo '状态:' . $stName . '<br/>';
+        echo '商品:<a href="view.php?classid=' . $this->classid . '&id=' . (int)$o['shopid'] . '">'
+            . $this->ToHtm($shop['title'] ?? '已删除商品') . '</a><br/>';
+        $unit = (int)($o['num']) > 0 ? (int)round((float)$o['totalprice'] / (int)$o['num']) : (int)round($o['totalprice']);
+        echo '单价:￥' . $unit . ' × ' . (int)$o['num'] . ' = ￥' . (int)round($o['totalprice']) . '<br/>';
+        echo '状态:<strong>' . $stName . '</strong><br/>';
         echo '地址:' . $this->ToHtm($o['address']) . '<br/>';
         echo '电话:' . $this->ToHtm($o['mobile']) . '<br/>';
         echo '下单时间:' . $this->ToHtm($o['addtime']) . '<br/>';
+        echo '</div>';
+
+        // 订单进度
+        if ($st === -1) {
+            echo '<div class="content"><div class="error">该订单已取消，交易关闭。</div></div>';
+        } elseif ($st === -2) {
+            echo '<div class="content"><div class="success">该订单已退款，款项已退回账户余额。</div></div>';
+        } else {
+            $steps = [0 => '提交订单', 1 => '完成付款', 2 => '商家发货', 3 => '确认收货'];
+            echo '<div class="content"><div class="subtitle">订单进度</div><ul class="timeline">';
+            foreach ($steps as $si => $label) {
+                if ($st > $si) {
+                    echo '<li>【已完成】' . $label . '</li>';
+                } elseif ($st === $si) {
+                    echo '<li><strong>【当前】' . $label . '</strong></li>';
+                } else {
+                    echo '<li class="time">【未开始】' . $label . '</li>';
+                }
+            }
+            echo '</ul></div>';
+        }
+
+        // 状态相关操作与说明
+        echo '<div class="content">';
         if ($st === 0) {
-            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '">';
+            echo '<a href="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">去支付</a><br/>';
+            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '" onsubmit="return confirm(\'确定取消该订单？取消后需重新下单。\');">';
             echo '<input type="hidden" name="act" value="cancel"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="取消订单"/></form>';
-            echo '<a href="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">去支付</a><br/>';
+        } elseif ($st === 1) {
+            echo '<div class="time">商家正在备货，请耐心等待发货。</div>';
         } elseif ($st === 2) {
-            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '">';
+            echo '<div class="time">商品已发出，收到货后请确认收货。</div>';
+            echo '<form method="post" action="myorder.php?classid=' . $this->classid . '" onsubmit="return confirm(\'确认已收到商品？\');">';
             echo '<input type="hidden" name="act" value="confirm"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
             echo '<input type="submit" value="确认收货"/></form>';
-        } elseif ($st === 1) {
-            echo '<div class="time">商家正在备货，请耐心等待发货</div>';
-        } elseif ($st === -2) {
-            echo '<div class="success">退款已退回账户余额</div>';
+        } elseif ($st === 3) {
+            echo '<div class="success">交易已完成，感谢您的购买。</div>';
         }
         echo '</div>';
         echo '<div><a href="myorder.php?classid=' . $this->classid . '">返回订单列表</a></div>';

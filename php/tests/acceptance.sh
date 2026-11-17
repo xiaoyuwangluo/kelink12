@@ -66,7 +66,7 @@ check "shop:list bad price" "$BASE/shop/list.php?classid=1&minprice=abc"
 check "shop:cart msg" "$BASE/shop/cart.php?msg=ok"
 check "shop:checkout no item" "$BASE/shop/checkout.php?shopid=999"
 check "shop:checkout bad ids" "$BASE/shop/checkout.php?ids=99999"
-for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?status=0" "shop/myorder.php?status=1" "shop/myorder.php?orderid=1" "paimai/bid.php?id=1" "myaccount/index.php" "myaccount/index.php?type=in" "myaccount/index.php?type=out"; do
+for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?status=0" "shop/myorder.php?status=1" "shop/myorder.php?orderid=1" "shop/myorder.php?orderid=2" "paimai/bid.php?id=1" "myaccount/index.php" "myaccount/index.php?type=in" "myaccount/index.php?type=out"; do
   check "shop:$p" "$BASE/$p"
 done
 
