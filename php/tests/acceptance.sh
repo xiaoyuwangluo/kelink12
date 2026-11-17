@@ -195,6 +195,10 @@ if echo "$wml2" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$(
 
 # v6 积分商城 / 敏感词后台（只读检查）
 check "shop:point" "$BASE/shop/point.php"
+check "shop:point_orders" "$BASE/shop/point_orders.php"
+check "shop:point_orders status=0" "$BASE/shop/point_orders.php?status=0"
+check "shop:point_orders status=1" "$BASE/shop/point_orders.php?status=1"
+check "shop:point_orders status=2" "$BASE/shop/point_orders.php?status=2"
 check_admin "admin:pointgoods" "$BASE/admin/pointgoods.php"
 check_admin "admin:pointorder" "$BASE/admin/pointorder.php"
 check_admin "admin:filter" "$BASE/admin/filter.php"
