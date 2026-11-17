@@ -17,6 +17,18 @@ class ShopCheckoutPage extends WapPage {
         $items = $this->collectItems($uid);
         if (!$items) $this->showError('没有可结算的商品', 'cart.php?classid=' . $this->classid);
 
+        // 校验在售/库存，并按商品当前价格刷新条目
+        list($items, $errors) = $this->validateItems($items);
+        if ($errors) {
+            $this->strTitle = '无法结算';
+            $this->showTop($this->strTitle);
+            echo '<div class="subtitle">无法结算</div><div class="content"><div class="error">以下商品暂不可结算：</div><ul>';
+            foreach ($errors as $e) echo '<li>' . $this->ToHtm($e) . '</li>';
+            echo '</ul><a href="cart.php?classid=' . $this->classid . '">返回购物车调整</a></div>';
+            $this->showDown();
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->doSubmit($uid, $items);
             return;
@@ -25,6 +37,11 @@ class ShopCheckoutPage extends WapPage {
         // 结算确认页：商品清单 + 收货地址/手机
         $total = 0;
         foreach ($items as $it) $total += $it['price'] * $it['num'];
+        // 预填最近一次订单的收货信息
+        $last = $db->getOne("SELECT address,mobile FROM WapShopOrder WHERE userid=? AND address<>'' ORDER BY id DESC LIMIT 1", [$uid]);
+        $lastAddr = $last['address'] ?? '';
+        $lastMobile = $last['mobile'] ?? '';
+        $money = (int)$db->getScalar("SELECT money FROM WapUser WHERE id=?", [$uid]);
 
         $this->strTitle = '确认订单';
         $this->showTop($this->strTitle);
@@ -35,6 +52,8 @@ class ShopCheckoutPage extends WapPage {
         }
         echo '</ul>';
         echo '<div class="total">应付合计:￥' . $total . '</div>';
+        echo '<div class="time">当前余额:￥' . $money
+            . ($money < $total ? '（余额不足，可在支付页选择其他方式）' : '') . '</div>';
         echo '<form method="post" action="checkout.php?classid=' . $this->classid . '">';
         // 隐藏条目参数（直接购买模式）
         if (!empty($_GET['shopid'])) {
@@ -45,12 +64,35 @@ class ShopCheckoutPage extends WapPage {
         foreach ($items as $it) {
             if (!empty($it['cartid'])) echo '<input type="hidden" name="ids[]" value="' . (int)$it['cartid'] . '"/>';
         }
-        echo '收货地址:<input type="text" name="address" maxlength="100" required/><br/>';
-        echo '联系电话:<input type="text" name="mobile" maxlength="20" required/><br/>';
-        echo '<input type="submit" value="提交订单"/></form>';
+        echo '收货地址:<input type="text" name="address" maxlength="100" value="' . $this->ToHtm($lastAddr) . '" required/><br/>';
+        echo '联系电话:<input type="text" name="mobile" maxlength="20" value="' . $this->ToHtm($lastMobile) . '" required/>'
+            . '<br/><span class="time">请填写 6-20 位数字，可含 + 或 -</span><br/>';
+        echo '<input type="submit" value="提交订单（￥' . $total . '）"/></form>';
         echo '</div>';
         echo '<div><a href="cart.php?classid=' . $this->classid . '">返回购物车</a></div>';
         $this->showDown();
+    }
+
+    /** 校验条目在售与库存，并用商品当前标题/价格刷新 */
+    private function validateItems($items) {
+        $db = $this->db;
+        $errors = [];
+        $ok = [];
+        foreach ($items as $it) {
+            $p = $db->getOne("SELECT title,price,stock,isshow FROM WapShop WHERE id=?", [$it['shopid']]);
+            if (!$p) { $errors[] = '商品「' . $it['title'] . '」已不存在'; continue; }
+            if ((int)$p['isshow'] !== 1) { $errors[] = '商品「' . $p['title'] . '」已下架'; continue; }
+            $stock = (int)$p['stock'];
+            if ($stock <= 0) { $errors[] = '商品「' . $p['title'] . '」已售罄'; continue; }
+            if ($it['num'] > $stock) {
+                $errors[] = '商品「' . $p['title'] . '」库存不足，仅剩 ' . $stock . ' 件';
+                continue;
+            }
+            $it['title'] = $p['title'];
+            $it['price'] = (int)round($p['price']);
+            $ok[] = $it;
+        }
+        return [$ok, $errors];
     }
 
     /** 收集待结算条目，来源：POST/GET 的 ids[] 或 shopid+num */
