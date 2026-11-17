@@ -49,7 +49,9 @@ class AdminAuditPage extends WapPage {
         $err = (string)($_GET['err'] ?? '');
 
         $this->strTitle = '内容审核';
-        $this->showTop($this->strTitle);
+        $adminTitle = '内容审核';
+        $activeNav = 'audit';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">内容审核</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
         if ($msg !== '') echo '<div class="success">' . $this->ToHtm($msg) . '</div>';
@@ -65,7 +67,7 @@ class AdminAuditPage extends WapPage {
 
         if (!$rows) {
             echo '<div class="content">暂无记录</div>';
-            $this->showDown();
+            require __DIR__ . '/inc/footer.php';
             return;
         }
 
@@ -120,7 +122,7 @@ class AdminAuditPage extends WapPage {
             }
             echo '</div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 处理通过/拒绝，完成后重定向 (PRG) */

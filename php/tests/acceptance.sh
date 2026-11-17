@@ -301,6 +301,18 @@ if echo "$ui_setting" | grep -q 'class="admin-shell"' && echo "$ui_setting" | gr
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v54:admin setting shell"
 fi
+ui_audit=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/audit.php")
+if echo "$ui_audit" | grep -q 'class="admin-shell"' && echo "$ui_audit" | grep -q 'class="subtitle">内容审核'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v55:admin audit shell"
+fi
+ui_tag=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/tag.php")
+if echo "$ui_tag" | grep -q 'class="admin-shell"' && echo "$ui_tag" | grep -q 'class="subtitle">帖子标签管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v55:admin tag shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

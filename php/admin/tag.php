@@ -56,7 +56,9 @@ class AdminTagPage extends WapPage {
         );
 
         $this->strTitle = '标签管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '标签管理';
+        $activeNav = 'tag';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">帖子标签管理</div>';
         echo '<div><a href="index.php">返回后台首页</a> | <a href="../bbs/tags.php">前台热门话题</a></div>';
 
@@ -101,7 +103,7 @@ class AdminTagPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 标签改名 / 合并（同帖已有目标标签时删除旧标签行，避免唯一键冲突） */
