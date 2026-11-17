@@ -43,6 +43,19 @@ for m in article bbs shop novel video picture download ring link guessbook gongq
 done
 check "novel/chapter" "$BASE/novel/view.php?id=1&cid=1"
 check "article/index" "$BASE/article/index.php"
+# v63 文章详情与评论页组件化
+aview=$(curl -s "$BASE/article/view.php?id=1")
+if echo "$aview" | grep -q 'ui-breadcrumb' && echo "$aview" | grep -q 'content ui-card'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v63:article view components"
+fi
+areply=$(curl -s "$BASE/article/book_re.php?id=1")
+if echo "$areply" | grep -q '全部评论' && echo "$areply" | grep -q 'ui-list'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v63:article reply components"
+fi
 
 # 新模块
 for m in chat clan games zhdao nongchang signin form; do

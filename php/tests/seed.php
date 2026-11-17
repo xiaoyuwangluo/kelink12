@@ -65,6 +65,15 @@ foreach ($bbsReplies as $r) {
       ->execute([$r[0], $r[1], $r[2], $r[3], $r[4], $r[5]]);
 }
 
+$articles = [
+    [1, 2, '文章测试标题', '测试作者', '这是文章正文内容，用于详情页与评论页组件验收。'],
+    [2, 2, '文章第二条', '测试作者', '用于上一条/下一条导航验收。'],
+];
+foreach ($articles as $a) {
+    $d->prepare("INSERT INTO WapArticle (id,classid,userid,title,author,content,isshow,hits,addtime) VALUES (?,?,0,?,?,?,1,10,NOW())")
+      ->execute([$a[0], $a[1], $a[2], $a[3], $a[4]]);
+}
+
 $online = [
     [1, 2, 'user2', '127.0.0.1', '/index.php', date('Y-m-d H:i:s')],
     [2, 1, 'user1', '10.0.0.1', '/bbs/list.php', date('Y-m-d H:i:s')],

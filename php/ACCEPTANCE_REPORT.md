@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 380/380；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 382/382；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,19 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **380/380 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **382/382 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v63 文章详情与评论页组件化（P2 第二步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 详情页结构 | [article/view.php](file:///workspace/php/article/view.php)：新增面包屑，作者/时间/点击量改为 `ui-tag`，正文容器加 `ui-card`，底部操作改为 `ui-btn` 主次按钮 | 输出 1 个面包屑、1 个 `content ui-card`、1 个主按钮与 1 个幽灵按钮 |
+| 评论页结构 | [article/book_re.php](file:///workspace/php/article/book_re.php)：表单卡片化（`ui-field` + 字数提示 + 块级提交），评论列表改为 `ui-list`，显示评论总数与空状态 | 显示“全部评论 / 共 3 条”、`ui-list`，无评论时输出 `ui-empty` |
+| 提示与分页 | 校验提示改用 `ui-alert` 变体（危险/警告/成功），分页改用 `ui-pager` 当前页高亮 | 未登录、空内容、限频、成功四类提示样式正确 |
+| 评论链路 | 登录会员提交评论走原有校验与限频逻辑，不改数据流 | 限频窗口过后提交成功：提示“评论发表成功”，总数 2→3，帖子立即可见 |
+| 测试夹具 | [tests/seed.php](file:///workspace/php/tests/seed.php) 增补 2 篇文章，供详情与上下篇验收 | 种子库 `WapArticle=2`，评论页取到 2 条可见评论 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **382 项**（新增详情/评论组件断言） | **382/382 PASS** |
 
 ## 〇〇〇〇〇〇〇、v62 前台 modern 模板与站点配置生效修复（P2 起步）
 

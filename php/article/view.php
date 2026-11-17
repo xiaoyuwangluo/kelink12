@@ -25,13 +25,14 @@ class ArticleViewPage extends WapPage {
         $this->strTitle = $article['title'];
         $this->showTop($this->strTitle);
 
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">' . $this->ToHtm($this->classVo->classname ?? '文章') . '</a> / 正文</div>';
         echo '<div class="subtitle">' . $this->ToHtm($article['title']) . '</div>';
-        echo '<div class="info">';
-        echo '作者:' . $this->ToHtm($article['author'] ?? '佚名') . ' ';
-        echo '时间:' . date('Y-m-d H:i', strtotime($article['addtime'])) . ' ';
-        echo '点击:' . (int)$article['hits'] . ' ';
+        echo '<div class="content ui-card">';
+        echo '<div class="ui-flex ui-mb-2" style="gap:8px;flex-wrap:wrap">';
+        echo '<span class="ui-tag">作者：' . $this->ToHtm($article['author'] ?? '佚名') . '</span>';
+        echo '<span class="ui-tag ui-tag-muted">' . date('Y-m-d H:i', strtotime($article['addtime'])) . '</span>';
+        echo '<span class="ui-tag ui-tag-muted">点击 ' . (int)$article['hits'] . '</span>';
         echo '</div>';
-        echo '<div class="content">';
         echo $this->wapTool->ToWML($article['content'], $this->wmlVo);
         echo '</div>';
 
@@ -44,9 +45,9 @@ class ArticleViewPage extends WapPage {
         $this->showPrevNext($id);
 
         // 回复入口
-        echo '<div class="replybar">';
-        echo '<a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">查看/发表评论</a>';
-        echo ' <a href="list.php?classid=' . $this->classid . '">返回列表</a>';
+        echo '<div class="replybar ui-mt-3">';
+        echo '<a class="ui-btn ui-btn-primary" href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">查看/发表评论</a>';
+        echo '<a class="ui-btn ui-btn-ghost" href="list.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
 
         $this->showDown();
