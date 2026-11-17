@@ -39,51 +39,63 @@ class ShopPointOrdersPage extends WapPage {
 
         $this->strTitle = '我的兑换记录';
         $this->showTop($this->strTitle);
-        echo '<div class="subtitle">我的兑换记录</div><div class="content">';
-        echo '我的积分：' . (int)($user['point'] ?? 0) . '<br/>';
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="point.php">积分商城</a> / 兑换记录</div>';
+        echo '<div class="subtitle">我的兑换记录</div>';
 
+        echo '<div class="ui-card"><div class="ui-flex ui-between ui-center"><span class="ui-tag ui-tag-muted">我的积分</span>'
+            . '<span class="price">' . (int)($user['point'] ?? 0) . '</span></div></div>';
+
+        // 状态筛选 tabs
         $tabs = ['all' => '全部'] + self::STATUS_TEXT;
+        echo '<div class="ui-tabs ui-mt-2">';
         foreach ($tabs as $st => $label) {
             $cnt = ($st === 'all') ? $total : ($counts[(int)$st] ?? 0);
             $txt = $label . '(' . $cnt . ')';
+            $href = 'point_orders.php' . ((string)$st === 'all' ? '' : '?status=' . $st);
             echo ((string)$status === (string)$st)
-                ? '<strong>[' . $txt . ']</strong> '
-                : '<a href="point_orders.php' . ((string)$st === 'all' ? '' : '?status=' . $st) . '">' . $txt . '</a> ';
+                ? '<a class="is-active" href="' . $href . '">' . $txt . '</a>'
+                : '<a href="' . $href . '">' . $txt . '</a>';
         }
+        echo '</div>';
 
-        echo '<div class="time">共 ' . $total . ' 条兑换记录，当前条件 ' . (int)$sum['c'] . ' 条，累计消耗积分 '
-            . (int)$sum['sp'] . '，本页 ' . count($result['list']) . ' 条</div>';
+        echo '<div class="ui-flex ui-flex-wrap ui-gap-2 ui-center ui-mt-2">'
+            . '<span class="ui-tag">共 ' . $total . ' 条记录</span>'
+            . '<span class="ui-tag ui-tag-muted">当前条件 ' . (int)$sum['c'] . ' 条</span>'
+            . '<span class="ui-tag ui-tag-muted">累计消耗 ' . (int)$sum['sp'] . ' 积分</span></div>';
 
         if (!$result['list']) {
-            echo $status === 'all' ? '暂无兑换记录。' : '该状态下暂无兑换记录。';
+            echo '<div class="ui-card ui-mt-2"><div class="ui-empty"><div class="icon">📦</div>'
+                . ($status === 'all' ? '暂无兑换记录' : '该状态下暂无兑换记录') . '</div></div>';
         } else {
-            echo '<ul class="loglist">';
+            echo '<ul class="loglist list ui-list ui-mt-2">';
             foreach ($result['list'] as $o) {
                 $st = (int)$o['status'];
-                echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['goodsname'])
-                    . ' 积分 ' . (int)$o['points'] . ' × ' . (int)$o['num']
-                    . ' <strong>[' . (self::STATUS_TEXT[$st] ?? '未知') . ']</strong> '
-                    . ($o['addtime'] ? date('m-d H:i', strtotime($o['addtime'])) : '');
-                if (!empty($o['note'])) echo '<br/><span class="time">备注：' . $this->ToHtm($o['note']) . '</span>';
+                $tagClass = $st === 1 ? 'ui-tag-success' : ($st === 2 ? 'ui-tag-muted' : 'ui-tag-warning');
+                echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['goodsname']);
+                echo '<span class="ui-flex ui-gap-2 ui-center">'
+                    . '<span class="ui-tag">积分 ' . (int)$o['points'] . ' × ' . (int)$o['num'] . '</span>'
+                    . '<span class="ui-tag ' . $tagClass . '">' . (self::STATUS_TEXT[$st] ?? '未知') . '</span>'
+                    . '<span class="ui-tag ui-tag-muted">' . ($o['addtime'] ? date('m-d H:i', strtotime($o['addtime'])) : '') . '</span>'
+                    . '</span>';
+                if (!empty($o['note'])) echo '<div class="meta">备注：' . $this->ToHtm($o['note']) . '</div>';
                 echo '</li>';
             }
             echo '</ul>';
         }
-        echo '</div>';
 
         if ($result['pageCount'] > 1) {
             $pageUrl = function ($p) use ($status) {
                 return 'point_orders.php?' . ($status === 'all' ? '' : 'status=' . $status . '&') . 'page=' . $p;
             };
-            echo '<div class="pager">';
-            if ($page > 1) echo '<a href="' . $pageUrl($page - 1) . '">上一页</a> ';
-            echo '第' . $page . '/' . $result['pageCount'] . '页 ';
+            echo '<div class="ui-pager">';
+            if ($page > 1) echo '<a href="' . $pageUrl($page - 1) . '">上一页</a>';
+            echo '<span class="current">' . $page . ' / ' . (int)$result['pageCount'] . '</span>';
             if ($page < $result['pageCount']) echo '<a href="' . $pageUrl($page + 1) . '">下一页</a>';
             echo '</div>';
         }
 
-        echo '<div class="nav"><a href="point.php">继续兑换</a> ';
-        echo '<a href="../myaccount/index.php">我的账户</a></div>';
+        echo '<div class="ui-flex ui-gap-2 ui-mt-2"><a class="ui-btn ui-btn-ghost" href="point.php">继续兑换</a>';
+        echo '<a class="ui-btn" href="../myaccount/index.php">我的账户</a></div>';
         $this->showDown();
     }
 }

@@ -38,14 +38,18 @@ class PaimaiBidPage extends WapPage {
         // 出价页
         $this->strTitle = '我要出价';
         $this->showTop($this->strTitle);
-        echo '<div class="subtitle">出价 - ' . $this->ToHtm($item['title']) . '</div><div class="content">';
-        echo '当前最高价:￥' . $curTop . '<br/>';
-        echo '最低可出价:￥' . $minNext . '(加价幅度' . self::MIN_STEP . '元)<br/>';
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">拍卖</a> / <a href="view.php?classid=' . $this->classid . '&id=' . $paimaiid . '">拍品</a> / 出价</div>';
+        echo '<div class="subtitle">出价 - ' . $this->ToHtm($item['title']) . '</div>';
+        echo '<div class="ui-card">';
+        echo '<div class="ui-flex ui-between ui-center"><span class="ui-tag ui-tag-muted">当前最高价</span><span class="price">￥' . $curTop . '</span></div>';
+        echo '<div class="ui-flex ui-between ui-center ui-mt-2"><span class="ui-tag ui-tag-muted">最低可出价</span><span class="ui-tag">￥' . $minNext . '</span></div>';
+        echo '<div class="ui-alert ui-alert-info">加价幅度 ' . self::MIN_STEP . ' 元，请填写不低于最低可出价的整数。</div>';
         echo '<form method="post" action="bid.php?classid=' . $this->classid . '&paimaiid=' . $paimaiid . '">';
-        echo '我的出价(元):<input type="number" name="price" min="' . $minNext . '" step="1" required/><br/>';
-        echo '<input type="submit" value="确认出价"/></form>';
+        echo '<div class="ui-field"><label for="price">我的出价(元)</label>';
+        echo '<input type="number" id="price" name="price" min="' . $minNext . '" step="1" required/></div>';
+        echo '<input class="ui-btn ui-btn-primary ui-btn-block" type="submit" value="确认出价"/></form>';
         echo '</div>';
-        echo '<div><a href="view.php?classid=' . $this->classid . '&id=' . $paimaiid . '">返回拍品</a></div>';
+        echo '<div class="ui-flex ui-gap-2 ui-mt-2"><a class="ui-btn ui-btn-ghost" href="view.php?classid=' . $this->classid . '&id=' . $paimaiid . '">返回拍品</a></div>';
         $this->showDown();
     }
 }

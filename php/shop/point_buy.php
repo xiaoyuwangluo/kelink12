@@ -31,17 +31,24 @@ class ShopPointBuyPage extends WapPage {
         $user = $this->userSession->getUserVo();
         $this->strTitle = '确认兑换';
         $this->showTop($this->strTitle);
-        echo '<div class="subtitle">确认兑换</div><div class="content">';
-        echo '商品：' . $this->ToHtm($goods['name']) . '<br/>';
-        echo '所需积分：' . (int)$goods['points'] . '<br/>';
-        echo '我的积分：' . (int)($user['point'] ?? 0) . '<br/>';
-        echo '剩余库存：' . (int)$goods['stock'] . '<br/>';
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="point.php">积分商城</a> / 确认兑换</div>';
+        echo '<div class="subtitle">确认兑换</div>';
+        echo '<div class="ui-card">';
+        echo '<div class="ui-card-head"><span class="ui-card-title">' . $this->ToHtm($goods['name']) . '</span>'
+            . '<span class="ui-card-extra">剩余库存 ' . (int)$goods['stock'] . '</span></div>';
+        echo '<div class="ui-stat-grid">';
+        echo '<div class="ui-stat"><div class="num">' . (int)$goods['points'] . '</div><div class="label">所需积分</div></div>';
+        echo '<div class="ui-stat"><div class="num">' . (int)($user['point'] ?? 0) . '</div><div class="label">我的积分</div></div>';
+        echo '</div>';
+        if ((int)($user['point'] ?? 0) < (int)$goods['points']) {
+            echo '<div class="ui-alert ui-alert-warning">积分不足，无法兑换该商品。</div>';
+        }
         echo '<form method="post" action="point_buy.php?id=' . (int)$goods['id'] . '">';
         echo '<input type="hidden" name="goodsid" value="' . (int)$goods['id'] . '"/>';
-        echo '<input type="submit" value="确认兑换"/></form>';
+        echo '<input class="ui-btn ui-btn-primary ui-btn-block ui-mt-2" type="submit" value="确认兑换"/></form>';
         echo '</div>';
-        echo '<div><a href="point.php">返回积分商城</a> ';
-        echo '<a href="point_orders.php">我的兑换记录</a></div>';
+        echo '<div class="ui-flex ui-gap-2 ui-mt-2"><a class="ui-btn ui-btn-ghost" href="point.php">返回积分商城</a>';
+        echo '<a class="ui-btn" href="point_orders.php">我的兑换记录</a></div>';
         $this->showDown();
     }
 

@@ -78,6 +78,40 @@ $d->prepare("INSERT INTO WapVideo (id,classid,title,content,videourl,isshow,hits
 $d->prepare("INSERT INTO WapDownload (id,classid,userid,title,content,downurl,isshow,hits,addtime) VALUES (1,2,0,'下载测试标题','下载简介','/uploadfiles/demo.zip',1,5,NOW())")->execute();
 $d->prepare("INSERT INTO WapBbs (id,classid,userid,nickname,title,content,isshow,hits,replynum,addtime) VALUES (1,2,1,'user1','论坛测试帖子','这是帖子正文，用于详情页组件验收。',1,8,2,NOW())")->execute();
 
+$paimais = [
+    [1, 1, 0, '拍卖测试拍品', '这是拍品描述，用于拍卖详情页组件验收。', '', '', 0, 1, 12],
+    [2, 1, 0, '无出价拍品', '用于空出价状态验收。', '', '', 0, 1, 3],
+];
+foreach ($paimais as $p) {
+    $d->prepare("INSERT INTO WapPaimai (id,classid,userid,title,content,picurl,downurl,istop,isshow,hits,addtime) VALUES (?,?,?,?,?,?,?,?,?,?,NOW())")
+      ->execute($p);
+}
+$paimaiBids = [
+    [1, 1, 2, '会员二', 120],
+    [2, 1, 1, '会员一', 100],
+];
+foreach ($paimaiBids as $b) {
+    $d->prepare("INSERT INTO WapPaimaiBid (id,paimaiid,userid,nickname,price,addtime) VALUES (?,?,?,?,?,NOW())")
+      ->execute($b);
+}
+
+$pointGoods = [
+    [1, '积分兑换测试商品', '积分商城列表组件验收', 50, 10, 1, 0],
+    [2, '积分不足商品', '积分不足状态验收', 500, 5, 1, 0],
+];
+foreach ($pointGoods as $g) {
+    $d->prepare("INSERT INTO WapPointGoods (id,name,intro,points,stock,isshow,sortnum,addtime) VALUES (?,?,?,?,?,?,?,NOW())")
+      ->execute($g);
+}
+$pointOrders = [
+    [1, 2, 1, '积分兑换测试商品', 50, 1, 0, ''],
+    [2, 2, 2, '积分不足商品', 500, 1, 1, '已人工发放'],
+];
+foreach ($pointOrders as $o) {
+    $d->prepare("INSERT INTO WapPointOrder (id,userid,goodsid,goodsname,points,num,status,note,addtime) VALUES (?,?,?,?,?,?,?,?,NOW())")
+      ->execute($o);
+}
+
 $online = [
     [1, 2, 'user2', '127.0.0.1', '/index.php', date('Y-m-d H:i:s')],
     [2, 1, 'user1', '10.0.0.1', '/bbs/list.php', date('Y-m-d H:i:s')],

@@ -325,10 +325,11 @@ class WapPage {
     /** 显示错误信息 */
     public function showError($msg, $backUrl = '') {
         $this->showTop('错误提示');
-        echo '<div class="error">' . $this->ToHtm($msg) . '</div>';
+        echo '<div class="ui-card"><div class="ui-alert ui-alert-danger">' . $this->ToHtm($msg) . '</div>';
         if ($backUrl) {
-            echo '<div><a href="' . $backUrl . '">返回</a></div>';
+            echo '<a class="ui-btn ui-btn-ghost" href="' . $this->ToHtm($backUrl) . '">返回</a>';
         }
+        echo '</div>';
         $this->showDown();
         exit;
     }
@@ -336,10 +337,11 @@ class WapPage {
     /** 成功提示 */
     public function showSuccess($msg, $backUrl = '') {
         $this->showTop('操作成功');
-        echo '<div class="success">' . $this->ToHtm($msg) . '</div>';
+        echo '<div class="ui-card"><div class="ui-alert ui-alert-success">' . $this->ToHtm($msg) . '</div>';
         if ($backUrl) {
-            echo '<div><a href="' . $backUrl . '">返回</a></div>';
+            echo '<a class="ui-btn ui-btn-ghost" href="' . $this->ToHtm($backUrl) . '">返回</a>';
         }
+        echo '</div>';
         $this->showDown();
         exit;
     }

@@ -43,40 +43,52 @@ class ShopPayPage extends WapPage {
         $user = $this->userVo;
         $this->strTitle = '订单支付';
         $this->showTop($this->strTitle);
-        echo '<div class="subtitle">订单支付 #' . $orderid . '</div><div class="content">';
-        echo '应付金额:<span class="price">￥' . $total . '</span><br/>';
-        echo '账户余额:￥' . (int)$user['money'] . '<br/>';
-        echo '<hr/>';
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">商城</a> / 订单支付</div>';
+        echo '<div class="subtitle">订单支付 #' . $orderid . '</div>';
+
+        echo '<div class="ui-card">';
+        echo '<div class="ui-flex ui-between ui-center"><span class="ui-tag ui-tag-muted">应付金额</span><span class="price">￥' . $total . '</span></div>';
+        echo '<div class="ui-flex ui-between ui-center ui-mt-2"><span class="ui-tag ui-tag-muted">账户余额</span><span class="ui-tag">￥' . (int)$user['money'] . '</span></div>';
+        echo '</div>';
+
+        echo '<div class="ui-card">';
+        echo '<div class="ui-card-head"><span class="ui-card-title">余额支付</span><span class="ui-card-extra">即时到账</span></div>';
         echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
         echo '<input type="hidden" name="act" value="balance"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
-        echo '<input type="submit" value="使用余额支付"/></form>';
-        echo '<hr/>';
+        echo '<input class="ui-btn ui-btn-primary ui-btn-block" type="submit" value="使用余额支付"/></form>';
+        echo '</div>';
+
+        echo '<div class="ui-card">';
+        echo '<div class="ui-card-head"><span class="ui-card-title">充值卡支付</span><span class="ui-card-extra">先充值后扣款</span></div>';
         echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
         echo '<input type="hidden" name="act" value="card"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
-        echo '充值卡卡号:<input type="text" name="cardno" maxlength="32"/><br/>';
-        echo '充值卡密码:<input type="password" name="cardpwd" maxlength="32"/><br/>';
-        echo '<input type="submit" value="充值卡支付(先充值后扣款)"/></form>';
-        echo '<hr/>';
+        echo '<div class="ui-field"><label for="cardno">充值卡卡号</label><input type="text" id="cardno" name="cardno" maxlength="32"/></div>';
+        echo '<div class="ui-field"><label for="cardpwd">充值卡密码</label><input type="password" id="cardpwd" name="cardpwd" maxlength="32"/></div>';
+        echo '<input class="ui-btn ui-btn-block" type="submit" value="充值卡支付"/></form>';
+        echo '</div>';
+
         // 第三方网关选项卡: 仅当开关开启且凭据齐全时显示支付按钮，否则显示"通道未启用"说明
-        echo '<div class="subtitle">第三方网关支付</div>';
+        echo '<div class="ui-card">';
+        echo '<div class="ui-card-head"><span class="ui-card-title">第三方网关支付</span></div>';
         $aliReady = (new AliPay())->ready();
         $wxReady = (new WxPay())->ready();
         if ($aliReady) {
             echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
             echo '<input type="hidden" name="act" value="alipay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
-            echo '<input type="submit" value="支付宝支付"/></form>';
+            echo '<input class="ui-btn ui-btn-block" type="submit" value="支付宝支付"/></form>';
         } else {
-            echo '支付宝: 通道未启用 (需 KL_AliPay_Open=1 且凭据齐全)<br/>';
+            echo '<div class="ui-alert ui-alert-warning">支付宝：通道未启用（需 KL_AliPay_Open=1 且凭据齐全）</div>';
         }
         if ($wxReady) {
             echo '<form method="post" action="pay.php?classid=' . $this->classid . '&orderid=' . $orderid . '">';
             echo '<input type="hidden" name="act" value="wxpay"/><input type="hidden" name="orderid" value="' . $orderid . '"/>';
-            echo '<input type="submit" value="微信支付(扫码)"/></form>';
+            echo '<input class="ui-btn ui-btn-block" type="submit" value="微信支付(扫码)"/></form>';
         } else {
-            echo '微信支付: 通道未启用 (需 KL_WxPay_Open=1 且凭据齐全)';
+            echo '<div class="ui-alert ui-alert-warning">微信支付：通道未启用（需 KL_WxPay_Open=1 且凭据齐全）</div>';
         }
         echo '</div>';
-        echo '<div><a href="myorder.php?classid=' . $this->classid . '">我的订单</a></div>';
+
+        echo '<div class="ui-flex ui-gap-2 ui-mt-2"><a class="ui-btn ui-btn-ghost" href="myorder.php?classid=' . $this->classid . '">我的订单</a></div>';
         $this->showDown();
     }
 

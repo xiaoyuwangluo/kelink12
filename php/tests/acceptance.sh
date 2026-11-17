@@ -117,6 +117,49 @@ if echo "$ple" | grep -q 'ui-empty'; then
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v66:picture list empty state"
 fi
+# v67 拍卖/积分/支付交易页组件化与统一提示条
+pl=$(curl -s "$BASE/paimai/list.php?classid=1")
+if echo "$pl" | grep -q 'ui-breadcrumb' && echo "$pl" | grep -q 'list ui-list'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:paimai list components"
+fi
+pv=$(curl -s "$BASE/paimai/view.php?id=1")
+if echo "$pv" | grep -q 'ui-card' && echo "$pv" | grep -q '最近出价' && echo "$pv" | grep -q 'ui-btn ui-btn-primary ui-btn-block'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:paimai view components"
+fi
+pd=$(curl -s -b "$JAR" "$BASE/paimai/bid.php?classid=1&paimaiid=1")
+if echo "$pd" | grep -q 'ui-breadcrumb' && echo "$pd" | grep -q 'ui-field' && echo "$pd" | grep -q 'ui-btn-primary'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:paimai bid form"
+fi
+sp=$(curl -s "$BASE/shop/point.php")
+if echo "$sp" | grep -q 'ui-breadcrumb' && echo "$sp" | grep -q 'ui-tabs' && echo "$sp" | grep -q 'list ui-list'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:point list components"
+fi
+spo=$(curl -s -b "$JAR" "$BASE/shop/point_orders.php?status=0")
+if echo "$spo" | grep -q 'ui-tabs' && echo "$spo" | grep -q 'ui-tag ui-tag-warning'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:point orders components"
+fi
+spay=$(curl -s -b "$JAR" "$BASE/shop/pay.php?orderid=1")
+if echo "$spay" | grep -q 'ui-card' && echo "$spay" | grep -q '使用余额支付' && echo "$spay" | grep -q 'ui-alert ui-alert-warning'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:pay page components"
+fi
+serr=$(curl -s -b "$JAR" "$BASE/shop/point_buy.php?id=999")
+if echo "$serr" | grep -q 'ui-alert ui-alert-danger'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:unified error alert"
+fi
 check "shop:cart msg" "$BASE/shop/cart.php?msg=ok"
 check "shop:checkout no item" "$BASE/shop/checkout.php?shopid=999"
 check "shop:checkout bad ids" "$BASE/shop/checkout.php?ids=99999"

@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 390/390；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 397/397；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,23 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **390/390 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **397/397 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v67 拍卖/积分/支付交易页组件化（P2 第六步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 统一提示条 | [WapPage.php](file:///workspace/php/includes/WapPage.php)：`showError` / `showSuccess` 由 `.error` / `.success` 改为 `ui-card` + `ui-alert ui-alert-danger` / `ui-alert-success`，返回链接改 `ui-btn ui-btn-ghost`，全站提示条一次性统一 | `point_buy.php?id=999` 输出 `ui-alert ui-alert-danger` 与“返回”按钮 |
+| 拍卖列表 | [paimai/list.php](file:///workspace/php/paimai/list.php)：面包屑、`list ui-list` 卡片流、点击/日期标签、空栏目 `ui-empty`、`ui-pager`，管理员操作按钮化 | 栏目 1 输出面包屑与列表卡片 |
+| 拍卖详情 | [paimai/view.php](file:///workspace/php/paimai/view.php)：详情卡（时间/点击/栏目标签 + 正文）、竞拍信息卡（最高价、出价次数、加价说明、主按钮）、最近出价卡（`ui-list` / `ui-empty`）、操作栏按钮化 | 拍品 1 输出“最近出价”、最高价 ￥120、3 条出价与出价主按钮 |
+| 出价页 | [paimai/bid.php](file:///workspace/php/paimai/bid.php)：面包屑、当前/最低价信息卡、加价提示、`ui-field` 数字输入 + 块级主按钮，校验失败统一走 `showError` | 输出面包屑、`ui-field` 与 `ui-btn-primary` |
+| 积分商城 | [shop/point.php](file:///workspace/php/shop/point.php)：面包屑、我的积分卡、排序 `ui-tabs`（`is-active`）、筛选表单卡片化、商品卡片含积分/库存标签与兑换主按钮、空状态 `ui-empty`、分页保留筛选 | 输出 `ui-tabs`、`list ui-list` 与积分标签 |
+| 积分兑换 | [shop/point_buy.php](file:///workspace/php/shop/point_buy.php)：确认页改 `ui-stat` 双指标卡（所需/我的积分），积分不足 `ui-alert-warning`，块级兑换主按钮 | 积分不足分支输出告警条 |
+| 兑换记录 | [shop/point_orders.php](file:///workspace/php/shop/point_orders.php)：面包屑、积分卡、状态 `ui-tabs`、汇总标签、状态三色 `ui-tag`、空状态、`ui-pager` | `status=0` 输出 `ui-tabs` 与 `ui-tag-warning` 待发放标签 |
+| 订单支付 | [shop/pay.php](file:///workspace/php/shop/pay.php)：应付/余额信息卡，余额支付、充值卡支付（`ui-field`）、第三方网关三卡分区；网关未启用改 `ui-alert-warning` | 订单 1 输出三张支付卡、余额主按钮与两条通道告警 |
+| 测试夹具 | [tests/seed.php](file:///workspace/php/tests/seed.php) 增补拍品 2 条、出价 2 条、积分商品 2 条、积分兑换记录 2 条 | 拍卖详情/出价页/积分商城/兑换记录均取到真实数据 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **397 项**（新增 7 条交易页组件与统一提示条断言） | **397/397 PASS** |
 
 ## 〇〇〇〇〇〇〇、v66 列表页卡片流与空状态（P2 第五步）
 
