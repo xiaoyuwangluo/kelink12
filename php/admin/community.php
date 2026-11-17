@@ -67,7 +67,9 @@ class AdminCommunityPage extends WapPage {
         } catch (Exception $e) {}
 
         $this->strTitle = '社区报表';
-        $this->showTop($this->strTitle);
+        $adminTitle = '社区报表';
+        $activeNav = 'community';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">社区运营报表</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
         $base = 'community.php';
@@ -123,7 +125,7 @@ class AdminCommunityPage extends WapPage {
         }
         echo '</table></div>';
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 统计：指定时间起点时追加时间条件（自动补 WHERE） */

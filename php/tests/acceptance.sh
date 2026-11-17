@@ -325,6 +325,18 @@ if echo "$ui_online" | grep -q 'class="admin-shell"' && echo "$ui_online" | grep
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v56:admin online shell"
 fi
+ui_comm=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/community.php")
+if echo "$ui_comm" | grep -q 'class="admin-shell"' && echo "$ui_comm" | grep -q '社区运营报表'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v57:admin community shell"
+fi
+ui_sysmsg=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/sysmsg.php")
+if echo "$ui_sysmsg" | grep -q 'class="admin-shell"' && echo "$ui_sysmsg" | grep -q 'class="subtitle">系统公告'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v57:admin sysmsg shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="
