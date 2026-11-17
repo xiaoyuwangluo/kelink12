@@ -73,7 +73,9 @@ class AdminShopOrderPage extends WapPage {
             $where, 'id DESC', $page, 20, $params);
 
         $this->strTitle = '商城订单';
-        $this->showTop($this->strTitle);
+        $adminTitle = '商城订单';
+        $activeNav = 'shoporder';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">商城订单</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
 
@@ -129,7 +131,7 @@ class AdminShopOrderPage extends WapPage {
             if ($page < $result['pageCount']) echo '<a href="' . $this->backUrl($status, $q) . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 列表回跳地址（保留筛选与搜索） */
