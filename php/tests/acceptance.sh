@@ -63,6 +63,7 @@ check "shop:view offshelf" "$BASE/shop/view.php?id=3"
 check "shop:list sort" "$BASE/shop/list.php?classid=1&sort=price_asc"
 check "shop:list search" "$BASE/shop/list.php?classid=1&q=%E6%B5%8B%E8%AF%95"
 check "shop:list bad price" "$BASE/shop/list.php?classid=1&minprice=abc"
+check "shop:cart msg" "$BASE/shop/cart.php?msg=ok"
 for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?status=0" "shop/myorder.php?status=1" "shop/myorder.php?orderid=1" "paimai/bid.php?id=1" "myaccount/index.php" "myaccount/index.php?type=in" "myaccount/index.php?type=out"; do
   check "shop:$p" "$BASE/$p"
 done
