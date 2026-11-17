@@ -14,17 +14,26 @@ class VideoViewPage extends WapPage {
         if (!$video) $this->showError('视频不存在');
         $db->execute("UPDATE WapVideo SET hits=hits+1 WHERE id=?", [$id]);
 
+        $class = $db->getOne("SELECT classname FROM WapClass WHERE id=?", [(int)$video['classid']]);
+        $classname = $class['classname'] ?? '视频';
+
         $this->strTitle = $video['title'];
         $this->showTop($this->strTitle);
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">' . $this->ToHtm($classname) . '</a> / 视频</div>';
         echo '<div class="subtitle">' . $this->ToHtm($video['title']) . '</div>';
         // 视频播放
         if (!empty($video['videourl'])) {
-            echo '<div class="player">';
+            echo '<div class="player ui-card">';
             echo '<video src="' . $this->ToHtm($video['videourl']) . '" controls="controls" width="100%"></video>';
             echo '</div>';
         }
-        echo '<div class="content">' . $this->wapTool->ToWML($video['content'], $this->wmlVo) . '</div>';
-        echo '<div><a href="download.php?id=' . $id . '">下载视频</a> | <a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="ui-flex ui-flex-wrap ui-gap-2 ui-mt-2">';
+        echo '<span class="ui-tag ui-tag-muted">点击 ' . ((int)$video['hits'] + 1) . '</span>';
+        echo '<span class="ui-tag ui-tag-muted">' . $this->ToHtm($classname) . '</span>';
+        echo '</div>';
+        echo '<div class="content ui-card ui-mt-2">' . $this->wapTool->ToWML($video['content'], $this->wmlVo) . '</div>';
+        echo '<div class="ui-flex ui-flex-wrap ui-gap-2 ui-mt-2"><a class="ui-btn ui-btn-primary" href="download.php?id=' . $id . '">下载视频</a>';
+        echo '<a class="ui-btn ui-btn-ghost" href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

@@ -293,6 +293,25 @@ check "bbs:active" "$BASE/bbs/active.php"
 check "bbs:tags" "$BASE/bbs/tags.php"
 check "bbs:tag guard" "$BASE/bbs/tag.php?name=bad%20name"
 check "bbs:like guard" "$BASE/bbs/like.php?id=999999"
+# v65 论坛/视频/下载详情页组件化
+bv=$(curl -s "$BASE/bbs/view.php?id=1")
+if echo "$bv" | grep -q 'post ui-card' && echo "$bv" | grep -q 'reply ui-card' && echo "$bv" | grep -q '全部回复' && echo "$bv" | grep -q 'ui-tag ui-tag-muted">#'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v65:bbs view components"
+fi
+ved=$(curl -s "$BASE/video/view.php?id=1")
+if echo "$ved" | grep -q 'ui-breadcrumb' && echo "$ved" | grep -q 'content ui-card'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v65:video view components"
+fi
+dlv=$(curl -s "$BASE/download/view.php?id=1")
+if echo "$dlv" | grep -q 'ui-breadcrumb' && echo "$dlv" | grep -q 'ui-btn ui-btn-primary'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v65:download view components"
+fi
 check "zone:follow guard" "$BASE/zone/follow.php?uid=2"
 check "zone:block list" "$BASE/zone/block.php"
 check "zone:block guard" "$BASE/zone/block.php?uid=2"

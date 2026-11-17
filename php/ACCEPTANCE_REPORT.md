@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 384/384；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 387/387；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **384/384 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **387/387 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v65 论坛/视频/下载详情页组件化（P2 第四步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 论坛帖子页 | [bbs/view.php](file:///workspace/php/bbs/view.php)：面包屑 + 主帖卡片（作者、等级、时间标签），标题标签化并显示回复总数，主帖/回复点赞改为标签 + `ui-btn-sm`，附件独立卡片，操作栏按钮化，投票卡片化 | 输出 `post ui-card`、`reply ui-card`、“全部回复 / 共 1 条”、楼层 `#1` 标签、主按钮 |
+| 视频播放页 | [video/view.php](file:///workspace/php/video/view.php)：播放器与简介分卡，点击/栏目标签化，下载为主按钮、返回为幽灵按钮 | 输出面包屑、`player ui-card`、`content ui-card`、主/幽灵按钮 |
+| 下载详情页 | [download/view.php](file:///workspace/php/download/view.php)：信息、配图、正文合并为卡片，时间/点击/栏目标签化，下载、评论、返回按钮化 | 输出面包屑、1 个信息卡、5 个标签与下载主按钮 |
+| 测试夹具 | [tests/seed.php](file:///workspace/php/tests/seed.php) 增补论坛主题、视频、下载各 1 条 | 帖子页取到 1 条可见回复（隐藏回复不计），视频/下载详情页正常渲染 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **387 项**（新增三页组件断言） | **387/387 PASS** |
 
 ## 〇〇〇〇〇〇〇、v64 商品详情页组件化（P2 第三步）
 
@@ -34,7 +44,7 @@
 | 提示与分页 | 校验提示改用 `ui-alert` 变体（危险/警告/成功），分页改用 `ui-pager` 当前页高亮 | 未登录、空内容、限频、成功四类提示样式正确 |
 | 评论链路 | 登录会员提交评论走原有校验与限频逻辑，不改数据流 | 限频窗口过后提交成功：提示“评论发表成功”，总数 2→3，帖子立即可见 |
 | 测试夹具 | [tests/seed.php](file:///workspace/php/tests/seed.php) 增补 2 篇文章，供详情与上下篇验收 | 种子库 `WapArticle=2`，评论页取到 2 条可见评论 |
-| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **382 项**（新增详情/评论组件断言） | **384/384 PASS** |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **382 项**（新增详情/评论组件断言） | **382/382 PASS** |
 
 ## 〇〇〇〇〇〇〇、v62 前台 modern 模板与站点配置生效修复（P2 起步）
 

@@ -40,9 +40,10 @@ class BbsViewPage extends WapPage {
         }
         if ($authorName === '') $authorName = '楼主';
 
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">论坛</a> / 帖子</div>';
         echo '<div class="subtitle">' . $this->ToHtm($thread['title']) . '</div>';
-        echo '<div class="post">';
-        echo '<div class="poster">';
+        echo '<div class="post ui-card">';
+        echo '<div class="poster ui-flex ui-flex-wrap ui-gap-2 ui-center">';
         if ($threadUid > 0) {
             echo '<a href="../zone/index.php?uid=' . $threadUid . '">'
                 . $this->ToHtm($authorName) . '</a>';
@@ -50,18 +51,18 @@ class BbsViewPage extends WapPage {
             echo $this->ToHtm($authorName);
         }
         echo ' ' . kl_level_tag_html($authorPoint);
-        echo ' ' . date('Y-m-d H:i', strtotime($thread['addtime'])) . '</div>';
+        echo ' <span class="ui-tag ui-tag-muted">' . date('Y-m-d H:i', strtotime($thread['addtime'])) . '</span></div>';
         echo '<div class="content">' . $this->wapTool->ToWML($thread['content'], $this->wmlVo) . '</div>';
         echo '</div>';
 
         // 帖子标签
         $threadTags = $db->getAll("SELECT tagname FROM WapBbsTag WHERE bbsid=? ORDER BY id",[$id]);
         if ($threadTags) {
-            echo '<div class="tags">标签：';
+            echo '<div class="tags ui-flex ui-flex-wrap ui-gap-2 ui-mt-2"><span class="ui-tag ui-tag-muted">标签</span>';
             foreach ($threadTags as $tt) {
                 $tname = (string)$tt['tagname'];
-                echo '<a href="tag.php?name=' . rawurlencode($tname) . '">#'
-                    . $this->ToHtm($tname) . '#</a> ';
+                echo '<a class="ui-tag" href="tag.php?name=' . rawurlencode($tname) . '">#'
+                    . $this->ToHtm($tname) . '#</a>';
             }
             echo '</div>';
         }
@@ -70,19 +71,19 @@ class BbsViewPage extends WapPage {
         $likeCount = kl_like_count($db, 'bbs', $id, 0);
         $isLogin = $this->userSession->isLogin();
         $meLiked = $isLogin ? kl_like_exists($db, 'bbs', $id, 0, (int)$this->userSession->getUserId()) : false;
-        echo '<div class="postlike">赞(' . $likeCount . ') ';
+        echo '<div class="postlike ui-flex ui-center ui-gap-2 ui-mt-2"><span class="ui-tag">赞 ' . $likeCount . '</span>';
         if ($isLogin) {
-            echo '<a href="like.php?id=' . $id . '&replyid=0&act='
+            echo '<a class="ui-btn ui-btn-sm' . ($meLiked ? '' : ' ui-btn-primary') . '" href="like.php?id=' . $id . '&replyid=0&act='
                 . ($meLiked ? 'unlike' : 'like') . '">' . ($meLiked ? '取消赞' : '赞') . '</a>';
         } else {
-            echo '<a href="../waplogin.php">登录后点赞</a>';
+            echo '<a class="ui-btn ui-btn-sm" href="../waplogin.php">登录后点赞</a>';
         }
         echo '</div>';
 
         // 帖子图片附件 (WapBbsFile)
         $bbsFiles = $db->getAll("SELECT * FROM WapBbsFile WHERE bbsid=? ORDER BY id",[$id]);
         if ($bbsFiles) {
-            echo '<div class="content"><div class="time">图片附件:</div>';
+            echo '<div class="content ui-card ui-mt-3"><div class="ui-card-head"><span class="ui-card-title">图片附件</span><span class="ui-card-extra">共 ' . count($bbsFiles) . ' 个</span></div>';
             foreach ($bbsFiles as $bf) {
                 $url = '../uploadfiles/' . implode('/', array_map('rawurlencode', explode('/', $bf['filepath'])));
                 $ext = strtolower(pathinfo($bf['filepath'], PATHINFO_EXTENSION));
@@ -129,7 +130,11 @@ class BbsViewPage extends WapPage {
             }
         }
 
-        echo '<div class="replylist">';
+        echo '<div class="replylist ui-mt-3">';
+        echo '<div class="ui-card-head"><span class="ui-card-title">全部回复</span><span class="ui-card-extra">共 ' . (int)$total . ' 条</span></div>';
+        if (!$replys) {
+            echo '<div class="ui-empty"><div class="icon">💬</div>还没有回复，来抢沙发</div>';
+        }
         $floor = ($page - 1) * $pageSize + 1;
         foreach ($replys as $r) {
             $rUid = (int)$r['userid'];
@@ -141,25 +146,25 @@ class BbsViewPage extends WapPage {
             if ($rName === '') $rName = '游客';
             $rPoint = $rUser ? (int)$rUser['point'] : 0;
 
-            echo '<div class="reply">';
-            echo '<div class="poster">#' . $floor . ' ';
+            echo '<div class="reply ui-card">';
+            echo '<div class="poster ui-flex ui-flex-wrap ui-gap-2 ui-center"><span class="ui-tag ui-tag-muted">#' . $floor . '</span>';
             if ($rUid > 0) {
                 echo '<a href="../zone/index.php?uid=' . $rUid . '">'
                     . $this->ToHtm($rName) . '</a>';
             } else {
                 echo $this->ToHtm($rName);
             }
-            echo ' ' . kl_level_tag_html($rPoint) . ' ' . date('m-d H:i', strtotime($r['addtime'])) . '</div>';
+            echo ' ' . kl_level_tag_html($rPoint) . ' <span class="ui-tag ui-tag-muted">' . date('m-d H:i', strtotime($r['addtime'])) . '</span></div>';
             echo '<div class="content">' . $this->wapTool->ToWML($r['content'], $this->wmlVo) . '</div>';
             $rid = (int)$r['id'];
             $rcount = $replyLikeCounts[$rid] ?? 0;
-            echo '<div class="replylike">赞(' . $rcount . ') ';
+            echo '<div class="replylike ui-flex ui-center ui-gap-2"><span class="ui-tag">赞 ' . $rcount . '</span>';
             if ($isLogin) {
                 $rLiked = isset($myReplyLikes[$rid]);
-                echo '<a href="like.php?id=' . $id . '&replyid=' . $rid . '&act='
+                echo '<a class="ui-btn ui-btn-sm' . ($rLiked ? '' : ' ui-btn-primary') . '" href="like.php?id=' . $id . '&replyid=' . $rid . '&act='
                     . ($rLiked ? 'unlike' : 'like') . '">' . ($rLiked ? '取消赞' : '赞') . '</a>';
             } else {
-                echo '<a href="../waplogin.php">登录后点赞</a>';
+                echo '<a class="ui-btn ui-btn-sm" href="../waplogin.php">登录后点赞</a>';
             }
             echo '</div>';
             echo '</div>';
@@ -169,35 +174,35 @@ class BbsViewPage extends WapPage {
 
         // 分页
         if ($pageCount > 1) {
-            echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a> ';
-            echo '第' . $page . '/' . $pageCount . '页 ';
+            echo '<div class="ui-pager">';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page-1) . '">上一页</a>';
+            echo '<span class="current">' . $page . ' / ' . (int)$pageCount . '</span>';
             if ($page < $pageCount) echo '<a href="?classid=' . $this->classid . '&id=' . $id . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
 
         // 回复/操作
-        echo '<div class="actionbar">';
+        echo '<div class="actionbar ui-flex ui-flex-wrap ui-gap-2 ui-mt-3">';
         if (!$thread['islock']) {
-            echo '<a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">回复</a> ';
+            echo '<a class="ui-btn ui-btn-primary ui-btn-sm" href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">回复</a>';
         }
-        echo '<a href="fav.php?classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a> ';
+        echo '<a class="ui-btn ui-btn-sm" href="fav.php?classid=' . $this->classid . '&module=bbs&id=' . $id . '">收藏</a>';
         if ($this->userSession->isLogin()) {
-            echo '<a href="report.php?classid=' . $this->classid . '&id=' . $id . '">举报</a> ';
+            echo '<a class="ui-btn ui-btn-sm" href="report.php?classid=' . $this->classid . '&id=' . $id . '">举报</a>';
         }
         // 作者或管理员显示管理入口
         $isOwner = $this->userSession->isLogin() && (int)$thread['userid'] === (int)$this->userSession->getUserId();
         $isAdmin = !empty($_SESSION['kl_adminid']);
         if ($isOwner || $isAdmin) {
-            echo '<a href="mod.php?act=edit&id=' . $id . '">编辑</a> ';
+            echo '<a class="ui-btn ui-btn-sm" href="mod.php?act=edit&id=' . $id . '">编辑</a>';
             if ($isAdmin) {
-                echo '<a href="mod.php?act=top&id=' . $id . '">置顶</a> ';
-                echo '<a href="mod.php?act=good&id=' . $id . '">加精</a> ';
-                echo '<a href="mod.php?act=lock&id=' . $id . '">锁帖</a> ';
+                echo '<a class="ui-btn ui-btn-sm" href="mod.php?act=top&id=' . $id . '">置顶</a>';
+                echo '<a class="ui-btn ui-btn-sm" href="mod.php?act=good&id=' . $id . '">加精</a>';
+                echo '<a class="ui-btn ui-btn-sm" href="mod.php?act=lock&id=' . $id . '">锁帖</a>';
             }
-            echo '<a href="mod.php?act=del&id=' . $id . '">删除</a> ';
+            echo '<a class="ui-btn ui-btn-sm" href="mod.php?act=del&id=' . $id . '">删除</a>';
         }
-        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a>';
+        echo '<a class="ui-btn ui-btn-ghost ui-btn-sm" href="list.php?classid=' . $this->classid . '">返回列表</a>';
         echo '</div>';
 
         // 帖子关联投票 (读 WapVote / WapVoteOption)
@@ -205,22 +210,21 @@ class BbsViewPage extends WapPage {
         if ($vote) {
             $options = $db->getAll("SELECT * FROM WapVoteOption WHERE voteid=? ORDER BY id", [$vote['id']]);
             $vtotal = max(1, (int)$vote['total']);
-            echo '<div class="vote">';
-            echo '<div class="subtitle">' . $this->ToHtm($vote['question']) . '</div>';
+            echo '<div class="vote ui-card ui-mt-3">';
+            echo '<div class="ui-card-head"><span class="ui-card-title">' . $this->ToHtm($vote['question']) . '</span><span class="ui-card-extra">总票数 ' . (int)$vote['total'] . '</span></div>';
             $canVote = $this->userSession->isLogin();
             echo '<form method="post" action="vote.php?voteid=' . (int)$vote['id'] . '">';
             foreach ($options as $o) {
                 $pct = round((int)$o['votes'] * 100 / $vtotal);
-                echo '<label>';
+                echo '<div class="ui-field"><label>';
                 if ($canVote) echo '<input type="radio" name="optionid" value="' . (int)$o['id'] . '"/> ';
                 echo $this->ToHtm($o['optionname']) . ' (' . (int)$o['votes'] . '票 ' . $pct . '%)';
-                echo '</label><br/>';
+                echo '</label></div>';
             }
-            echo '总票数:' . (int)$vote['total'];
             if ($canVote) {
-                echo ' <input type="submit" value="投票"/>';
+                echo '<input class="ui-btn ui-btn-primary ui-btn-block" type="submit" value="投票"/>';
             } else {
-                echo ' <a href="../waplogin.php">登录后投票</a>';
+                echo '<a class="ui-btn ui-btn-block" href="../waplogin.php">登录后投票</a>';
             }
             echo '</form></div>';
         }

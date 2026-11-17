@@ -13,15 +13,25 @@ class DownloadViewPage extends WapPage {
         $row = $db->getOne("SELECT * FROM WapDownload WHERE id=?",[$id]);
         if (!$row) $this->showError('内容不存在');
         $db->execute("UPDATE WapDownload SET hits=hits+1 WHERE id=?", [$id]);
+        $class = $db->getOne("SELECT classname FROM WapClass WHERE id=?", [(int)$row['classid']]);
+        $classname = $class['classname'] ?? '下载';
         $this->strTitle = $row['title'];
         $this->showTop($this->strTitle);
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / <a href="list.php?classid=' . $this->classid . '">' . $this->ToHtm($classname) . '</a> / 详情</div>';
         echo '<div class="subtitle">' . $this->ToHtm($row['title']) . '</div>';
-        echo '<div class="info">时间:' . date('Y-m-d H:i', strtotime($row['addtime'])) . ' 点击:' . (int)$row['hits'] . '</div>';
-        if (!empty($row['picurl'])) echo '<div class="pic"><img src="' . $this->ToHtm($row['picurl']) . '"/></div>';
-        echo '<div class="content">' . $this->wapTool->ToWML($row['content'], $this->wmlVo) . '</div>';
-        if (!empty($row['downurl'])) echo '<div class="download"><a href="' . $this->http_start . 'down.php?id=' . $id . '">下载</a></div>';
-        echo '<div class="replybar"><a href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">评论</a> ';
-        echo '<a href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
+        echo '<div class="ui-card">';
+        echo '<div class="ui-flex ui-flex-wrap ui-gap-2">';
+        echo '<span class="ui-tag ui-tag-muted">' . date('Y-m-d H:i', strtotime($row['addtime'])) . '</span>';
+        echo '<span class="ui-tag ui-tag-muted">点击 ' . ((int)$row['hits'] + 1) . '</span>';
+        echo '<span class="ui-tag">' . $this->ToHtm($classname) . '</span>';
+        echo '</div>';
+        if (!empty($row['picurl'])) echo '<div class="pic ui-mt-2"><img src="' . $this->ToHtm($row['picurl']) . '"/></div>';
+        echo '<div class="content ui-mt-2">' . $this->wapTool->ToWML($row['content'], $this->wmlVo) . '</div>';
+        echo '</div>';
+        echo '<div class="replybar ui-flex ui-flex-wrap ui-gap-2 ui-mt-2">';
+        if (!empty($row['downurl'])) echo '<a class="ui-btn ui-btn-primary" href="' . $this->http_start . 'down.php?id=' . $id . '">下载</a>';
+        echo '<a class="ui-btn" href="book_re.php?classid=' . $this->classid . '&id=' . $id . '">评论</a>';
+        echo '<a class="ui-btn ui-btn-ghost" href="list.php?classid=' . $this->classid . '">返回列表</a></div>';
         $this->showDown();
     }
 }

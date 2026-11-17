@@ -74,6 +74,10 @@ foreach ($articles as $a) {
       ->execute([$a[0], $a[1], $a[2], $a[3], $a[4]]);
 }
 
+$d->prepare("INSERT INTO WapVideo (id,classid,title,content,videourl,isshow,hits,addtime) VALUES (1,2,'视频测试标题','视频简介','/uploadfiles/demo.mp4',1,5,NOW())")->execute();
+$d->prepare("INSERT INTO WapDownload (id,classid,userid,title,content,downurl,isshow,hits,addtime) VALUES (1,2,0,'下载测试标题','下载简介','/uploadfiles/demo.zip',1,5,NOW())")->execute();
+$d->prepare("INSERT INTO WapBbs (id,classid,userid,nickname,title,content,isshow,hits,replynum,addtime) VALUES (1,2,1,'user1','论坛测试帖子','这是帖子正文，用于详情页组件验收。',1,8,2,NOW())")->execute();
+
 $online = [
     [1, 2, 'user2', '127.0.0.1', '/index.php', date('Y-m-d H:i:s')],
     [2, 1, 'user1', '10.0.0.1', '/bbs/list.php', date('Y-m-d H:i:s')],
