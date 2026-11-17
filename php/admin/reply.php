@@ -22,7 +22,9 @@ class AdminReplyPage extends WapPage {
         $content = mb_substr(trim(preg_replace('/\s+/', ' ', (string)($row['content'] ?? ''))), 0, 50);
 
         $this->strTitle = '删除评论确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除评论确认';
+        $activeNav = 'reply';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除评论确认</div>';
         echo '<div><a href="' . $back . '">返回评论列表</a></div>';
         echo '<div class="content">类型：' . ($tab === 'bbs' ? '论坛回复' : '内容评论')
@@ -36,7 +38,7 @@ class AdminReplyPage extends WapPage {
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="hidden" name="from" value="' . $this->ToHtm($tab) . '"/>'
             . '<input type="submit" value="确认删除"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
@@ -106,7 +108,9 @@ class AdminReplyPage extends WapPage {
         }
 
         $this->strTitle = '评论审核';
-        $this->showTop($this->strTitle);
+        $adminTitle = '评论审核';
+        $activeNav = 'reply';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">评论审核</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 切换标签
@@ -206,7 +210,7 @@ class AdminReplyPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 

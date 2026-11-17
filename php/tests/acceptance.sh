@@ -277,6 +277,12 @@ if echo "$ui_so" | grep -q 'class="admin-shell"' && echo "$ui_so" | grep -q 'cla
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v51:admin shoporder shell"
 fi
+ui_reply=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/reply.php")
+if echo "$ui_reply" | grep -q 'class="admin-shell"' && echo "$ui_reply" | grep -q 'class="subtitle">评论审核'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v52:admin reply shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="
