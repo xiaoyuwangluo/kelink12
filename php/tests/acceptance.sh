@@ -373,6 +373,18 @@ if echo "$ui_backup" | grep -q 'class="admin-shell"' && echo "$ui_backup" | grep
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v60:admin backup shell"
 fi
+ui_caiji=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/caiji.php")
+if echo "$ui_caiji" | grep -q 'class="admin-shell"' && echo "$ui_caiji" | grep -q 'class="subtitle">采集管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v61:admin caiji shell"
+fi
+ui_caiji_del=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/caiji.php?act=del&id=1")
+if echo "$ui_caiji_del" | grep -q 'class="admin-shell"' && echo "$ui_caiji_del" | grep -q 'class="subtitle">删除采集源确认'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v61:admin caiji delete shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

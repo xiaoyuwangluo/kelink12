@@ -19,7 +19,9 @@ class AdminCaijiPage extends WapPage {
         if (!$row) $this->showError('采集源不存在', $back);
 
         $this->strTitle = '删除采集源确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除采集源确认';
+        $activeNav = 'caiji';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除采集源确认</div>';
         echo '<div><a href="' . $back . '">返回采集管理</a></div>';
         echo '<div class="content">名称：' . $this->ToHtm($row['name']) . '<br/>'
@@ -30,7 +32,7 @@ class AdminCaijiPage extends WapPage {
             . '<input type="hidden" name="act" value="deldone"/>'
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="submit" value="确认删除"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
@@ -143,7 +145,9 @@ class AdminCaijiPage extends WapPage {
         $articleTotal = (int)$db->getScalar("SELECT COUNT(*) FROM WapArticle");
 
         $this->strTitle = '采集管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '采集管理';
+        $activeNav = 'caiji';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">采集管理</div><div><a href="index.php">返回后台首页</a></div>';
         if ($msg !== '') echo '<div class="' . ($msgType === 'error' ? 'error' : 'success') . '">' . $this->ToHtm($msg) . '</div>';
 
@@ -192,7 +196,7 @@ class AdminCaijiPage extends WapPage {
             . '<div class="time">支持每行“标题|正文”，最多导入 100 篇；正文中的 HTML 标签会被清除。</div>'
             . '<input type="submit" value="开始导入"/></form></div>';
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 
