@@ -149,6 +149,32 @@ check_admin "admin:export goods low" "$BASE/admin/export.php?type=goods&low=1"
 # OAuth / 模板
 check "oauth" "$BASE/oauth/index.php"
 check "templates" "$BASE/templates/list.php"
+# v62 modern 模板样式与模板中心识别
+mcss=$(curl -s "$BASE/templates/modern/style.css")
+mcode=$(curl -s -o /dev/null -w '%{http_code}' "$BASE/templates/modern/style.css")
+if [ "$mcode" = "200" ] && echo "$mcss" | grep -q -- '--xy-primary' && echo "$mcss" | grep -q 'replylist'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v62:modern style [$mcode]"
+fi
+tpllist=$(curl -s "$BASE/templates/list.php")
+if echo "$tpllist" | grep -q '内置模板' && echo "$tpllist" | grep -q '现代模板'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v62:template center modern"
+fi
+# v62 站点 template 字段应生效（切换 modern 后首页加载对应样式，测后还原）
+accdb="${PHP_ROOT:-/workspace/php}/data/sql444001.db"
+if [ -f "$accdb" ] && command -v sqlite3 >/dev/null 2>&1; then
+  sqlite3 "$accdb" "UPDATE WapSite SET template='modern' WHERE id=1;"
+  mhit=$(curl -s "$BASE/wapindex.php" | grep -c 'templates/modern/style.css')
+  sqlite3 "$accdb" "UPDATE WapSite SET template='default' WHERE id=1;"
+  if [ "$mhit" -ge 1 ]; then
+    PASS=$((PASS+1))
+  else
+    FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v62:site template switch"
+  fi
+fi
 
 # v4 每模块管理页 (modify/del/change)
 cd "${PHP_ROOT:-/workspace/php}"

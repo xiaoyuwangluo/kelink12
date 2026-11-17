@@ -222,6 +222,8 @@ class WapPage {
     protected function loadSiteInfo() {
         try {
             $this->siteVo = $this->db->getOne("SELECT * FROM WapSite ORDER BY id ASC LIMIT 1");
+            // getOne 返回关联数组，统一转为对象以匹配 siteVo->field 的读取方式
+            if (is_array($this->siteVo)) $this->siteVo = (object)$this->siteVo;
         } catch (Exception $e) {
             $this->siteVo = null;
         }
@@ -243,6 +245,7 @@ class WapPage {
     protected function loadClassInfo() {
         if ($this->classid > 0) {
             $this->classVo = $this->db->getOne("SELECT * FROM WapClass WHERE id=?", [$this->classid]);
+            if (is_array($this->classVo)) $this->classVo = (object)$this->classVo;
         }
         if (!$this->classVo) {
             $this->classVo = (object)['id' => 0, 'childid' => 0, 'classname' => '首页'];

@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 377/377；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 380/380；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,17 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **377/377 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **380/380 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v62 前台 modern 模板与站点配置生效修复（P2 起步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| modern 模板 | 新增 [templates/modern/style.css](file:///workspace/php/templates/modern/style.css)：基于 tokens/components 的移动卡片风格，覆盖列表卡片、帖子/评论气泡、导航宫格、标签、分页、表单与表格 | 样式文件 200、7.7 KB；切换站点 `template=modern` 后首页、文章、商品页均加载该样式 |
+| 模板中心 | [templates/list.php](file:///workspace/php/templates/list.php) 新增“内置模板”区块，扫描 `templates/*/style.css` 并标注当前启用项 | 页面显示“默认/触屏/现代”三项，当前使用项正确高亮 |
+| 配置缺陷修复 | [WapPage.php](file:///workspace/php/includes/WapPage.php#L222-L249)：`getOne` 返回关联数组却按对象读取，导致站点名称、版权、模板字段全部回落默认值；`loadSiteInfo`/`loadClassInfo` 统一转为对象 | 标题由常量回落值变为数据库站点名；`template=modern` 实际生效 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **380 项**（新增样式可达、模板中心识别、站点模板切换三条用例） | **380/380 PASS** |
 
 ## 〇〇〇〇〇〇〇、v61 后台页面迁移第十三步（采集管理接入统一外壳）
 

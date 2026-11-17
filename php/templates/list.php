@@ -24,6 +24,25 @@ class TemplateListPage extends WapPage {
             }
         }
         echo '</ul>';
+
+        // 内置模板（按 templates/*/style.css 扫描，便于未入库时也能识别）
+        $labels = ['default' => '默认模板（PC 简洁）', 'touch' => '触屏模板（移动深色）', 'modern' => '现代模板（移动卡片）'];
+        $dirs = glob(KL_ROOT . '/templates/*/style.css') ?: [];
+        echo '<div class="subtitle">内置模板</div><ul class="list">';
+        $found = 0;
+        foreach ($dirs as $file) {
+            $dir = basename(dirname($file));
+            if (!preg_match('/^[a-z0-9_\-]+$/i', $dir)) continue;
+            $found++;
+            $name = $this->ToHtm($labels[$dir] ?? $dir);
+            if ($dir === $curTpl) {
+                echo '<li><strong>' . $name . '</strong>（当前使用）</li>';
+            } else {
+                echo '<li>' . $name . ' — <a href="' . $this->http_start . 'wapindex.php">查看站点</a></li>';
+            }
+        }
+        if ($found === 0) echo '<li>未发现内置模板</li>';
+        echo '</ul>';
         echo '<div class="pagenav"><a href="../wapindex.php">返回首页</a></div></div>';
         $this->showDown();
     }
