@@ -1,0 +1,49 @@
+/* 小宇网络 WAP建站系统 PHP版 - 管理后台布局 (依赖 tokens.css / components.css) */
+.admin-body{font-family:var(--xy-font);background:var(--xy-bg);color:var(--xy-text);margin:0;font-size:var(--xy-fs-base);line-height:var(--xy-line)}
+.admin-body a{text-decoration:none;color:var(--xy-primary)}
+.admin-shell{display:flex;min-height:100vh}
+
+/* 侧栏 */
+.admin-sidebar{width:var(--xy-sidebar-w);flex:0 0 var(--xy-sidebar-w);background:#001529;color:#fff;display:flex;flex-direction:column}
+.admin-brand{padding:0 var(--xy-space-5);height:var(--xy-topbar-h);display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.08)}
+.admin-brand a{color:#fff;font-size:var(--xy-fs-md);font-weight:600;letter-spacing:.5px}
+.admin-brand a:hover{color:#fff}
+.admin-nav{flex:1;overflow-y:auto;padding:var(--xy-space-3) 0}
+.admin-nav-group{padding:var(--xy-space-2) var(--xy-space-3) var(--xy-space-3)}
+.admin-nav-title{display:block;padding:0 var(--xy-space-2);margin-bottom:4px;font-size:var(--xy-fs-xs);color:rgba(255,255,255,.45)}
+.admin-nav a{display:block;padding:7px var(--xy-space-2);border-radius:var(--xy-radius-sm);color:rgba(255,255,255,.78);font-size:var(--xy-fs-sm)}
+.admin-nav a:hover{background:rgba(255,255,255,.08);color:#fff}
+.admin-nav a.is-active{background:var(--xy-primary);color:#fff}
+.admin-nav .badge{float:right;min-width:18px;padding:0 5px;border-radius:var(--xy-radius-pill);background:var(--xy-danger);color:#fff;font-size:var(--xy-fs-xs);line-height:18px;text-align:center}
+
+/* 主区 */
+.admin-main{flex:1;min-width:0;display:flex;flex-direction:column}
+.admin-topbar{height:var(--xy-topbar-h);flex:0 0 var(--xy-topbar-h);display:flex;align-items:center;justify-content:space-between;
+  gap:var(--xy-space-3);padding:0 var(--xy-space-5);background:var(--xy-surface);border-bottom:1px solid var(--xy-border);
+  position:sticky;top:0;z-index:var(--xy-z-sticky)}
+.admin-topbar-title{font-size:var(--xy-fs-md);font-weight:600;color:var(--xy-text)}
+.admin-topbar-actions{display:flex;align-items:center;gap:var(--xy-space-3);font-size:var(--xy-fs-sm);color:var(--xy-text-3)}
+.admin-content{padding:var(--xy-space-5);flex:1}
+
+/* 后台区块 */
+.admin-section{margin-bottom:var(--xy-space-5)}
+.admin-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--xy-space-3)}
+.admin-section-title{font-size:var(--xy-fs-md);font-weight:600;margin:0;color:var(--xy-text)}
+.admin-panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:var(--xy-space-4)}
+.admin-quick{display:flex;flex-wrap:wrap;gap:var(--xy-space-2)}
+.admin-quick .ui-btn{background:var(--xy-surface)}
+.admin-quick .ui-btn:hover{border-color:var(--xy-primary)}
+
+/* 移动端：侧栏转为横向滚动导航 */
+@media (max-width: 900px){
+  .admin-shell{flex-direction:column}
+  .admin-sidebar{width:100%;flex:none;flex-direction:row;align-items:center;overflow-x:auto}
+  .admin-brand{height:auto;padding:var(--xy-space-3) var(--xy-space-4);border-bottom:none;white-space:nowrap}
+  .admin-nav{display:flex;padding:0 var(--xy-space-2);overflow-x:auto}
+  .admin-nav-group{display:flex;align-items:center;padding:var(--xy-space-2)}
+  .admin-nav-title{display:none}
+  .admin-nav a{white-space:nowrap;padding:6px 10px;color:rgba(255,255,255,.82)}
+  .admin-nav a:hover{background:rgba(255,255,255,.12)}
+  .admin-content{padding:var(--xy-space-4)}
+  .admin-topbar{padding:0 var(--xy-space-4)}
+}

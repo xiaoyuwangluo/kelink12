@@ -52,6 +52,9 @@ class WapTool {
             $html .= '<html><head>' . "\n";
             $html .= '<meta http-equiv="Content-Type" content="text/html; charset=' . $charset . '" />' . "\n";
             $html .= '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' . "\n";
+            // 全站设计令牌与通用组件（ui- 前缀，模板样式在其后加载可覆盖）
+            $html .= '<link rel="stylesheet" href="' . $wmlVo->http_start . 'assets/css/tokens.css" />' . "\n";
+            $html .= '<link rel="stylesheet" href="' . $wmlVo->http_start . 'assets/css/components.css" />' . "\n";
             // 模板样式 (templates/{dir}/style.css，站点 template 字段选择)
             $tplDir = preg_replace('/[^a-z0-9_\-]/i', '', (string)($this->siteVo->template ?? 'default'));
             if ($tplDir === '') $tplDir = 'default';

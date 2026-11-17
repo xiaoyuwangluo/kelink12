@@ -122,6 +122,16 @@ foreach ($logs as $l) {
       ->execute($l);
 }
 
+$friends = [
+    [1, 2, 1, 1], // user2 好友 user1
+    [2, 2, 3, 1], // user2 好友 user3
+    [3, 2, 4, 0], // user2 待确认（不显示）
+];
+foreach ($friends as $f) {
+    $d->prepare("INSERT INTO WapFriend (id,userid,friendid,status,addtime) VALUES (?,?,?,?,NOW())")
+      ->execute($f);
+}
+
 $messages = [
     // id, fromid, fromname, toid, toname, title, content, isread
     [1, 1, 'user1', 2, 'user2', '测试私信一', '这是一条未读私信', 0],

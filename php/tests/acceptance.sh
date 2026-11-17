@@ -6,13 +6,13 @@ CJ=/tmp/acc_admin.txt
 PASS=0; FAIL=0; FAILED_LIST=""
 
 check() { # check NAME URL
-  body=$(curl -s -b "$JAR" -c "$JAR" -L "$2")
+  body=$(curl -s -b "$JAR" -c "$JAR" -L "$2" | tr -d '\0')
   code=$(curl -s -o /dev/null -w '%{http_code}' -b "$JAR" -c "$JAR" -L "$2")
   err=$(echo "$body" | grep -c 'Fatal error\|Parse error\|Uncaught')
   if [ "$code" = "200" ] && [ "$err" = "0" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL $1 [$code err=$err] $2"; fi
 }
 check_admin() {
-  body=$(curl -s -b "$CJ" -c "$CJ" -L "$2")
+  body=$(curl -s -b "$CJ" -c "$CJ" -L "$2" | tr -d '\0')
   code=$(curl -s -o /dev/null -w '%{http_code}' -b "$CJ" -c "$CJ" -L "$2")
   err=$(echo "$body" | grep -c 'Fatal error\|Parse error\|Uncaught')
   if [ "$code" = "200" ] && [ "$err" = "0" ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL $1 [$code err=$err] $2"; fi
@@ -61,6 +61,10 @@ check "msg:inbox unread" "$BASE/message/index.php?box=in&status=unread"
 check "msg:inbox search" "$BASE/message/index.php?box=in&q=%E7%A7%81%E4%BF%A1"
 check "msg:outbox read" "$BASE/message/index.php?box=out&status=read"
 check "msg:bad status" "$BASE/message/index.php?box=in&status=bad&q=%E7%A7%81%E4%BF%A1"
+# 好友列表增强：用户名/昵称搜索 / 无结果
+check "friend:search username" "$BASE/friend/index.php?q=user1"
+check "friend:search nickname" "$BASE/friend/index.php?q=%E4%BC%9A%E5%91%98%E4%B8%89"
+check "friend:search none" "$BASE/friend/index.php?q=zzz"
 
 # 商城/支付/账户
 check "shop:view stock" "$BASE/shop/view.php?id=2"
@@ -87,7 +91,7 @@ check "shop:order num over stock" "$BASE/shop/order.php?id=2&num=5"
 check "shop:order num bad" "$BASE/shop/order.php?id=1&num=-3"
 
 # 后台
-for p in "admin/index.php" "admin/class.php" "admin/user.php" "admin/content.php?module=article" "admin/content.php?module=bbs" "admin/reply.php" "admin/online.php" "admin/sysmsg.php" "admin/card.php" "admin/logout.php"; do
+for p in "admin/index.php" "admin/class.php" "admin/user.php" "admin/content.php?module=article" "admin/content.php?module=bbs" "admin/reply.php" "admin/online.php" "admin/sysmsg.php" "admin/card.php"; do
   check_admin "admin:$p" "$BASE/$p"
 done
 # 商城订单后台
@@ -240,6 +244,22 @@ check "bbs:like guard" "$BASE/bbs/like.php?id=999999"
 check "zone:follow guard" "$BASE/zone/follow.php?uid=2"
 check "zone:block list" "$BASE/zone/block.php"
 check "zone:block guard" "$BASE/zone/block.php?uid=2"
+
+# v48 UI 设计底座与后台外壳（结构断言）
+ui_admin=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/index.php")
+if echo "$ui_admin" | grep -q 'class="admin-shell"' && echo "$ui_admin" | grep -q 'assets/css/admin.css'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v48:admin shell"
+fi
+ui_front=$(curl -s -b "$JAR" -c "$JAR" -L "$BASE/friend/index.php")
+if echo "$ui_front" | grep -q 'assets/css/tokens.css' && echo "$ui_front" | grep -q 'assets/css/components.css'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v48:front tokens"
+fi
+# 管理员退出放在最后，避免提前销毁后台会话
+check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="
 echo "PASS=$PASS FAIL=$FAIL"

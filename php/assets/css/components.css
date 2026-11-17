@@ -1,0 +1,111 @@
+/* 小宇网络 WAP建站系统 PHP版 - 通用组件 (ui- 前缀，避免与既有页面类名冲突)
+ * 依赖 tokens.css 的 CSS 变量；纯 CSS，无构建步骤
+ */
+
+/* 按钮 */
+.ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:6px 16px;
+  font-size:var(--xy-fs-base);line-height:1.4;color:var(--xy-text);background:var(--xy-surface);
+  border:1px solid var(--xy-border);border-radius:var(--xy-radius);cursor:pointer;text-decoration:none;
+  transition:background .18s,border-color .18s,color .18s,box-shadow .18s;white-space:nowrap}
+.ui-btn:hover{border-color:var(--xy-primary);color:var(--xy-primary)}
+.ui-btn:focus-visible{outline:2px solid var(--xy-primary);outline-offset:1px}
+.ui-btn-primary{background:var(--xy-primary);border-color:var(--xy-primary);color:#fff}
+.ui-btn-primary:hover{background:var(--xy-primary-hover);border-color:var(--xy-primary-hover);color:#fff}
+.ui-btn-danger{background:var(--xy-danger);border-color:var(--xy-danger);color:#fff}
+.ui-btn-danger:hover{filter:brightness(1.08);color:#fff}
+.ui-btn-ghost{background:transparent;border-color:transparent;color:var(--xy-primary)}
+.ui-btn-ghost:hover{background:var(--xy-primary-bg);color:var(--xy-primary)}
+.ui-btn-sm{min-height:28px;padding:2px 10px;font-size:var(--xy-fs-xs);border-radius:var(--xy-radius-sm)}
+.ui-btn-block{display:flex;width:100%}
+.ui-btn[disabled],.ui-btn.is-disabled{opacity:.55;cursor:not-allowed;pointer-events:none}
+
+/* 卡片 */
+.ui-card{background:var(--xy-surface);border:1px solid var(--xy-border);border-radius:var(--xy-radius-lg);
+  box-shadow:var(--xy-shadow-sm);padding:var(--xy-space-4)}
+.ui-card + .ui-card{margin-top:var(--xy-space-4)}
+.ui-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--xy-space-3);margin-bottom:var(--xy-space-3)}
+.ui-card-title{font-size:var(--xy-fs-md);font-weight:600;color:var(--xy-text);margin:0}
+.ui-card-extra{font-size:var(--xy-fs-xs);color:var(--xy-text-3)}
+
+/* 标签与徽标 */
+.ui-tag{display:inline-block;padding:0 8px;line-height:20px;font-size:var(--xy-fs-xs);
+  color:var(--xy-primary);background:var(--xy-primary-bg);border:1px solid var(--xy-primary-border);border-radius:var(--xy-radius-sm)}
+.ui-tag-success{color:var(--xy-success);background:var(--xy-success-bg);border-color:transparent}
+.ui-tag-warning{color:var(--xy-warning);background:var(--xy-warning-bg);border-color:transparent}
+.ui-tag-danger{color:var(--xy-danger);background:var(--xy-danger-bg);border-color:transparent}
+.ui-tag-muted{color:var(--xy-text-3);background:var(--xy-bg-soft);border-color:var(--xy-border)}
+
+/* 页签 */
+.ui-tabs{display:flex;flex-wrap:wrap;gap:var(--xy-space-2);padding:var(--xy-space-2) 0;border-bottom:1px solid var(--xy-border)}
+.ui-tabs a{padding:6px 14px;font-size:var(--xy-fs-sm);color:var(--xy-text-2);border-radius:var(--xy-radius-pill);text-decoration:none}
+.ui-tabs a:hover{background:var(--xy-bg-soft);color:var(--xy-primary)}
+.ui-tabs a.is-active{background:var(--xy-primary);color:#fff}
+
+/* 统计卡 */
+.ui-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:var(--xy-space-3)}
+.ui-stat{background:var(--xy-surface);border:1px solid var(--xy-border);border-radius:var(--xy-radius);
+  padding:var(--xy-space-3) var(--xy-space-4);box-shadow:var(--xy-shadow-sm)}
+.ui-stat .num{font-size:var(--xy-fs-2xl);font-weight:700;color:var(--xy-primary);line-height:1.2}
+.ui-stat .label{margin-top:2px;font-size:var(--xy-fs-xs);color:var(--xy-text-3)}
+.ui-stat.is-warning .num{color:var(--xy-warning)}
+.ui-stat.is-danger .num{color:var(--xy-danger)}
+.ui-stat.is-success .num{color:var(--xy-success)}
+
+/* 表格 */
+.ui-table-wrap{overflow-x:auto;border:1px solid var(--xy-border);border-radius:var(--xy-radius)}
+.ui-table{width:100%;border-collapse:collapse;font-size:var(--xy-fs-sm);background:var(--xy-surface)}
+.ui-table th,.ui-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--xy-border-light);white-space:nowrap}
+.ui-table th{background:var(--xy-bg-soft);color:var(--xy-text-3);font-weight:500}
+.ui-table tbody tr:hover{background:var(--xy-bg-soft)}
+.ui-table tbody tr:last-child td{border-bottom:none}
+.ui-table .num{text-align:right}
+
+/* 表单字段 */
+.ui-field{margin-bottom:var(--xy-space-3)}
+.ui-field label{display:block;margin-bottom:4px;font-size:var(--xy-fs-sm);color:var(--xy-text-2)}
+.ui-field input[type=text],.ui-field input[type=password],.ui-field input[type=number],
+.ui-field input[type=email],.ui-field select,.ui-field textarea{
+  width:100%;padding:8px 10px;font-size:var(--xy-fs-base);color:var(--xy-text);
+  background:var(--xy-surface);border:1px solid var(--xy-border);border-radius:var(--xy-radius-sm);
+  box-sizing:border-box;transition:border-color .18s,box-shadow .18s}
+.ui-field input:focus,.ui-field select:focus,.ui-field textarea:focus{
+  border-color:var(--xy-primary);box-shadow:0 0 0 2px var(--xy-primary-bg);outline:none}
+.ui-field .hint{margin-top:4px;font-size:var(--xy-fs-xs);color:var(--xy-text-3)}
+
+/* 提示条 */
+.ui-alert{padding:10px 14px;border-radius:var(--xy-radius);font-size:var(--xy-fs-sm);margin:var(--xy-space-3) 0}
+.ui-alert-info{color:var(--xy-primary);background:var(--xy-info-bg)}
+.ui-alert-success{color:var(--xy-success);background:var(--xy-success-bg)}
+.ui-alert-warning{color:var(--xy-warning);background:var(--xy-warning-bg)}
+.ui-alert-danger{color:var(--xy-danger);background:var(--xy-danger-bg)}
+
+/* 空状态 */
+.ui-empty{text-align:center;padding:var(--xy-space-6) var(--xy-space-3);color:var(--xy-text-3);font-size:var(--xy-fs-sm)}
+.ui-empty .icon{font-size:32px;line-height:1;margin-bottom:var(--xy-space-2);opacity:.5}
+
+/* 面包屑 */
+.ui-breadcrumb{display:flex;flex-wrap:wrap;gap:6px;font-size:var(--xy-fs-xs);color:var(--xy-text-3);padding:var(--xy-space-2) 0}
+.ui-breadcrumb a{color:var(--xy-text-3);text-decoration:none}
+.ui-breadcrumb a:hover{color:var(--xy-primary)}
+.ui-breadcrumb .sep{color:var(--xy-text-4)}
+
+/* 分页 */
+.ui-pager{display:flex;justify-content:center;align-items:center;gap:var(--xy-space-2);
+  padding:var(--xy-space-4) 0;font-size:var(--xy-fs-sm);color:var(--xy-text-2)}
+.ui-pager a,.ui-pager span{padding:4px 10px;border:1px solid var(--xy-border);border-radius:var(--xy-radius-sm);
+  color:var(--xy-text-2);text-decoration:none;background:var(--xy-surface)}
+.ui-pager a:hover{border-color:var(--xy-primary);color:var(--xy-primary)}
+.ui-pager .current{border-color:var(--xy-primary);background:var(--xy-primary);color:#fff}
+
+/* 列表 */
+.ui-list{list-style:none;margin:0;padding:0}
+.ui-list > li{padding:10px 0;border-bottom:1px solid var(--xy-border-light);font-size:var(--xy-fs-base)}
+.ui-list > li:last-child{border-bottom:none}
+.ui-list .meta{color:var(--xy-text-3);font-size:var(--xy-fs-xs)}
+
+/* 间距工具类 */
+.ui-mt-1{margin-top:var(--xy-space-1)}.ui-mt-2{margin-top:var(--xy-space-2)}
+.ui-mt-3{margin-top:var(--xy-space-3)}.ui-mt-4{margin-top:var(--xy-space-4)}
+.ui-mb-2{margin-bottom:var(--xy-space-2)}.ui-mb-3{margin-bottom:var(--xy-space-3)}
+.ui-flex{display:flex}.ui-flex-wrap{flex-wrap:wrap}.ui-gap-2{gap:var(--xy-space-2)}
+.ui-between{justify-content:space-between}.ui-center{align-items:center}

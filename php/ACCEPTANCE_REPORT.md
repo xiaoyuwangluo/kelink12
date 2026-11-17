@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 351/351；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 356/356；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,32 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **351/351 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **356/356 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v48 全栈 UI 设计底座与后台外壳（tokens / 组件库 / 仪表盘改版）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 设计令牌 | 新增 [tokens.css](file:///workspace/php/assets/css/tokens.css)：品牌色/功能色/中性色、间距 4-32、圆角、阴影、字号、层级、布局宽度，附深色主题变量 | 前台页面 `<head>` 输出 `assets/css/tokens.css` 链接，结构断言通过 |
+| 通用组件库 | 新增 [components.css](file:///workspace/php/assets/css/components.css)：`ui-` 前缀的按钮/卡片/标签/页签/统计卡/表格/表单/提示条/空态/面包屑/分页/列表与工具类 | 后台仪表盘实际渲染 8 个统计卡、订单状态标签与 2 张数据表 |
+| 后台外壳 | 新增 [admin/inc/header.php](file:///workspace/php/admin/inc/header.php) 与 [footer.php](file:///workspace/php/admin/inc/footer.php)、[admin.css](file:///workspace/php/assets/css/admin.css)：深色侧栏分组导航（内容/会员/商城/运营/系统）、待办徽标、顶栏、内容区，900px 以下自动横向导航 | 后台首页输出 `class="admin-shell"` 并通过结构断言；导航含待发货 1、待审核等动态徽标 |
+| 仪表盘改版 | [admin/index.php](file:///workspace/php/admin/index.php) 改用统一外壳：8 项统计卡（成交额/库存预警等语义色）、最近订单（状态标签）、最新会员、8 个快捷入口，全部保留原有数据口径 | 统计卡 8 个、订单表 1 行、会员表 1 行、快捷入口 8 个 |
+| 前台接入 | [WapTool.php](file:///workspace/php/includes/WapTool.php) 的 HTML 头部在模板样式之前加载 tokens/components，模板样式仍可覆盖，不影响 default/touch 既有外观 | 前台页面均带两份新样式链接，原有 354 项用例全部保持通过 |
+| 测试治理 | 管理员退出用例移至脚本末尾，避免提前销毁后台会话导致后续后台用例空跑；`check/check_admin` 去除 NUL 字节（备份下载为二进制） | 修复后暴露并修复社区报表 SQL 缺陷 |
+| 缺陷修复 | [admin/community.php](file:///workspace/php/admin/community.php)：`cnt()` 动态补 `WHERE`、发帖 Top10 基础 SQL 补 `WHERE 1=1`，修复 `days=7/30` 触发 `near "AND": syntax error` | 近 7 天/近 30 天报表正常输出统计与趋势，不再报错 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **356 项**（新增后台外壳与前台令牌 2 条结构断言） | **356/356 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
+
+## 〇〇〇〇〇〇〇、v47 好友列表增强（关键词搜索 / 数量汇总 / 失效标记）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 关键词搜索 | [friend/index.php](file:///workspace/php/friend/index.php)：`q` 联表 `WapUser` 按用户名或昵称模糊匹配，仅检索本会员已通过的好友（`status=1`），附「清除搜索」入口 | `q=user1` 由 2 位收窄为 1 位（会员一）；`q=会员三` 命中会员三(user3) |
+| 数量汇总 | 顶部输出“共 N 位好友（当前条件 M 位），本页 K 位”，随搜索变化 | 默认“共 2 位好友，本页 2 位”；搜索后“共 2 位好友，当前条件 1 位，本页 1 位” |
+| 展示与入口 | 好友名统一“昵称(用户名)”格式，保留空间/发短信/删除入口与添加时间；待确认好友不进入列表 | 列表显示会员三(user3)、会员一(user1)，待确认的 user4 不出现 |
+| 失效与空态 | 关联会员不存在时标记“已注销用户”且隐藏操作入口；无结果区分“没有找到匹配的好友”与“您还没有好友” | `q=zzz` 显示“没有找到匹配的好友”且不报错 |
+| 分页 | 分页链接携带 `q`，翻页不丢搜索条件；页码越界自动收敛到最后一页 | 搜索条件保留在翻页 URL 中 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **354 项**（新增用户名搜索、昵称搜索、无结果 3 条用例）；[seed.php](file:///workspace/php/tests/seed.php) 补充 3 条好友关系种子 | **354/354 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v46 站内消息中心增强（状态筛选 / 关键词搜索 / 计数汇总）
 

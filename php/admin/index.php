@@ -61,6 +61,8 @@ try {
 }
 // 订单状态文案
 $orderStatusMap = [0 => '待付款', 1 => '待发货', 2 => '已发货', 3 => '已完成', -1 => '已取消', -2 => '已退款'];
+// 订单状态标签样式
+$orderTagMap = [0 => 'warning', 1 => '', 2 => '', 3 => 'success', -1 => 'muted', -2 => 'danger'];
 // 最近订单会员名映射
 $orderUsers = [];
 foreach ($recentOrders as $o) {
@@ -70,109 +72,103 @@ foreach ($recentOrders as $o) {
         $orderUsers[$ouid] = $uname !== false && $uname !== null ? $uname : ('#' . $ouid);
     }
 }
+
+$adminTitle = '仪表盘';
+$activeNav = 'index';
+require __DIR__ . '/inc/header.php';
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<title>小宇网络 - 管理后台</title>
-<style>
-body{font-family:"微软雅黑",Arial;margin:0;background:#f0f2f5}
-.header{background:#001529;color:#fff;padding:15px 30px}
-.header h1{margin:0;font-size:18px}
-.header .nav{float:right}
-.header .nav a{color:#fff;margin-left:15px;text-decoration:none}
-.container{padding:20px}
-.stats{display:flex;gap:20px;flex-wrap:wrap}
-.stat-card{background:#fff;padding:20px;border-radius:6px;flex:1;min-width:150px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.stat-card .num{font-size:28px;color:#1890ff;font-weight:bold}
-.stat-card .label{color:#999;margin-top:5px}
-.menu{background:#fff;margin-top:20px;padding:15px;border-radius:6px}
-.menu a{display:inline-block;margin:5px 10px;padding:6px 14px;background:#1890ff;color:#fff;text-decoration:none;border-radius:4px}
-.panels{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px}
-.panel{background:#fff;padding:15px;border-radius:6px;flex:1;min-width:320px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.panel h2{font-size:15px;margin:0 0 10px;color:#333}
-.panel table{width:100%;border-collapse:collapse;font-size:13px}
-.panel th,.panel td{padding:6px;border-bottom:1px solid #f0f0f0;text-align:left}
-.panel th{color:#999;font-weight:normal}
-</style>
-</head>
-<body>
-<div class="header">
-<h1>小宇网络 WAP建站系统 管理后台</h1>
-<div class="nav"><a href="logout.php">退出</a></div>
-</div>
-<div class="container">
-<div class="stats">
-<div class="stat-card"><div class="num"><?php echo $userCount; ?></div><div class="label">会员数</div></div>
-<div class="stat-card"><div class="num"><?php echo $articleCount; ?></div><div class="label">文章数</div></div>
-<div class="stat-card"><div class="num"><?php echo $bbsCount; ?></div><div class="label">帖子数</div></div>
-<div class="stat-card"><div class="num"><?php echo $todayReg; ?></div><div class="label">今日注册</div></div>
-<div class="stat-card"><div class="num"><?php echo $todayOrders; ?></div><div class="label">今日订单</div></div>
-<div class="stat-card"><div class="num">￥<?php echo number_format($todayRevenue, 2); ?></div><div class="label">今日成交额</div></div>
-<div class="stat-card"><div class="num"><?php echo $shopPending; ?></div><div class="label">待发货订单</div></div>
-<div class="stat-card"><div class="num"><?php echo $lowStock; ?></div><div class="label">库存预警</div></div>
-</div>
-<div class="panels">
-<div class="panel">
-<h2>最近订单</h2>
-<table>
-<tr><th>ID</th><th>会员</th><th>金额</th><th>状态</th><th>时间</th></tr>
+<section class="admin-section">
+  <div class="ui-stat-grid">
+    <div class="ui-stat"><div class="num"><?php echo (int)$userCount; ?></div><div class="label">会员数</div></div>
+    <div class="ui-stat"><div class="num"><?php echo (int)$articleCount; ?></div><div class="label">文章数</div></div>
+    <div class="ui-stat"><div class="num"><?php echo (int)$bbsCount; ?></div><div class="label">帖子数</div></div>
+    <div class="ui-stat"><div class="num"><?php echo (int)$todayReg; ?></div><div class="label">今日注册</div></div>
+    <div class="ui-stat"><div class="num"><?php echo (int)$todayOrders; ?></div><div class="label">今日订单</div></div>
+    <div class="ui-stat is-success"><div class="num">￥<?php echo number_format($todayRevenue, 2); ?></div><div class="label">今日成交额</div></div>
+    <div class="ui-stat<?php echo $shopPending > 0 ? ' is-warning' : ''; ?>"><div class="num"><?php echo (int)$shopPending; ?></div><div class="label">待发货订单</div></div>
+    <div class="ui-stat<?php echo $lowStock > 0 ? ' is-danger' : ''; ?>"><div class="num"><?php echo (int)$lowStock; ?></div><div class="label">库存预警</div></div>
+  </div>
+</section>
+
+<section class="admin-section">
+  <div class="admin-panels">
+    <div class="ui-card">
+      <div class="ui-card-head">
+        <h2 class="ui-card-title">最近订单</h2>
+        <a class="ui-card-extra" href="shoporder.php">查看全部</a>
+      </div>
+      <div class="ui-table-wrap">
+        <table class="ui-table">
+          <thead><tr><th>ID</th><th>会员</th><th class="num">金额</th><th>状态</th><th>时间</th></tr></thead>
+          <tbody>
 <?php if (empty($recentOrders)) { ?>
-<tr><td colspan="5">暂无订单</td></tr>
-<?php } else { foreach ($recentOrders as $o) {
-    $ouid = (int)($o['userid'] ?? 0);
-    $ost = (int)($o['status'] ?? 0);
-    $otime = !empty($o['addtime']) ? date('m-d H:i', strtotime($o['addtime'])) : '';
+            <tr><td colspan="5"><div class="ui-empty">暂无订单</div></td></tr>
+<?php } else {
+    foreach ($recentOrders as $o) {
+        $ouid = (int)($o['userid'] ?? 0);
+        $ost = (int)($o['status'] ?? 0);
+        $otime = !empty($o['addtime']) ? date('m-d H:i', strtotime($o['addtime'])) : '';
+        $tag = $orderTagMap[$ost] ?? 'muted';
 ?>
-<tr>
-<td><a href="shoporder.php?q=<?php echo (int)$o['id']; ?>">#<?php echo (int)$o['id']; ?></a></td>
-<td><?php echo $page->ToHtm($ouid > 0 ? ($orderUsers[$ouid] ?? ('#' . $ouid)) : '游客'); ?></td>
-<td>￥<?php echo number_format((float)($o['totalprice'] ?? 0), 2); ?></td>
-<td><?php echo $page->ToHtm($orderStatusMap[$ost] ?? ('状态' . $ost)); ?></td>
-<td><?php echo $otime; ?></td>
-</tr>
-<?php } } ?>
-</table>
-</div>
-<div class="panel">
-<h2>最新会员</h2>
-<table>
-<tr><th>ID</th><th>用户名</th><th>注册时间</th></tr>
+            <tr>
+              <td><a href="shoporder.php?q=<?php echo (int)$o['id']; ?>">#<?php echo (int)$o['id']; ?></a></td>
+              <td><?php echo $page->ToHtm($ouid > 0 ? ($orderUsers[$ouid] ?? ('#' . $ouid)) : '游客'); ?></td>
+              <td class="num">￥<?php echo number_format((float)($o['totalprice'] ?? 0), 2); ?></td>
+              <td><span class="ui-tag<?php echo $tag !== '' ? ' ui-tag-' . $tag : ''; ?>"><?php echo $page->ToHtm($orderStatusMap[$ost] ?? ('状态' . $ost)); ?></span></td>
+              <td><?php echo $page->ToHtm($otime); ?></td>
+            </tr>
+<?php
+    }
+} ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="ui-card">
+      <div class="ui-card-head">
+        <h2 class="ui-card-title">最新会员</h2>
+        <a class="ui-card-extra" href="user.php">查看全部</a>
+      </div>
+      <div class="ui-table-wrap">
+        <table class="ui-table">
+          <thead><tr><th>ID</th><th>用户名</th><th>注册时间</th></tr></thead>
+          <tbody>
 <?php if (empty($recentUsers)) { ?>
-<tr><td colspan="3">暂无会员</td></tr>
-<?php } else { foreach ($recentUsers as $u) { ?>
-<tr>
-<td><?php echo (int)$u['id']; ?></td>
-<td><a href="user.php?q=<?php echo $page->ToHtm($u['username']); ?>"><?php echo $page->ToHtm($u['username']); ?></a></td>
-<td><?php echo !empty($u['regtime']) ? date('Y-m-d H:i', strtotime($u['regtime'])) : ''; ?></td>
-</tr>
-<?php } } ?>
-</table>
-</div>
-</div>
-<div class="menu">
-<a href="../wapindex.php">站点首页</a>
-<a href="class.php">栏目管理</a>
-<a href="user.php">会员管理</a>
-<a href="content.php?module=article">内容管理</a>
-<a href="shoporder.php">商城订单（待发货 <?php echo $shopPending; ?>）</a>
-<a href="goods.php">商品库存（预警 <?php echo $lowStock; ?>）</a>
-<a href="reply.php">评论审核</a>
-<a href="audit.php">内容审核（待审 <?php echo $auditPending; ?>）</a>
-<a href="report.php">举报管理</a>
-<a href="community.php">社区报表</a>
-<a href="tag.php">标签管理</a>
-<a href="online.php">在线用户</a>
-<a href="sysmsg.php">系统公告</a>
-<a href="card.php">充值卡</a>
-<a href="pointgoods.php">积分商品</a>
-<a href="pointorder.php">兑换订单（待发放 <?php echo $pointPending; ?>）</a>
-<a href="filter.php">敏感词库</a>
-<a href="upload.php">文件管理</a>
-<a href="setting.php">系统设置</a>
-<a href="backup.php">数据库维护</a>
-</div>
-</div>
-</body>
-</html>
+            <tr><td colspan="3"><div class="ui-empty">暂无会员</div></td></tr>
+<?php } else {
+    foreach ($recentUsers as $u) {
+?>
+            <tr>
+              <td><?php echo (int)$u['id']; ?></td>
+              <td><a href="user.php?q=<?php echo $page->ToHtm($u['username']); ?>"><?php echo $page->ToHtm($u['username']); ?></a></td>
+              <td><?php echo !empty($u['regtime']) ? $page->ToHtm(date('Y-m-d H:i', strtotime($u['regtime']))) : ''; ?></td>
+            </tr>
+<?php
+    }
+} ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="admin-section">
+  <div class="ui-card">
+    <div class="ui-card-head">
+      <h2 class="ui-card-title">快捷入口</h2>
+      <span class="ui-card-extra">按当前待办数量排序</span>
+    </div>
+    <div class="admin-quick">
+      <a class="ui-btn ui-btn-primary" href="shoporder.php?status=1">待发货订单<?php echo $shopPending > 0 ? '（' . (int)$shopPending . '）' : ''; ?></a>
+      <a class="ui-btn" href="audit.php">待审核内容<?php echo $auditPending > 0 ? '（' . (int)$auditPending . '）' : ''; ?></a>
+      <a class="ui-btn" href="pointorder.php?status=0">待发放兑换<?php echo $pointPending > 0 ? '（' . (int)$pointPending . '）' : ''; ?></a>
+      <a class="ui-btn" href="report.php?status=0">待处理举报<?php echo $pendingReports > 0 ? '（' . (int)$pendingReports . '）' : ''; ?></a>
+      <a class="ui-btn" href="goods.php?low=1">库存预警<?php echo $lowStock > 0 ? '（' . (int)$lowStock . '）' : ''; ?></a>
+      <a class="ui-btn ui-btn-ghost" href="goods.php?act=add">新增商品</a>
+      <a class="ui-btn ui-btn-ghost" href="content.php?module=article">发布内容</a>
+      <a class="ui-btn ui-btn-ghost" href="backup.php">数据库维护</a>
+    </div>
+  </div>
+</section>
+<?php require __DIR__ . '/inc/footer.php'; ?>

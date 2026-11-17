@@ -41,7 +41,7 @@ class AdminCommunityPage extends WapPage {
             [$since]), 'd', 'c');
 
         // 发帖 Top10
-        $postSql = "SELECT userid, COUNT(*) AS c FROM WapBbs";
+        $postSql = "SELECT userid, COUNT(*) AS c FROM WapBbs WHERE 1=1";
         $postParams = [];
         if ($start) { $postSql .= " AND addtime>=?"; $postParams[] = $start; }
         $postSql .= " GROUP BY userid ORDER BY c DESC LIMIT 10";
@@ -126,10 +126,10 @@ class AdminCommunityPage extends WapPage {
         $this->showDown();
     }
 
-    /** 统计：指定时间起点时追加 addtime 条件 */
+    /** 统计：指定时间起点时追加时间条件（自动补 WHERE） */
     private function cnt($db, $sql, $timeField, $start, $params) {
         if ($start) {
-            $sql .= " AND {$timeField}>=?";
+            $sql .= (stripos($sql, ' WHERE ') === false ? " WHERE {$timeField}>=?" : " AND {$timeField}>=?");
             $params[] = $start;
         }
         return (int)$db->getScalar($sql, $params);

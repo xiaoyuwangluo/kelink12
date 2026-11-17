@@ -1,0 +1,99 @@
+/* 小宇网络 WAP建站系统 PHP版 - 设计令牌 (Design Tokens)
+ * 全栈共用：前台 WAP / PC / 管理后台
+ * 通过 CSS 变量统一色彩、间距、圆角、阴影、字号与层级
+ */
+:root {
+  /* 品牌色 */
+  --xy-primary: #1890ff;
+  --xy-primary-hover: #40a9ff;
+  --xy-primary-active: #096dd9;
+  --xy-primary-bg: #e6f7ff;
+  --xy-primary-border: #91d5ff;
+
+  /* 功能色 */
+  --xy-success: #52c41a;
+  --xy-success-bg: #f6ffed;
+  --xy-warning: #fa8c16;
+  --xy-warning-bg: #fff7e6;
+  --xy-danger: #f5222d;
+  --xy-danger-bg: #fff1f0;
+  --xy-info: #1890ff;
+  --xy-info-bg: #e6f7ff;
+
+  /* 中性色 */
+  --xy-text: #1f2329;
+  --xy-text-2: #4e5969;
+  --xy-text-3: #86909c;
+  --xy-text-4: #c9cdd4;
+  --xy-border: #e5e6eb;
+  --xy-border-light: #f2f3f5;
+  --xy-bg: #f5f7fa;
+  --xy-bg-soft: #fafbfc;
+  --xy-surface: #ffffff;
+
+  /* 间距 */
+  --xy-space-1: 4px;
+  --xy-space-2: 8px;
+  --xy-space-3: 12px;
+  --xy-space-4: 16px;
+  --xy-space-5: 24px;
+  --xy-space-6: 32px;
+
+  /* 圆角 */
+  --xy-radius-sm: 4px;
+  --xy-radius: 8px;
+  --xy-radius-lg: 12px;
+  --xy-radius-pill: 999px;
+
+  /* 阴影 */
+  --xy-shadow-sm: 0 1px 2px rgba(0, 0, 0, .04), 0 1px 6px rgba(0, 0, 0, .04);
+  --xy-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  --xy-shadow-lg: 0 8px 24px rgba(0, 0, 0, .12);
+
+  /* 字号 */
+  --xy-fs-xs: 12px;
+  --xy-fs-sm: 13px;
+  --xy-fs-base: 14px;
+  --xy-fs-md: 16px;
+  --xy-fs-lg: 18px;
+  --xy-fs-xl: 24px;
+  --xy-fs-2xl: 28px;
+
+  /* 字体与行高 */
+  --xy-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  --xy-line: 1.7;
+  --xy-line-tight: 1.4;
+
+  /* 层级 */
+  --xy-z-sticky: 100;
+  --xy-z-dropdown: 200;
+  --xy-z-modal: 1000;
+
+  /* 布局 */
+  --xy-wap-max: 640px;
+  --xy-pc-max: 1200px;
+  --xy-sidebar-w: 224px;
+  --xy-topbar-h: 56px;
+}
+
+/* 深色主题（后台标记 data-theme="dark" 或系统偏好时启用） */
+[data-theme="dark"] {
+  --xy-text: #e8eaed;
+  --xy-text-2: #c2c7d0;
+  --xy-text-3: #8f96a3;
+  --xy-text-4: #5b6270;
+  --xy-border: #2f3542;
+  --xy-border-light: #242a35;
+  --xy-bg: #141821;
+  --xy-bg-soft: #1a1f2b;
+  --xy-surface: #1e2430;
+  --xy-primary-bg: #12283f;
+  --xy-primary-border: #1d4a73;
+  --xy-success-bg: #1c2f18;
+  --xy-warning-bg: #33260f;
+  --xy-danger-bg: #35191b;
+  --xy-info-bg: #12283f;
+  --xy-shadow-sm: 0 1px 2px rgba(0, 0, 0, .5);
+  --xy-shadow: 0 4px 12px rgba(0, 0, 0, .55);
+  --xy-shadow-lg: 0 8px 24px rgba(0, 0, 0, .6);
+}
