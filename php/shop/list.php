@@ -45,67 +45,70 @@ class ShopListPage extends WapPage {
 
         $this->strTitle = $this->classVo->classname ?? '商城';
         $this->showTop($this->strTitle);
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / ' . $this->ToHtm($this->classVo->classname ?? '商城') . '</div>';
         echo '<div class="subtitle">' . $this->ToHtm($this->classVo->classname ?? '商城') . '</div>';
 
-        echo '<div class="content">排序：';
+        echo '<div class="ui-tabs">';
         $sorts = ['new' => '最新', 'price_asc' => '价格↑', 'price_desc' => '价格↓', 'hot' => '人气'];
         foreach ($sorts as $k => $label) {
             echo ($sort === $k)
-                ? '<strong>[' . $label . ']</strong> '
-                : '<a href="' . $this->backUrl($q, $k, $minprice, $maxprice) . '">' . $label . '</a> ';
+                ? '<a class="is-active" href="' . $this->backUrl($q, $k, $minprice, $maxprice) . '">' . $label . '</a>'
+                : '<a href="' . $this->backUrl($q, $k, $minprice, $maxprice) . '">' . $label . '</a>';
         }
         echo '</div>';
 
-        echo '<div class="content"><form method="get" action="list.php">'
+        echo '<div class="ui-card ui-mt-2"><form method="get" action="list.php">'
             . '<input type="hidden" name="classid" value="' . $this->classid . '"/>'
             . '<input type="hidden" name="sort" value="' . $this->ToHtm($sort) . '"/>'
-            . '搜索：<input type="text" name="q" size="10" value="' . $this->ToHtm($q) . '" placeholder="ID/标题"/><br/>'
-            . '价格：<input type="text" name="minprice" size="6" value="' . $this->ToHtm($minprice) . '"/>'
-            . ' - <input type="text" name="maxprice" size="6" value="' . $this->ToHtm($maxprice) . '"/>'
-            . '<input type="submit" value="筛选"/></form>';
+            . '<div class="ui-field"><label for="q">搜索</label><input type="text" id="q" name="q" value="' . $this->ToHtm($q) . '" placeholder="商品 ID 或标题"/></div>'
+            . '<div class="ui-flex ui-gap-2"><div class="ui-field" style="flex:1"><label for="minprice">最低价</label><input type="text" id="minprice" name="minprice" value="' . $this->ToHtm($minprice) . '"/></div>'
+            . '<div class="ui-field" style="flex:1"><label for="maxprice">最高价</label><input type="text" id="maxprice" name="maxprice" value="' . $this->ToHtm($maxprice) . '"/></div></div>'
+            . '<input class="ui-btn ui-btn-primary ui-btn-block" type="submit" value="筛选"/></form>';
         if ($q !== '' || $minprice !== '' || $maxprice !== '') {
-            echo '<a href="list.php?classid=' . $this->classid . '&sort=' . $this->ToHtm($sort) . '">清除筛选</a>';
+            echo '<a class="ui-btn ui-btn-ghost ui-btn-sm ui-mt-2" href="list.php?classid=' . $this->classid . '&sort=' . $this->ToHtm($sort) . '">清除筛选</a>';
         }
-        if ($err !== '') echo '<div class="error">' . $this->ToHtm($err) . '</div>';
+        if ($err !== '') echo '<div class="ui-alert ui-alert-danger">' . $this->ToHtm($err) . '</div>';
         echo '</div>';
 
         $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapShop WHERE " . $where, $params);
-        echo '<div class="content"><div class="time">共 ' . $total . ' 件商品</div>';
-        if ($total === 0) {
-            echo '没有找到符合条件的商品。<a href="list.php?classid=' . $this->classid . '">查看全部</a>';
-        }
+        echo '<div class="ui-flex ui-between ui-center ui-mt-2"><span class="ui-tag">共 ' . $total . ' 件商品</span>';
+        if ($total === 0) echo '<a class="ui-btn ui-btn-sm" href="list.php?classid=' . $this->classid . '">查看全部</a>';
         echo '</div>';
 
         $result = $db->getPage('WapShop', 'id,title,picurl,price,stock,addtime,hits', $where,
             $sortSql[$sort], $page, $pageSize, $params);
 
-        echo '<div class="content"><ul class="shoplist">';
-        foreach ($result['list'] as $p) {
-            $id = (int)$p['id'];
-            $stock = (int)$p['stock'];
-            echo '<li>';
-            if (!empty($p['picurl'])) echo '<img src="' . $this->ToHtm($p['picurl']) . '" alt=""/>';
-            echo '<a href="view.php?classid=' . $this->classid . '&id=' . $id . '">';
-            echo $this->ToHtm($p['title']) . '</a>';
-            echo ' <span class="price">￥' . number_format((float)$p['price'], 2) . '</span>';
-            if ($stock <= 0) {
-                echo ' <span style="color:red">售罄</span>';
-            } else {
-                echo '<form method="post" action="cart.php?classid=' . $this->classid . '" style="display:inline">';
-                echo '<input type="hidden" name="act" value="add"/><input type="hidden" name="shopid" value="' . $id . '"/>';
-                echo '<input type="hidden" name="num" value="1"/>';
-                echo '<input type="submit" value="加入购物车"/></form> ';
-                echo '<a href="checkout.php?classid=' . $this->classid . '&shopid=' . $id . '&num=1">立即购买</a>';
+        if ($total === 0) {
+            echo '<div class="ui-card ui-mt-2"><div class="ui-empty"><div class="icon">🛒</div>没有找到符合条件的商品</div></div>';
+        } else {
+            echo '<ul class="list ui-list ui-mt-2">';
+            foreach ($result['list'] as $p) {
+                $id = (int)$p['id'];
+                $stock = (int)$p['stock'];
+                echo '<li>';
+                echo '<a href="view.php?classid=' . $this->classid . '&id=' . $id . '">';
+                if (!empty($p['picurl'])) echo '<img src="' . $this->ToHtm($p['picurl']) . '" alt="" style="max-width:60px;margin-right:8px;vertical-align:middle"/>';
+                echo $this->ToHtm($p['title']) . '</a>';
+                echo '<span class="ui-flex ui-gap-2 ui-center"><span class="price">￥' . number_format((float)$p['price'], 2) . '</span>';
+                if ($stock <= 0) {
+                    echo '<span class="ui-tag ui-tag-danger">售罄</span>';
+                } else {
+                    echo '<form method="post" action="cart.php?classid=' . $this->classid . '" style="display:inline">';
+                    echo '<input type="hidden" name="act" value="add"/><input type="hidden" name="shopid" value="' . $id . '"/>';
+                    echo '<input type="hidden" name="num" value="1"/>';
+                    echo '<input class="ui-btn ui-btn-sm ui-btn-primary" type="submit" value="加入购物车"/></form>';
+                    echo '<a class="ui-btn ui-btn-sm" href="checkout.php?classid=' . $this->classid . '&shopid=' . $id . '&num=1">立即购买</a>';
+                }
+                echo $this->adminLinks($id) . '</span>';
+                echo '</li>';
             }
-            echo $this->adminLinks($id);
-            echo '</li>';
+            echo '</ul>';
         }
-        echo '</ul></div>';
 
         if ($result['pageCount'] > 1) {
-            echo '<div class="pager">';
-            if ($page > 1) echo '<a href="' . $this->backUrl($q, $sort, $minprice, $maxprice) . '&page=' . ($page - 1) . '">上一页</a> ';
-            echo '第' . $page . '/' . $result['pageCount'] . '页 ';
+            echo '<div class="ui-pager">';
+            if ($page > 1) echo '<a href="' . $this->backUrl($q, $sort, $minprice, $maxprice) . '&page=' . ($page - 1) . '">上一页</a>';
+            echo '<span class="current">' . $page . ' / ' . (int)$result['pageCount'] . '</span>';
             if ($page < $result['pageCount']) echo '<a href="' . $this->backUrl($q, $sort, $minprice, $maxprice) . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }

@@ -11,20 +11,25 @@ class PictureListPage extends WapPage {
         $page = max(1, (int)($_GET['page'] ?? 1));
         $this->strTitle = $this->classVo->classname ?? 'picture';
         $this->showTop($this->strTitle);
+        echo '<div class="ui-breadcrumb"><a href="' . $this->http_start . 'wapindex.php">首页</a> / ' . $this->ToHtm($this->classVo->classname ?? 'picture') . '</div>';
         echo '<div class="subtitle">' . $this->ToHtm($this->classVo->classname ?? 'picture') . '</div>';
         $result = $db->getPage('WapPicture', 'id,title,addtime,hits',"classid=? AND isshow=1", 'id DESC', $page, 20,[$this->classid]);
-        echo '<div class="content"><ul class="list">';
-        foreach ($result['list'] as $row) {
-            echo '<li><a href="view.php?classid=' . $this->classid . '&id=' . $row['id'] . '">';
-            echo $this->ToHtm($row['title']) . '</a> <span class="hits">(' . (int)$row['hits'] . ')</span>';
-            echo $this->adminLinks((int)$row['id']);
-            echo '</li>';
+        if (empty($result['list'])) {
+            echo '<div class="ui-card ui-mt-2"><div class="ui-empty"><div class="icon">🖼️</div>该栏目暂无图片</div></div>';
+        } else {
+            echo '<ul class="list ui-list ui-mt-2">';
+            foreach ($result['list'] as $row) {
+                echo '<li><a href="view.php?classid=' . $this->classid . '&id=' . $row['id'] . '">';
+                echo $this->ToHtm($row['title']) . '</a> <span class="ui-tag">' . (int)$row['hits'] . '</span>';
+                echo $this->adminLinks((int)$row['id']);
+                echo '</li>';
+            }
+            echo '</ul>';
         }
-        echo '</ul></div>';
         if ($result['pageCount'] > 1) {
-            echo '<div class="pager">';
-            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a> ';
-            echo '第' . $page . '/' . $result['pageCount'] . '页 ';
+            echo '<div class="ui-pager">';
+            if ($page > 1) echo '<a href="?classid=' . $this->classid . '&page=' . ($page-1) . '">上一页</a>';
+            echo '<span class="current">' . $page . ' / ' . (int)$result['pageCount'] . '</span>';
             if ($page < $result['pageCount']) echo '<a href="?classid=' . $this->classid . '&page=' . ($page+1) . '">下一页</a>';
             echo '</div>';
         }
@@ -35,9 +40,9 @@ class PictureListPage extends WapPage {
     private function adminLinks($id) {
         if (!$this->userSession->isAdminLogin()) return '';
         $base = '?classid=' . $this->classid . '&id=' . $id;
-        return ' <a href="admin_WAPmodify.php' . $base . '">修改</a>'
-             . ' <a href="admin_WAPdel.php' . $base . '">删除</a>'
-             . ' <a href="admin_WAPchange.php' . $base . '">显隐</a>';
+        return ' <span class="ui-flex ui-gap-2"><a class="ui-btn ui-btn-sm" href="admin_WAPmodify.php' . $base . '">修改</a>'
+             . '<a class="ui-btn ui-btn-sm" href="admin_WAPdel.php' . $base . '">删除</a>'
+             . '<a class="ui-btn ui-btn-sm" href="admin_WAPchange.php' . $base . '">显隐</a></span>';
     }
 }
 $page = new PictureListPage();

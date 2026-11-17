@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 387/387；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 390/390；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **387/387 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **390/390 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v66 列表页卡片流与空状态（P2 第五步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 文章列表 | [article/list.php](file:///workspace/php/article/list.php)：面包屑 + 置顶项标签卡，正文列表改 `list ui-list`（日期/点击标签化），空栏目输出 `ui-empty`，分页改 `ui-pager` | 栏目 2 输出面包屑、列表与 2 组日期/点击标签 |
+| 图片列表 | [picture/list.php](file:///workspace/php/picture/list.php)：面包屑、列表卡片化、点击标签化，管理员操作按钮化，空栏目提示，分页统一 | 不存在的栏目 99 输出 `ui-empty` 空状态 |
+| 商品列表 | [shop/list.php](file:///workspace/php/shop/list.php)：排序改 `ui-tabs` 当前项高亮，筛选表单卡片化（搜索/价格区间 + 提示），商品卡片含价格标签、售罄标签、加购主按钮与立即购买，筛选条件在分页中保留 | 排序页输出 `ui-tabs` 与 `is-active`，列表输出价格与加购主按钮 |
+| 空结果 | 筛选无结果时显示“共 0 件商品”与 `ui-empty`，并提供“查看全部”入口 | `q=zzzz` 输出空状态与 0 件计数 |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **390 项**（新增三页列表/空状态断言） | **390/390 PASS** |
 
 ## 〇〇〇〇〇〇〇、v65 论坛/视频/下载详情页组件化（P2 第四步）
 

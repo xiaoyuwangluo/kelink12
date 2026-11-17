@@ -98,6 +98,25 @@ fi
 check "shop:list sort" "$BASE/shop/list.php?classid=1&sort=price_asc"
 check "shop:list search" "$BASE/shop/list.php?classid=1&q=%E6%B5%8B%E8%AF%95"
 check "shop:list bad price" "$BASE/shop/list.php?classid=1&minprice=abc"
+# v66 列表页卡片流与空状态
+al=$(curl -s "$BASE/article/list.php?classid=2")
+if echo "$al" | grep -q 'ui-breadcrumb' && echo "$al" | grep -q 'list ui-list'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v66:article list components"
+fi
+sle=$(curl -s "$BASE/shop/list.php?classid=1&q=zzzznohit")
+if echo "$sle" | grep -q 'ui-empty' && echo "$sle" | grep -q '没有找到符合条件的商品' && echo "$sle" | grep -q 'ui-tabs'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v66:shop list empty state"
+fi
+ple=$(curl -s "$BASE/picture/list.php?classid=99")
+if echo "$ple" | grep -q 'ui-empty'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v66:picture list empty state"
+fi
 check "shop:cart msg" "$BASE/shop/cart.php?msg=ok"
 check "shop:checkout no item" "$BASE/shop/checkout.php?shopid=999"
 check "shop:checkout bad ids" "$BASE/shop/checkout.php?ids=99999"
