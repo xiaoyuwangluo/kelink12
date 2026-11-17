@@ -72,7 +72,9 @@ class AdminOnlinePage extends WapPage {
         $guestCount = (int)$db->getScalar("SELECT COUNT(*) FROM WapOnline WHERE " . $baseWhere . " AND (userid IS NULL OR userid=0)", $params);
 
         $this->strTitle = '在线用户';
-        $this->showTop($this->strTitle);
+        $adminTitle = '在线用户';
+        $activeNav = 'online';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">在线用户</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 类型筛选
@@ -130,7 +132,7 @@ class AdminOnlinePage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 踢下线二次确认页 */
@@ -140,7 +142,9 @@ class AdminOnlinePage extends WapPage {
         $who = (int)($row['userid'] ?? 0) > 0 ? $this->ToHtm($row['username'] ?? '') : '游客';
 
         $this->strTitle = '踢下线确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '踢下线确认';
+        $activeNav = 'online';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">踢下线确认</div>';
         echo '<div><a href="' . $back . '">返回在线列表</a></div>';
         echo '<div class="content">用户：' . $who . '（ID:' . (int)$row['id'] . '）<br/>'
@@ -151,7 +155,7 @@ class AdminOnlinePage extends WapPage {
             . '<input type="hidden" name="action" value="kickdone"/>'
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="submit" value="确认踢下线"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 }

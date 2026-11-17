@@ -313,6 +313,18 @@ if echo "$ui_tag" | grep -q 'class="admin-shell"' && echo "$ui_tag" | grep -q 'c
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v55:admin tag shell"
 fi
+ui_filter=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/filter.php")
+if echo "$ui_filter" | grep -q 'class="admin-shell"' && echo "$ui_filter" | grep -q 'class="subtitle">敏感词库'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v56:admin filter shell"
+fi
+ui_online=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/online.php")
+if echo "$ui_online" | grep -q 'class="admin-shell"' && echo "$ui_online" | grep -q 'class="subtitle">在线用户'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v56:admin online shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

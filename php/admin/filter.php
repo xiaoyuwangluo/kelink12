@@ -28,7 +28,9 @@ class AdminFilterPage extends WapPage {
         $rows = $db->getAll("SELECT * FROM WapFilter ORDER BY id DESC",[]);
 
         $this->strTitle = '敏感词库';
-        $this->showTop($this->strTitle);
+        $adminTitle = '敏感词库';
+        $activeNav = 'filter';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">敏感词库</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
         echo '<div class="content">内置词来自 config.php 的 KL_Filter_All，此处为额外自定义词库。</div>';
@@ -51,7 +53,7 @@ class AdminFilterPage extends WapPage {
         }
         if (empty($rows)) echo '<li>暂无自定义敏感词</li>';
         echo '</ul></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 批量添加：按行/中英文逗号/空白分隔，去重、长度 1-50 校验，先查后插 */
