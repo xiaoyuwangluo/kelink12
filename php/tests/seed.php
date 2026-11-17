@@ -122,6 +122,18 @@ foreach ($logs as $l) {
       ->execute($l);
 }
 
+$messages = [
+    // id, fromid, fromname, toid, toname, title, content, isread
+    [1, 1, 'user1', 2, 'user2', '测试私信一', '这是一条未读私信', 0],
+    [2, 3, 'user3', 2, 'user2', '测试私信二', '这是一条已读私信', 1],
+    [3, 2, 'user2', 1, 'user1', '已发送私信一', '发件箱对方未读', 0],
+    [4, 2, 'user2', 3, 'user3', '已发送私信二', '发件箱对方已读', 1],
+];
+foreach ($messages as $m) {
+    $d->prepare("INSERT INTO WapMessage (id,fromid,fromname,toid,toname,title,content,isread,addtime) VALUES (?,?,?,?,?,?,?,?,NOW())")
+      ->execute($m);
+}
+
 echo "seeded: users=" . $d->query("SELECT COUNT(*) FROM WapUser")->fetchColumn()
    . " shops=" . $d->query("SELECT COUNT(*) FROM WapShop")->fetchColumn()
    . " orders=" . $d->query("SELECT COUNT(*) FROM WapShopOrder")->fetchColumn()
@@ -132,4 +144,5 @@ echo "seeded: users=" . $d->query("SELECT COUNT(*) FROM WapUser")->fetchColumn()
    . " online=" . $d->query("SELECT COUNT(*) FROM WapOnline")->fetchColumn()
    . " msgs=" . $d->query("SELECT COUNT(*) FROM WapSysMsg")->fetchColumn()
    . " cards=" . $d->query("SELECT COUNT(*) FROM WapCard")->fetchColumn()
-   . " reports=" . $d->query("SELECT COUNT(*) FROM WapReport")->fetchColumn() . "\n";
+   . " reports=" . $d->query("SELECT COUNT(*) FROM WapReport")->fetchColumn()
+   . " messages=" . $d->query("SELECT COUNT(*) FROM WapMessage")->fetchColumn() . "\n";

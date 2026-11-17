@@ -56,6 +56,11 @@ done
 for p in "bbs/mod.php?id=1" "bbs/vote.php?id=1" "bbs/fav.php?module=bbs&contentid=1" "bbs/favlist.php" "bbs/my.php" "bbs/my.php?type=replies" "message/index.php" "message/send.php" "message/view.php?id=1" "friend/index.php" "friend/add.php?fid=1" "zone/index.php?uid=1" "zone/msg.php?uid=1"; do
   check "user:$p" "$BASE/$p"
 done
+# 站内消息增强：状态筛选 / 关键词搜索 / 非法状态回落
+check "msg:inbox unread" "$BASE/message/index.php?box=in&status=unread"
+check "msg:inbox search" "$BASE/message/index.php?box=in&q=%E7%A7%81%E4%BF%A1"
+check "msg:outbox read" "$BASE/message/index.php?box=out&status=read"
+check "msg:bad status" "$BASE/message/index.php?box=in&status=bad&q=%E7%A7%81%E4%BF%A1"
 
 # 商城/支付/账户
 check "shop:view stock" "$BASE/shop/view.php?id=2"
