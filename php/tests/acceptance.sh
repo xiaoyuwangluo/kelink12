@@ -74,6 +74,12 @@ check "shop:myorder search" "$BASE/shop/myorder.php?q=%E6%B5%8B%E8%AF%95"
 check "shop:myorder search id" "$BASE/shop/myorder.php?q=2"
 check "shop:myorder sort amount_desc" "$BASE/shop/myorder.php?sort=amount_desc"
 check "shop:myorder status+sort" "$BASE/shop/myorder.php?status=1&sort=amount_asc"
+# 直购页增强：在售/库存校验
+check "shop:order normal" "$BASE/shop/order.php?id=1"
+check "shop:order offshelf" "$BASE/shop/order.php?id=3"
+check "shop:order missing" "$BASE/shop/order.php?id=999"
+check "shop:order num over stock" "$BASE/shop/order.php?id=2&num=5"
+check "shop:order num bad" "$BASE/shop/order.php?id=1&num=-3"
 
 # 后台
 for p in "admin/index.php" "admin/class.php" "admin/user.php" "admin/content.php?module=article" "admin/content.php?module=bbs" "admin/reply.php" "admin/online.php" "admin/sysmsg.php" "admin/card.php" "admin/logout.php"; do

@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 334/334；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 339/339；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,18 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **334/334 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **339/339 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v43 商品直购页整合（状态校验 / 库存收敛 / 统一结算）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 在售校验 | [shop/order.php](file:///workspace/php/shop/order.php)：进入直购页先校验商品存在与 `isshow=1`，不存在或已下架直接提示并给出返回入口 | `id=999` 提示“商品不存在”；`id=3`（下架商品）提示“商品已下架” |
+| 库存校验 | 库存为 0 提示“商品已售罄”；请求数量小于 1 归正为 1，超过库存收敛到库存上限并在页面提示，输入框 `max` 同步库存 | `id=2&num=5` 提示“购买数量已调整为库存上限 2 件”且 `max="2"`；`num=-3` 归正为 1 |
+| 统一结算 | 移除直购页自建订单逻辑，改为携带 `shopid`/`num` 跳转 [shop/checkout.php](file:///workspace/php/shop/checkout.php)，复用其库存复核、收货地址/手机必填、余额提示与事务下单 | `checkout.php?shopid=1&num=2` 显示应付合计 ￥198 与收货地址输入框 |
+| 信息展示 | 确认页展示商品名、单价、库存与数量输入，附返回商品/商城入口 | `id=1` 显示“商品:测试商品 单价:￥99.00 库存:94 件” |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **339 项**（新增直购正常/下架/不存在/超库存/非法数量 5 条用例） | **339/339 PASS**；全部 PHP 文件 `php -l` 零错误；交付库仍为空库 |
 
 ## 〇〇〇〇〇〇〇、v42 订单列表增强（搜索 / 排序 / 汇总 / 内联操作）
 
