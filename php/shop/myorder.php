@@ -38,19 +38,32 @@ class ShopMyOrderPage extends WapPage {
             return;
         }
 
-        // 订单列表（状态筛选 + 分页）
+        // 订单列表（状态筛选 + 关键词 + 排序 + 分页）
         $status = (string)($_GET['status'] ?? 'all');
         if (!in_array($status, ['all', '0', '1', '2', '3', '-1', '-2'], true)) $status = 'all';
+        $q = trim((string)($_GET['q'] ?? ''));
+        $sort = (string)($_GET['sort'] ?? 'newest');
+        $sortMap = [
+            'newest' => ['最新下单', 'id DESC'],
+            'amount_desc' => ['金额从高到低', 'totalprice DESC, id DESC'],
+            'amount_asc' => ['金额从低到高', 'totalprice ASC, id DESC'],
+        ];
+        if (!isset($sortMap[$sort])) $sort = 'newest';
         $where = 'userid=?';
         $params = [$uid];
         if ($status !== 'all') {
             $where .= ' AND status=?';
             $params[] = (int)$status;
         }
+        if ($q !== '') {
+            $where .= ' AND (id=? OR shopid IN (SELECT id FROM WapShop WHERE title LIKE ?))';
+            $params[] = ctype_digit($q) ? (int)$q : 0;
+            $params[] = '%' . $q . '%';
+        }
         $page = max(1, (int)($_GET['page'] ?? 1));
         $result = $db->getPage('WapShopOrder',
             'WapShopOrder.*, (SELECT title FROM WapShop WHERE WapShop.id=WapShopOrder.shopid) AS shoptitle',
-            $where, 'id DESC', $page, 20, $params);
+            $where, $sortMap[$sort][1], $page, 20, $params);
 
         // 各状态数量
         $statusCounts = [];
@@ -58,8 +71,13 @@ class ShopMyOrderPage extends WapPage {
             $statusCounts[(int)$r['status']] = (int)$r['c'];
         }
         $totalCount = array_sum($statusCounts);
-        $tabUrl = function ($st) {
-            return 'myorder.php?classid=' . $this->classid . ($st === 'all' ? '' : '&status=' . $st);
+        $filtered = $db->getOne("SELECT COUNT(*) AS c, COALESCE(SUM(totalprice),0) AS amount FROM WapShopOrder WHERE " . $where, $params);
+        $unpaid = $db->getOne("SELECT COUNT(*) AS c, COALESCE(SUM(totalprice),0) AS amount FROM WapShopOrder WHERE userid=? AND status=0", [$uid]);
+        $tabUrl = function ($st) use ($q, $sort) {
+            return 'myorder.php?classid=' . $this->classid
+                . ($st === 'all' ? '' : '&status=' . $st)
+                . ($q === '' ? '' : '&q=' . urlencode($q))
+                . ($sort === 'newest' ? '' : '&sort=' . $sort);
         };
 
         $this->strTitle = '我的订单';
@@ -76,21 +94,51 @@ class ShopMyOrderPage extends WapPage {
                 ? '<strong>[' . $txt . ']</strong> '
                 : '<a href="' . $tabUrl((string)$st) . '">' . $txt . '</a> ';
         }
-        echo '<div class="time">共 ' . $totalCount . ' 单，当前显示 ' . count($result['list']) . ' 单</div>';
+
+        // 搜索与排序
+        echo '<form method="get" action="myorder.php">';
+        echo '<input type="hidden" name="classid" value="' . $this->classid . '"/>';
+        if ($status !== 'all') echo '<input type="hidden" name="status" value="' . $this->ToHtm($status) . '"/>';
+        echo '订单号/商品名:<input type="text" name="q" value="' . $this->ToHtm($q) . '" size="12"/> ';
+        echo '<select name="sort">';
+        foreach ($sortMap as $k => $v) {
+            echo '<option value="' . $k . '"' . ($sort === $k ? ' selected="selected"' : '') . '>' . $v[0] . '</option>';
+        }
+        echo '</select> <input type="submit" value="查询"/></form>';
+        if ($q !== '') {
+            echo '<div class="time">搜索「' . $this->ToHtm($q) . '」：命中 ' . (int)$filtered['c'] . ' 单，'
+                . '<a href="myorder.php?classid=' . $this->classid . ($status === 'all' ? '' : '&status=' . $status) . '">清除搜索</a></div>';
+        }
+
+        echo '<div class="time">共 ' . $totalCount . ' 单，当前条件 ' . (int)$filtered['c'] . ' 单 合计￥'
+            . number_format((float)$filtered['amount'], 2) . '，本页 ' . count($result['list']) . ' 单</div>';
+        if ((int)$unpaid['c'] > 0) {
+            echo '<div class="error">您有 ' . (int)$unpaid['c'] . ' 个待付款订单，合计￥' . number_format((float)$unpaid['amount'], 2)
+                . '，<a href="' . $tabUrl('0') . '">去支付</a></div>';
+        }
         if (!$result['list']) {
-            echo $status === 'all' ? '暂无订单。' : '该状态下暂无订单。';
+            echo $q !== '' ? '没有符合条件的订单。' : ($status === 'all' ? '暂无订单。' : '该状态下暂无订单。');
             echo '<a href="list.php?classid=' . $this->classid . '">去购物</a>';
         } else {
             echo '<ul class="orderlist">';
             foreach ($result['list'] as $o) {
                 $st = (int)$o['status'];
                 $stName = self::STATUS_MAP[$st] ?? '未知';
-                echo '<li>#' . (int)$o['id'] . ' ' . $this->ToHtm($o['shoptitle'] ?? '') . ' ￥' . (int)round($o['totalprice'])
-                    . ' ×' . (int)$o['num'] . ' [' . $stName . ']'
+                $oid = (int)$o['id'];
+                echo '<li>#' . $oid . ' ' . $this->ToHtm($o['shoptitle'] ?? '已删除商品')
+                    . ' ￥' . number_format((float)$o['totalprice'], 2)
+                    . ' ×' . (int)$o['num'] . ' <strong>[' . $stName . ']</strong>'
                     . '<br/><span class="time">' . $this->ToHtm($o['addtime'] ?? '') . '</span>';
-                echo ' <a href="myorder.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">详情</a>';
+                echo ' <a href="myorder.php?classid=' . $this->classid . '&orderid=' . $oid . '">详情</a>';
                 if ($st === 0) {
-                    echo ' <a href="pay.php?classid=' . $this->classid . '&orderid=' . (int)$o['id'] . '">支付</a>';
+                    echo ' <a href="pay.php?classid=' . $this->classid . '&orderid=' . $oid . '">支付</a>';
+                    echo '<form method="post" action="myorder.php?classid=' . $this->classid . '" onsubmit="return confirm(\'确定取消订单 #' . $oid . '？\');">';
+                    echo '<input type="hidden" name="act" value="cancel"/><input type="hidden" name="orderid" value="' . $oid . '"/>';
+                    echo '<input type="submit" value="取消"/></form>';
+                } elseif ($st === 2) {
+                    echo '<form method="post" action="myorder.php?classid=' . $this->classid . '" onsubmit="return confirm(\'确认已收到订单 #' . $oid . ' 的商品？\');">';
+                    echo '<input type="hidden" name="act" value="confirm"/><input type="hidden" name="orderid" value="' . $oid . '"/>';
+                    echo '<input type="submit" value="确认收货"/></form>';
                 }
                 echo '</li>';
             }
@@ -98,8 +146,10 @@ class ShopMyOrderPage extends WapPage {
         }
         echo '</div>';
         if ($result['pageCount'] > 1) {
-            $pageUrl = function ($p) use ($status) {
-                return '?classid=' . $this->classid . ($status === 'all' ? '' : '&status=' . $status) . '&page=' . $p;
+            $pageUrl = function ($p) use ($status, $q, $sort) {
+                return '?classid=' . $this->classid . ($status === 'all' ? '' : '&status=' . $status)
+                    . ($q === '' ? '' : '&q=' . urlencode($q))
+                    . ($sort === 'newest' ? '' : '&sort=' . $sort) . '&page=' . $p;
             };
             echo '<div class="pager">';
             if ($page > 1) echo '<a href="' . $pageUrl($page - 1) . '">上一页</a> ';

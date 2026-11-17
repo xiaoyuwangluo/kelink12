@@ -69,6 +69,11 @@ check "shop:checkout bad ids" "$BASE/shop/checkout.php?ids=99999"
 for p in "shop/cart.php" "shop/checkout.php?shopid=1" "shop/pay.php?orderid=1" "shop/myorder.php" "shop/myorder.php?status=0" "shop/myorder.php?status=1" "shop/myorder.php?orderid=1" "shop/myorder.php?orderid=2" "paimai/bid.php?id=1" "myaccount/index.php" "myaccount/index.php?type=in" "myaccount/index.php?type=out"; do
   check "shop:$p" "$BASE/$p"
 done
+# 订单列表增强：搜索 / 排序
+check "shop:myorder search" "$BASE/shop/myorder.php?q=%E6%B5%8B%E8%AF%95"
+check "shop:myorder search id" "$BASE/shop/myorder.php?q=2"
+check "shop:myorder sort amount_desc" "$BASE/shop/myorder.php?sort=amount_desc"
+check "shop:myorder status+sort" "$BASE/shop/myorder.php?status=1&sort=amount_asc"
 
 # 后台
 for p in "admin/index.php" "admin/class.php" "admin/user.php" "admin/content.php?module=article" "admin/content.php?module=bbs" "admin/reply.php" "admin/online.php" "admin/sysmsg.php" "admin/card.php" "admin/logout.php"; do
