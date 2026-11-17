@@ -195,6 +195,10 @@ if echo "$wml2" | head -1 | grep -q '<?xml'; then PASS=$((PASS+1)); else FAIL=$(
 
 # v6 积分商城 / 敏感词后台（只读检查）
 check "shop:point" "$BASE/shop/point.php"
+check "shop:point search" "$BASE/shop/point.php?q=%E7%A7%AF%E5%88%86"
+check "shop:point sort points_asc" "$BASE/shop/point.php?sort=points_asc"
+check "shop:point points range" "$BASE/shop/point.php?minpoints=10&maxpoints=100"
+check "shop:point bad range" "$BASE/shop/point.php?minpoints=abc&maxpoints=xyz"
 check "shop:point_orders" "$BASE/shop/point_orders.php"
 check "shop:point_orders status=0" "$BASE/shop/point_orders.php?status=0"
 check "shop:point_orders status=1" "$BASE/shop/point_orders.php?status=1"
