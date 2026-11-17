@@ -337,6 +337,18 @@ if echo "$ui_sysmsg" | grep -q 'class="admin-shell"' && echo "$ui_sysmsg" | grep
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v57:admin sysmsg shell"
 fi
+ui_pg=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/pointgoods.php")
+if echo "$ui_pg" | grep -q 'class="admin-shell"' && echo "$ui_pg" | grep -q 'class="subtitle">积分商品管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v58:admin pointgoods shell"
+fi
+ui_po=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/pointorder.php")
+if echo "$ui_po" | grep -q 'class="admin-shell"' && echo "$ui_po" | grep -q 'class="subtitle">积分兑换订单'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v58:admin pointorder shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

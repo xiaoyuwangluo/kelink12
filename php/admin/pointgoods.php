@@ -32,7 +32,9 @@ class AdminPointGoodsPage extends WapPage {
             $goods = $db->getOne("SELECT * FROM WapPointGoods WHERE id=?",[$id]);
             if (!$goods) $this->showError('商品不存在', $back);
             $this->strTitle = '删除积分商品';
-            $this->showTop($this->strTitle);
+            $adminTitle = '删除积分商品';
+            $activeNav = 'pointgoods';
+            require __DIR__ . '/inc/header.php';
             echo '<div class="subtitle">删除确认</div><div class="content">';
             echo '确定删除商品「' . $this->ToHtm($goods['name']) . '」吗？删除后不可恢复。<br/>';
             echo '<form method="post" action="' . $back . '">';
@@ -40,7 +42,7 @@ class AdminPointGoodsPage extends WapPage {
             echo '<input type="hidden" name="id" value="' . (int)$goods['id'] . '"/>';
             echo '<input type="submit" value="确认删除"/> <a href="' . $back . '">取消</a>';
             echo '</form></div>';
-            $this->showDown();
+            require __DIR__ . '/inc/footer.php';
             return;
         }
 
@@ -68,7 +70,9 @@ class AdminPointGoodsPage extends WapPage {
         $result = $db->getPage('WapPointGoods', '*','', 'sortnum DESC, id DESC', $page, 20,[]);
 
         $this->strTitle = '积分商品管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '积分商品管理';
+        $activeNav = 'pointgoods';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">积分商品管理</div>';
         echo '<div><a href="index.php">返回后台首页</a> | <a href="' . $back . '&act=add">新增商品</a></div>';
         echo '<div class="content"><ul class="list">';
@@ -94,14 +98,16 @@ class AdminPointGoodsPage extends WapPage {
             if ($page < $result['pageCount']) echo '<a href="' . $back . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 新增/编辑表单 */
     private function showForm($goods, $back) {
         $isEdit = (int)$goods['id'] > 0;
         $this->strTitle = $isEdit ? '编辑积分商品' : '新增积分商品';
-        $this->showTop($this->strTitle);
+        $adminTitle = $this->strTitle;
+        $activeNav = 'pointgoods';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">' . $this->strTitle . '</div>';
         echo '<div><a href="' . $back . '">返回列表</a></div>';
         if (isset($_GET['err'])) echo '<div class="error">' . $this->ToHtm($_GET['err']) . '</div>';
@@ -116,7 +122,7 @@ class AdminPointGoodsPage extends WapPage {
         echo '图片地址:<input type="text" name="image" maxlength="255" value="' . $this->ToHtm($goods['image']) . '"/><br/>';
         echo '上架:<input type="checkbox" name="isshow" value="1"' . ((int)$goods['isshow'] === 1 ? ' checked="checked"' : '') . '/><br/>';
         echo '<input type="submit" value="保存"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 保存并校验 */

@@ -41,7 +41,9 @@ class AdminPointOrderPage extends WapPage {
         $result = $db->getPage('WapPointOrder', '*', $where, 'id DESC', $page, 20, $params);
 
         $this->strTitle = '积分兑换订单';
-        $this->showTop($this->strTitle);
+        $adminTitle = '积分兑换订单';
+        $activeNav = 'pointorder';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">积分兑换订单</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
         echo '<div class="content">筛选：';
@@ -83,7 +85,7 @@ class AdminPointOrderPage extends WapPage {
             if ($page < $result['pageCount']) echo '<a href="' . $back . '&status=' . $status . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 取消兑换：事务内订单置2 + 退积分 + 回补库存 + 积分流水 */
