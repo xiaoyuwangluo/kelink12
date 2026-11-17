@@ -92,7 +92,9 @@ class AdminClassPage extends WapPage {
         $total = (int)$db->getScalar("SELECT COUNT(*) FROM WapClass");
 
         $this->strTitle = '栏目管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '栏目管理';
+        $activeNav = 'class';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">栏目管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 模块筛选
@@ -194,7 +196,7 @@ class AdminClassPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 父栏目校验：存在、同模块、非自身、非下级（防循环） */
@@ -233,7 +235,9 @@ class AdminClassPage extends WapPage {
             : 0;
 
         $this->strTitle = '删除栏目确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除栏目确认';
+        $activeNav = 'class';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除栏目确认</div>';
         echo '<div><a href="' . $back . '">返回栏目列表</a></div>';
         echo '<div class="content">栏目：' . $this->ToHtm($row['classname']) . '（ID:' . (int)$row['id'] . '）'
@@ -250,7 +254,7 @@ class AdminClassPage extends WapPage {
                 . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
                 . '<input type="submit" value="确认删除"/></form></div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 

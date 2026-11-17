@@ -129,7 +129,9 @@ class AdminSettingPage extends WapPage {
         }
 
         $this->strTitle = '系统设置';
-        $this->showTop($this->strTitle);
+        $adminTitle = '系统设置';
+        $activeNav = 'setting';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">系统设置</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 可编辑项 (存 WapSite 表 id=1)
@@ -211,7 +213,7 @@ class AdminSettingPage extends WapPage {
         }
         if ($shown === 0) echo '<div class="content">没有匹配的配置常量</div>';
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 

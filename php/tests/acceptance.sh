@@ -289,6 +289,18 @@ if echo "$ui_content" | grep -q 'class="admin-shell"' && echo "$ui_content" | gr
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v53:admin content shell"
 fi
+ui_class=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/class.php")
+if echo "$ui_class" | grep -q 'class="admin-shell"' && echo "$ui_class" | grep -q '>栏目管理<'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v54:admin class shell"
+fi
+ui_setting=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/setting.php")
+if echo "$ui_setting" | grep -q 'class="admin-shell"' && echo "$ui_setting" | grep -q 'class="subtitle">系统设置'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v54:admin setting shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="
