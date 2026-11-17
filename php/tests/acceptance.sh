@@ -82,6 +82,19 @@ check "friend:search none" "$BASE/friend/index.php?q=zzz"
 # 商城/支付/账户
 check "shop:view stock" "$BASE/shop/view.php?id=2"
 check "shop:view offshelf" "$BASE/shop/view.php?id=3"
+# v64 商品详情组件化
+sv=$(curl -s "$BASE/shop/view.php?id=2")
+if echo "$sv" | grep -q 'ui-breadcrumb' && echo "$sv" | grep -q 'ui-card buybar' && echo "$sv" | grep -q 'ui-tag'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v64:shop view components"
+fi
+soff=$(curl -s "$BASE/shop/view.php?id=3")
+if echo "$soff" | grep -q 'ui-alert ui-alert-danger' && echo "$soff" | grep -q '已下架'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v64:shop offshelf alert"
+fi
 check "shop:list sort" "$BASE/shop/list.php?classid=1&sort=price_asc"
 check "shop:list search" "$BASE/shop/list.php?classid=1&q=%E6%B5%8B%E8%AF%95"
 check "shop:list bad price" "$BASE/shop/list.php?classid=1&minprice=abc"
