@@ -87,7 +87,9 @@ class AdminContentPage extends WapPage {
         $rows = $this->db->getAll("SELECT * FROM " . $conf['table'] . " WHERE $fk=? ORDER BY id DESC",[$id]);
 
         $this->strTitle = '附件管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '附件管理';
+        $activeNav = $module === 'bbs' ? 'bbs' : 'article';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">' . $this->ToHtm($module) . ' ID:' . $id . ' 附件</div>';
         echo '<div><a href="' . $back . '">返回内容列表</a></div>';
 
@@ -107,7 +109,7 @@ class AdminContentPage extends WapPage {
         }
         if (empty($rows)) echo '<li>暂无附件</li>';
         echo '</ul></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 单条删除二次确认页 */
@@ -116,7 +118,9 @@ class AdminContentPage extends WapPage {
         if (!$row) $this->showError('内容不存在', $back);
 
         $this->strTitle = '删除内容确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除内容确认';
+        $activeNav = $module === 'bbs' ? 'bbs' : 'article';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除内容确认</div>';
         echo '<div><a href="' . $back . '">返回内容列表</a></div>';
         echo '<div class="content">模块：' . $this->ToHtm($module) . '　ID：' . (int)$row['id'] . '<br/>'
@@ -127,7 +131,7 @@ class AdminContentPage extends WapPage {
             . '<input type="hidden" name="action" value="deldone"/>'
             . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
             . '<input type="submit" value="确认删除"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
@@ -212,7 +216,9 @@ class AdminContentPage extends WapPage {
         }
 
         $this->strTitle = '内容管理 - ' . $module;
-        $this->showTop($this->strTitle);
+        $adminTitle = '内容管理 - ' . $module;
+        $activeNav = $module === 'bbs' ? 'bbs' : 'article';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">内容管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 模块切换下拉
@@ -343,7 +349,7 @@ class AdminContentPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 
