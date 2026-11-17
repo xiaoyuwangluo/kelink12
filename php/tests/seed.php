@@ -112,6 +112,17 @@ foreach ($pointOrders as $o) {
       ->execute($o);
 }
 
+$genericModules = [
+    ['WapGuestbook', 1, '留言留言测试标题', '这是留言内容，用于详情页组件验收。'],
+    ['WapGongqiu', 1, '供求测试标题', '这是供求内容，用于详情页组件验收。'],
+    ['WapYuehui', 1, '交友活动测试标题', '这是活动内容，用于详情页组件验收。'],
+    ['WapHotel', 1, '酒店测试标题', '这是酒店内容，用于详情页组件验收。'],
+];
+foreach ($genericModules as $m) {
+    $d->prepare("INSERT INTO {$m[0]} (id,classid,userid,title,content,picurl,downurl,istop,isshow,hits,addtime) VALUES (1,?,0,?,?,'','',0,1,6,NOW())")
+      ->execute([$m[1], $m[2], $m[3]]);
+}
+
 $online = [
     [1, 2, 'user2', '127.0.0.1', '/index.php', date('Y-m-d H:i:s')],
     [2, 1, 'user1', '10.0.0.1', '/bbs/list.php', date('Y-m-d H:i:s')],

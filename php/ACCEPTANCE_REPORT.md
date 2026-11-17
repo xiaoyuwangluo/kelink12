@@ -1,7 +1,7 @@
 # 小宇网络 WAP建站系统 PHP版 — 复刻完成度验收报告
 
 验收日期：2026-11-16　　验收方式：自动化全量 URL 矩阵测试 + 功能链路实测 + 双数据库引擎验证 + 安全/压测/兼容性核查
-验收结论：**通过（独立建站版 SQLite 397/397；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
+验收结论：**通过（独立建站版 SQLite 401/401；全部 PHP 文件 php -l 零错误；SQLite 新库建表零错误）**
 交付包：`/workspace/xiaoyu-wap-php-v1.0.zip`
 
 ## 独立建站版改造（当前交付）
@@ -12,8 +12,17 @@
 | 数据模型 | 全库移除 `siteid` 列与含 `siteid` 的索引/唯一键；`WapSite` 保留为单行站点配置表（id=1） |
 | URL / SQL | 全站移除 `siteid` 查询参数、SQL 条件、INSERT 列与绑定参数；`WapPage` / `WapTool` / `Community` 全部单站化 |
 | 在线与流量统计 | `WapOnline` / `WapVisite` / `WapVisiteLog` 去掉 siteid，按全站统计 |
-| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **397/397 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
+| 验收 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) **401/401 PASS**（移除 4 个已删除页面用例，新增商城订单、商品库存、数据导出、会员/栏目/内容/评论/充值卡/在线/公告/举报/文件管理/系统设置/采集管理/数据库维护/订单筛选/钱包收支筛选/商品详情/商品列表/购物车/结算校验/订单详情/订单搜索排序/直购校验/积分兑换记录/积分商品筛选/站内消息筛选与搜索/好友搜索/UI 结构断言与后台页面迁移用例）；SQLite 新库 `schema.sql` + `schema_community.sql` 共 80+12 表导入零错误 |
 | 交付数据库 | `data/sql444001.db` 为全新空库：仅 `admin/admin123` 与默认站点配置，无测试会员、无内容数据 |
+
+## 〇〇〇〇〇〇〇、v68 留言/供求/交友/酒店列表与详情页组件化（P2 第七步）
+
+| 能力 | 实现 | 实测 |
+|---|---|---|
+| 列表页统一 | [guessbook/list.php](file:///workspace/php/guessbook/list.php)、[gongqiu/list.php](file:///workspace/php/gongqiu/list.php)、[yuehui/list.php](file:///workspace/php/yuehui/list.php)、[hotel/list.php](file:///workspace/php/hotel/list.php)：面包屑 + `list ui-list` 卡片流（点击/日期标签）+ 管理员按钮化 + `ui-empty` 空栏目 + `ui-pager` | 四模块栏目 1 均输出面包屑与列表卡片 |
+| 详情页统一 | [guessbook/view.php](file:///workspace/php/guessbook/view.php)、[gongqiu/view.php](file:///workspace/php/gongqiu/view.php)、[yuehui/view.php](file:///workspace/php/yuehui/view.php)、[hotel/view.php](file:///workspace/php/hotel/view.php)：面包屑 + 标题 + 信息/正文合并 `ui-card`（时间/点击/栏目标签）+ 配图 + 下载/评论/返回按钮化 | 四模块详情页均输出面包屑、`content ui-mt-2` 与操作按钮 |
+| 测试夹具 | [tests/seed.php](file:///workspace/php/tests/seed.php) 为四张内容表各增补 1 条测试数据 | 列表与详情页均取到真实数据（点击 6+1） |
+| 回归 | [acceptance.sh](file:///workspace/php/tests/acceptance.sh) 扩至 **401 项**（新增四模块列表+详情组合断言） | **401/401 PASS** |
 
 ## 〇〇〇〇〇〇〇、v67 拍卖/积分/支付交易页组件化（P2 第六步）
 

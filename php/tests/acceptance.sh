@@ -160,6 +160,17 @@ if echo "$serr" | grep -q 'ui-alert ui-alert-danger'; then
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v67:unified error alert"
 fi
+# v68 留言/供求/交友/酒店列表与详情页组件化
+for m in guessbook gongqiu yuehui hotel; do
+  ml=$(curl -s "$BASE/$m/list.php?classid=1")
+  mv=$(curl -s "$BASE/$m/view.php?classid=1&id=1")
+  if echo "$ml" | grep -q 'ui-breadcrumb' && echo "$ml" | grep -q 'list ui-list' \
+     && echo "$mv" | grep -q 'ui-breadcrumb' && echo "$mv" | grep -q 'content ui-mt-2'; then
+    PASS=$((PASS+1))
+  else
+    FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v68:$m list/view components"
+  fi
+done
 check "shop:cart msg" "$BASE/shop/cart.php?msg=ok"
 check "shop:checkout no item" "$BASE/shop/checkout.php?shopid=999"
 check "shop:checkout bad ids" "$BASE/shop/checkout.php?ids=99999"
