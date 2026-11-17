@@ -46,7 +46,7 @@
 .admin-content .pager{text-align:center;padding:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
 .admin-content .pager a{padding:2px 8px;border:1px solid var(--xy-border);border-radius:var(--xy-radius-sm);margin:0 4px}
 .admin-content .error{color:var(--xy-danger);background:var(--xy-danger-bg);padding:10px 14px;border-radius:var(--xy-radius);margin:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
-.admin-content .success{color:var(--xy-success);background:var(--xy-success-bg);padding:10px 14px;border-radius:var(--xy-radius);margin:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
+.admin-content .success,.admin-content .ok{color:var(--xy-success);background:var(--xy-success-bg);padding:10px 14px;border-radius:var(--xy-radius);margin:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
 .admin-content .info,.admin-content .time,.admin-content .hits{color:var(--xy-text-3);font-size:var(--xy-fs-xs)}
 .admin-content .price{color:var(--xy-danger);font-weight:600}
 .admin-content table{width:100%;border-collapse:collapse;font-size:var(--xy-fs-sm);background:var(--xy-surface)}

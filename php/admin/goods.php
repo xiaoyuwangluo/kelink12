@@ -82,7 +82,9 @@ class AdminGoodsPage extends WapPage {
             ($low === 1 ? 'stock ASC, id DESC' : 'id DESC'), $page, 20, $params);
 
         $this->strTitle = '商品库存';
-        $this->showTop($this->strTitle);
+        $adminTitle = '商品库存';
+        $activeNav = 'goods';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">商品库存</div>';
         echo '<div><a href="index.php">返回后台首页</a></div>';
 
@@ -147,7 +149,7 @@ class AdminGoodsPage extends WapPage {
             if ($page < $result['pageCount']) echo '<a href="' . $this->backUrl($q, $status, $low) . '&page=' . ($page + 1) . '">下一页</a>';
             echo '</div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 列表回跳地址（保留筛选/搜索/预警） */
@@ -206,7 +208,9 @@ class AdminGoodsPage extends WapPage {
         $classes = $db->getAll("SELECT id,classname FROM WapClass WHERE module='shop' ORDER BY orderid ASC, id ASC", []);
 
         $this->strTitle = $isEdit ? '编辑商品' : '新增商品';
-        $this->showTop($this->strTitle);
+        $adminTitle = $this->strTitle;
+        $activeNav = 'goods';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">' . $this->strTitle . '</div>';
         echo '<div><a href="goods.php">返回商品列表</a></div>';
         if (isset($_GET['err'])) echo '<div class="error">' . $this->ToHtm($_GET['err']) . '</div>';
@@ -240,7 +244,7 @@ class AdminGoodsPage extends WapPage {
             . ((int)$row['isshow'] === 1 ? ' checked="checked"' : '') . '/>上架销售</label></div>';
         echo '<div><input type="submit" value="' . ($isEdit ? '保存修改' : '确认新增') . '"/></div>';
         echo '</form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 新增/编辑保存 */
@@ -304,7 +308,9 @@ class AdminGoodsPage extends WapPage {
             "SELECT COUNT(*) FROM WapShopOrder WHERE shopid=? AND status IN (0,1,2)", [$id]);
 
         $this->strTitle = '删除商品';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除商品';
+        $activeNav = 'goods';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除确认</div><div class="content">';
         echo '确定删除商品「' . $this->ToHtm($goods['title']) . '」（ID:' . (int)$goods['id'] . '）吗？删除后不可恢复。<br/>';
         if ($lockCount > 0) {
@@ -318,7 +324,7 @@ class AdminGoodsPage extends WapPage {
             echo '</form>';
         }
         echo '</div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 删除商品：存在待付款/待发货/已发货订单时拒绝 */
