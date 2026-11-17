@@ -259,6 +259,12 @@ else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v48:front tokens"
 fi
 # 管理员退出放在最后，避免提前销毁后台会话
+ui_user=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/user.php")
+if echo "$ui_user" | grep -q 'class="admin-shell"' && echo "$ui_user" | grep -q '会员管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v49:admin user shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

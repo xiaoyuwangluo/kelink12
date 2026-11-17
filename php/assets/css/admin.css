@@ -34,7 +34,25 @@
 .admin-quick .ui-btn{background:var(--xy-surface)}
 .admin-quick .ui-btn:hover{border-color:var(--xy-primary)}
 
-/* 移动端：侧栏转为横向滚动导航 */
+/* 已迁移页面的旧类名兼容（仅作用于后台内容区，不影响前台） */
+.admin-content .subtitle{font-size:var(--xy-fs-md);font-weight:600;color:var(--xy-text);padding:0 0 var(--xy-space-2);margin:0 0 var(--xy-space-3);border-bottom:1px solid var(--xy-border)}
+.admin-content .content{background:var(--xy-surface);border:1px solid var(--xy-border);border-radius:var(--xy-radius);padding:var(--xy-space-3) var(--xy-space-4);margin-bottom:var(--xy-space-3);font-size:var(--xy-fs-sm);line-height:var(--xy-line)}
+.admin-content .content form{display:flex;flex-wrap:wrap;align-items:center;gap:var(--xy-space-2)}
+.admin-content .content input[type=text],.admin-content .content select{padding:6px 10px;font-size:var(--xy-fs-sm);border:1px solid var(--xy-border);border-radius:var(--xy-radius-sm);background:var(--xy-surface);color:var(--xy-text)}
+.admin-content .content input[type=submit],.admin-content .content button{padding:6px 14px;font-size:var(--xy-fs-sm);border:1px solid var(--xy-primary);border-radius:var(--xy-radius-sm);background:var(--xy-primary);color:#fff;cursor:pointer}
+.admin-content .list{list-style:none;margin:0;padding:0}
+.admin-content .list li{padding:10px 0;border-bottom:1px solid var(--xy-border-light);font-size:var(--xy-fs-sm)}
+.admin-content .list li:last-child{border-bottom:none}
+.admin-content .pager{text-align:center;padding:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
+.admin-content .pager a{padding:2px 8px;border:1px solid var(--xy-border);border-radius:var(--xy-radius-sm);margin:0 4px}
+.admin-content .error{color:var(--xy-danger);background:var(--xy-danger-bg);padding:10px 14px;border-radius:var(--xy-radius);margin:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
+.admin-content .success{color:var(--xy-success);background:var(--xy-success-bg);padding:10px 14px;border-radius:var(--xy-radius);margin:var(--xy-space-3) 0;font-size:var(--xy-fs-sm)}
+.admin-content .info,.admin-content .time,.admin-content .hits{color:var(--xy-text-3);font-size:var(--xy-fs-xs)}
+.admin-content .price{color:var(--xy-danger);font-weight:600}
+.admin-content table{width:100%;border-collapse:collapse;font-size:var(--xy-fs-sm);background:var(--xy-surface)}
+.admin-content table th,.admin-content table td{padding:8px 10px;border-bottom:1px solid var(--xy-border-light);text-align:left}
+.admin-content table th{background:var(--xy-bg-soft);color:var(--xy-text-3);font-weight:500}
+
 @media (max-width: 900px){
   .admin-shell{flex-direction:column}
   .admin-sidebar{width:100%;flex:none;flex-direction:row;align-items:center;overflow-x:auto}

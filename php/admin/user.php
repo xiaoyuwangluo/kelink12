@@ -148,7 +148,9 @@ class AdminUserPage extends WapPage {
         $locked = (int)$db->getScalar("SELECT COUNT(*) FROM WapUser WHERE islock<>0");
 
         $this->strTitle = '会员管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '会员管理';
+        $activeNav = 'user';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">会员管理</div><div><a href="index.php">返回后台首页</a></div>';
 
         // 状态筛选
@@ -249,7 +251,7 @@ class AdminUserPage extends WapPage {
             echo '</div>';
         }
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 
     /** 调整余额/积分并写流水 */
@@ -281,7 +283,9 @@ class AdminUserPage extends WapPage {
             "SELECT COUNT(*) FROM WapShopOrder WHERE userid=? AND status IN (0,1,2)", [$id]);
 
         $this->strTitle = '删除会员确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除会员确认';
+        $activeNav = 'user';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除会员确认</div>';
         echo '<div><a href="' . $back . '">返回会员列表</a></div>';
         echo '<div class="content">'
@@ -297,7 +301,7 @@ class AdminUserPage extends WapPage {
                 . '<input type="hidden" name="id" value="' . (int)$row['id'] . '"/>'
                 . '<input type="submit" value="确认删除"/></form></div>';
         }
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
