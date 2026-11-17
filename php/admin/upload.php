@@ -48,7 +48,9 @@ class AdminUploadPage extends WapPage {
         $sizeTxt = $size !== false ? Upload::formatSize($size) : '未知';
 
         $this->strTitle = '删除文件确认';
-        $this->showTop($this->strTitle);
+        $adminTitle = '删除文件确认';
+        $activeNav = 'upload';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">删除文件确认</div>';
         echo '<div><a href="' . $back . '">返回文件列表</a></div>';
         echo '<div class="content">文件：' . $this->ToHtm($rel) . '<br/>大小：' . $sizeTxt . '<br/>'
@@ -58,7 +60,7 @@ class AdminUploadPage extends WapPage {
             . '<input type="hidden" name="action" value="delete"/>'
             . '<input type="hidden" name="file" value="' . $this->ToHtm($rel) . '"/>'
             . '<input type="submit" value="确认删除"/></form></div>';
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
         exit;
     }
 
@@ -106,7 +108,9 @@ class AdminUploadPage extends WapPage {
         }
 
         $this->strTitle = '文件管理';
-        $this->showTop($this->strTitle);
+        $adminTitle = '文件管理';
+        $activeNav = 'upload';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">文件管理</div><div><a href="index.php">返回后台首页</a></div>';
         if ($msg !== '') echo '<div class="' . (strpos($msg, '成功') !== false || strpos($msg, '已删除') !== false ? 'success' : 'error') . '">' . $this->ToHtm($msg) . '</div>';
 
@@ -179,7 +183,7 @@ class AdminUploadPage extends WapPage {
         if (empty($filtered)) echo '<li>没有符合条件的文件</li>';
         echo '</ul><div class="time">当前显示 ' . count($filtered) . ' / ' . count($files) . ' 个文件，合计 ' . Upload::formatSize($totalSize) . '</div></div>';
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 

@@ -361,6 +361,18 @@ if echo "$ui_report" | grep -q 'class="admin-shell"' && echo "$ui_report" | grep
 else
   FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v59:admin report shell"
 fi
+ui_upload=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/upload.php")
+if echo "$ui_upload" | grep -q 'class="admin-shell"' && echo "$ui_upload" | grep -q 'class="subtitle">文件管理'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v60:admin upload shell"
+fi
+ui_backup=$(curl -s -b "$CJ" -c "$CJ" -L "$BASE/admin/backup.php")
+if echo "$ui_backup" | grep -q 'class="admin-shell"' && echo "$ui_backup" | grep -q 'class="subtitle">数据库维护'; then
+  PASS=$((PASS+1))
+else
+  FAIL=$((FAIL+1)); FAILED_LIST="$FAILED_LIST\n  FAIL v60:admin backup shell"
+fi
 check_admin "admin:logout" "$BASE/admin/logout.php"
 
 echo "=============================="

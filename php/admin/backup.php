@@ -108,7 +108,9 @@ class AdminBackupPage extends WapPage {
         }
 
         $this->strTitle = '数据库维护';
-        $this->showTop($this->strTitle);
+        $adminTitle = '数据库维护';
+        $activeNav = 'backup';
+        require __DIR__ . '/inc/header.php';
         echo '<div class="subtitle">数据库维护</div><div><a href="index.php">返回后台首页</a></div>';
         if ($msg !== '') echo '<div class="' . ($msgType === 'error' ? 'error' : 'success') . '">' . $this->ToHtm($msg) . '</div>';
 
@@ -131,7 +133,7 @@ class AdminBackupPage extends WapPage {
         }
         echo '</div>';
 
-        $this->showDown();
+        require __DIR__ . '/inc/footer.php';
     }
 }
 
